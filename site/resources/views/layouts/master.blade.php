@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>@yield('title', 'TOGI')</title>
+  <title>@yield('title',env('APP_NAME'))</title>
   <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.css') }}">
 
   <style type="text/css">
@@ -29,6 +29,12 @@
         </li>
         <li class="nav-item {{ url()->current() == route('series') ? 'active' : '' }}">
           <a class="nav-link" href="{{ route('series') }}">Series</a>
+        </li>
+        <li class="nav-item {{ url()->current() == route('errorcode') ? 'active' : '' }}">
+          <a class="nav-link" href="{{ route('errorcode') }}">Errorcode</a>
+        </li>
+        <li class="nav-item {{ url()->current() == route('errorcodetype') ? 'active' : '' }}">
+          <a class="nav-link" href="{{ route('errorcodetype') }}">Errorcode Type</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ route('checklist') }}">Checklist</a>

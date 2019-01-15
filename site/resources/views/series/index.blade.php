@@ -3,9 +3,9 @@
 @section('content')
   <div class="container">
     <div class="row">
-      <div class="col-sm-11"><h2>Series</h2></div>
+      <div class="col-sm-11"><h4>Series</h4></div>
       <div class="col-sm-1">
-        <a href="{{ route('createSeriesForm') }}" class="btn btn-success btn-lg btn-block">Add</a>
+        <a href="{{ route('createSeriesForm') }}" class="btn btn-success btn-ms btn-block">Add</a>
       </div>
     </div>
     <div class="row">
@@ -13,7 +13,7 @@
         <div class="table-responsive">
           <table class="table table-bordered">
             <thead>
-              <tr class="table-info">
+              <tr class="table-secondary">
                 <th>Code</th>
                 <th>Series</th>
                 <th>Pallet Quantity</th>

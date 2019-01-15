@@ -3,7 +3,7 @@
 @section('content')
   <div class="container">
     <div class="row">
-      <div class="col-md-4"><h2>Create Series</h2></div>
+      <div class="col-md-4"><h4>Create Series</h4></div>
     </div>
     <div class="row">
       <div class="col-md-4"></div>
@@ -11,15 +11,15 @@
         <form action="{{ route('createSeries') }}" method="post" class="form form-horizontal">
           {{ csrf_field() }}
           <div class="form-group">
-            <label>Series Code</label>
+            <label><b>Series Code</b></label>
             <input type="text" class="form-control" name="c_series_code" required>
           </div>
           <div class="form-group">
-            <label>Series Name</label>
+            <label><b>Series Name</b></label>
             <input type="text" class="form-control" name="n_series_name" required>
           </div>
           <div class="form-group">
-            <label>Pallet Quantity</label>
+            <label><b>Pallet Quantity</b></label>
             <input type="number" class="form-control" name="i_pallet_qty" required>
           </div>
           <div class="form-group" align="center">
