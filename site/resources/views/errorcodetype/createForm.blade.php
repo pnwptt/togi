@@ -16,7 +16,7 @@
         </div>
         <div class="form-group" align="center">
           <button type="submit" class="btn btn-success">Create</button>
-          <a href="{{ route('errorcodetype') }}" class="btn btn-default">Cancel</a>
+          <a href="{{ route('errorcodetype') }}" class="btn btn-light">Cancel</a>
         </div>
         </form>
       </div>

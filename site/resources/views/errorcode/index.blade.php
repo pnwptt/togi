@@ -13,7 +13,7 @@
             <div class="table-responsive">
               <table class="table table-bordered">
                 <thead>
-                  <tr class="table-primary">
+                  <tr class="table-dark">
                     <th>Rank</th>
                     <th>Error code</th>
                     <th>Inspection detail</th>
@@ -27,8 +27,11 @@
                       <td align="center">{{ $e->c_rank }}</td>
                       <td align="center">{{ $e->c_code }}</td>
                       <td>{{ $e->n_errorcode }}</td>
-                      <td align="center">{{ $e-></td>
-                      <td align="center"><a href="{{ route('deleteErrorcode', $e->i_errorcode_id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a></td>
+                      <td align="center">{{ $e->getType->n_errorcode_type }}</td>
+                      <td align="center">
+                        <a href="{{ route('editErrorcodeForm', $e->i_errorcode_id) }}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="{{ route('deleteErrorcode', $e->i_errorcode_id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>
+                      </td>
                     </tr>
                   @endforeach
                 </tbody>

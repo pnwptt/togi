@@ -24,7 +24,7 @@
           </div>
           <div class="form-group" align="center">
             <button type="submit" class="btn btn-success">Create</button>
-            <a href="{{ route('series') }}" class="btn btn-default">Cancel</a>
+            <a href="{{ route('series') }}" class="btn btn-light">Cancel</a>
           </div>
         </form>
       </div>

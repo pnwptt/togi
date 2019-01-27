@@ -4,20 +4,24 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Errorcode;
-// use App\ErrorcodeType;
+use App\ErrorcodeType;
 
 class ErrorcodeController extends Controller
 {
     public function index(){
-        $errorcodelist = Errorcode::where('c_errorcode_deleted', 0)->get();
-
-        // $typeall = ErrorcodeType::find()->orderBy('n_errorcode_type asc')->all();
-        // $type = ArrayHelper::map($typeall, 'i_errorcode_type_id', 'n_errorcode_type');
+        $errorcodeList = Errorcode::where('i_errorcode_deleted', 0)->get();
         return view('errorcode.index', compact('errorcodeList'));
     }
 
     public function createForm() {
-        return view('errorcode.createForm');
+        $types = ErrorcodeType::where('i_errorcode_type_deleted', 0)->get();
+        return view('errorcode.createForm', compact('types'));
+    }
+
+    public function editForm($id) {
+        $types = ErrorcodeType::where('i_errorcode_type_deleted', 0)->get();
+        $errorcode = Errorcode::where('i_errorcode_id', $id)->first();
+        return view('errorcode.editForm', compact('types', 'errorcode'));
     }
 
     public function create(Request $req) {
@@ -26,13 +30,23 @@ class ErrorcodeController extends Controller
             'c_code' => $req->c_code,
             'n_errorcode' => $req->n_errorcode,
             'i_errorcode_type_id' => $req->i_errorcode_type_id,
-            'c_errorcode_deleted' => 0,
+            'i_errorcode_deleted' => 0,
+        ]);
+        return redirect()->route('errorcode');
+    }
+
+    public function edit(Request $req){
+        Errorcode::where('i_errorcode_id', $req->i_errorcode_id)->update([
+            'c_rank' => $req->c_rank,
+            'c_code' => $req->c_code,
+            'n_errorcode' => $req->n_errorcode,
+            'i_errorcode_type_id' => $req->i_errorcode_type_id,
         ]);
         return redirect()->route('errorcode');
     }
 
     public function delete($id){
-        Errorcode::where('i_errorcode_id', $id)->update(['c_errorcode_deleted'=> 1]);
+        Errorcode::where('i_errorcode_id', $id)->update(['i_errorcode_deleted'=> 1]);
         return redirect()->route('errorcode');
     }
 }

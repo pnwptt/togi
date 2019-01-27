@@ -5,6 +5,14 @@
   <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.css') }}">
 
   <style type="text/css">
+    table {
+      padding: 15px; 
+      -moz-border-radius: 15px; 
+      -khtml-border-radius: 15px; 
+      -webkit-border-radius: 15px; 
+      border-radius: 15px;
+>
+    }
     table th {
       text-align: center;
     }
@@ -36,8 +44,11 @@
         <li class="nav-item {{ url()->current() == route('errorcodetype') ? 'active' : '' }}">
           <a class="nav-link" href="{{ route('errorcodetype') }}">Errorcode Type</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item {{ url()->current() == route('checklist') ? 'active' : '' }}">
           <a class="nav-link" href="{{ route('checklist') }}">Checklist</a>
+        </li>
+        <li class="nav-item {{ url()->current() == route('record') ? 'active' : '' }}">
+          <a class="nav-link" href="{{ route('record') }}">PPA Inspection Report</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">About</a>
