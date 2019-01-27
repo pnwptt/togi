@@ -14,8 +14,8 @@
           <table class="table table-bordered">
             <thead>
               <tr class="table-dark">
-                <th>Code</th>
                 <th>Series</th>
+                <th>Code(s)</th>
                 <th>Pallet Quantity</th>
                 <th>Action</th>
               </tr>
@@ -23,12 +23,19 @@
             <tbody>
               @foreach($seriesList as $s)
                 <tr>
-                  <td align="center">{{ $s->c_series_code }}</td>
                   <td>{{ $s->n_series_name }}</td>
+                  <td align="center">
+                    @php($partName = App\PartName::where('i_series_id', $s->i_series_id)->get())
+                    <ul align="left">
+                      @foreach($partName as $p)
+                        <li>{{ $p->n_part_name }}</li>
+                      @endforeach
+                    </ul>
+                  </td>
                   <td align="center">{{ $s->i_pallet_qty }}</td>
                   <td align="center">
                   <a href="{{ route('editSeriesForm', $s->i_series_id) }}" class="btn btn-warning btn-sm">Edit</a>
-                  <a href="{{ route('deleteSeries', $s->i_series_id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a></td>
+                  <!-- <a href="{{ route('deleteSeries', $s->i_series_id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a></td> -->
                 </tr>
               @endforeach
             </tbody>

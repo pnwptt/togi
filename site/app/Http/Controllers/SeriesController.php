@@ -25,17 +25,15 @@ class SeriesController extends Controller
     Series::insert([
       'n_series_name' => $req->n_series_name, 
       'i_series_deleted' => 0,
-      'i_pallet_qty' => $req->i_pallet_qty,
-      'c_series_code' => $req->c_series_code
+      'i_pallet_qty' => $req->i_pallet_qty
     ]);
     return redirect()->route('series');
   }
 
   public function edit(Request $req){
     Series::where('i_series_id', $req->i_series_id)->update([
-      'c_series_code' => $req->c_series_code,
       'n_series_name' => $req->n_series_name,
-      'i_pallet_qty' => $req->i_pallet_qty,
+      'i_pallet_qty' => $req->i_pallet_qty
     ]);
     return redirect()->route('errorcode');
   }

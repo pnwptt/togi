@@ -23,8 +23,8 @@
                   <tr>
                     <td align="center">{{ $et->n_errorcode_type }}</td>
                     <td align="center">
-                      <!-- <a href="{{ route('editErrorcodeTypeForm', $et->i_errorcode_type_id) }}" class="btn btn-warning btn-sm">Edit</a> -->
-                      <a href="{{ route('deleteErrorcodetype', $et->i_errorcode_type_id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>
+                      <a href="{{ route('editErrorcodeTypeForm', $et->i_errorcode_type_id) }}" class="btn btn-warning btn-sm">Edit</a>
+                      <!-- <a href="{{ route('deleteErrorcodetype', $et->i_errorcode_type_id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a> -->
                     </td>
                   </tr>
                 @endforeach

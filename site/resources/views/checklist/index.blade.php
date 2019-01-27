@@ -25,12 +25,12 @@
               @foreach($forms as $value)
                 <tr>
                   <td align="center">{{ $value->i_forms_id }}</td>
-                  <td align="center">{{ $value->d_forms_create }}</td>
+                  <td align="center">{{ $value->d_forms_created }}</td>
                   <td align="center">{{ $value->d_effactive_date }}</td>
                   <td align="center">{{ $value->i_status == 1 ? 'Acitve' : 'Inactive' }}</td>
                   <td align="center">
-                    <a href="{{ route('editRecordForm', $value->i_forms_id) }}" class="btn btn-warning btn-sm">Edit</a>
-                    <a href="{{ route('deleteSeries', $value->i_forms_id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>
+                    <a href="{{ route('editChecklistForm', $value->i_forms_id) }}" class="btn btn-warning btn-sm">Edit</a>
+                    <!-- <a href="{{ route('deleteChecklist', $value->i_forms_id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a> -->
                   </td>
                 </tr>
               @endforeach

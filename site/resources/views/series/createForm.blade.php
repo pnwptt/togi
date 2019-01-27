@@ -11,10 +11,6 @@
         <form action="{{ route('createSeries') }}" method="post" class="form form-horizontal">
           {{ csrf_field() }}
           <div class="form-group">
-            <label><b>Series Code</b></label>
-            <input type="text" class="form-control" name="c_series_code" required>
-          </div>
-          <div class="form-group">
             <label><b>Series Name</b></label>
             <input type="text" class="form-control" name="n_series_name" required>
           </div>

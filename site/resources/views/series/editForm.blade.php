@@ -12,10 +12,6 @@
           {{ csrf_field() }}
           <input type="hidden" name="i_series_id" value="{{ $series->i_series_id }}">
           <div class="form-group">
-            <label><b>Code</b></label>
-            <input type="text" class="form-control" name="c_series_code" value="{{ trim($series->c_series_code) }}" required>
-          </div>
-          <div class="form-group">
             <label><b>Series</b></label>
             <input type="text" class="form-control" name="n_series_name" value="{{ trim($series->n_series_name) }}" required>
           </div>

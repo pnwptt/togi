@@ -130,7 +130,7 @@
         <div class="col-md-4">
           <div class="form-horizontal">
             <div class="form-group" align="center">
-              <button type="button" class="btn btn-success" @click="createForm">Create</button>
+              <button type="button" class="btn btn-success" @click="editForm">Save</button>
               <a href="{{ route('checklist') }}" class="btn btn-light">Cancel</a>
             </div>
           </div>
@@ -151,11 +151,22 @@
     var app = new Vue({
       el: '#app',
       data: {
-        currentSeries: '',
+        currentSeries: '{{ $form->i_series_id }}',
         currentErrorcode: '',
         currentMin: '',
         currentMax: '',
-        errorcodeList: [],
+        errorcodeList: [
+          @foreach($checklist as $c)
+            {
+              id: '{{ $c->getErrorcode->i_errorcode_id }}',
+              code: '{{ $c->getErrorcode->c_code}}',
+              name: '{{ $c->getErrorcode->n_errorcode }}',
+              type: '{{ $c->getErrorcode->i_errorcode_type_id }}',
+              min: '{{ $c->f_minvalue }}',
+              max: '{{ $c->f_maxvalue }}'
+            },
+          @endforeach
+        ],
         processing: false
       },
       methods: {
@@ -200,10 +211,11 @@
           this.errorcodeList.splice(index,1);
         },
 
-        createForm() {
-          if (confirm('Comfirm?') && !this.processing) {
+        editForm() {
+          // if (confirm('Comfirm?') && !this.processing) {
+          if (false) {
             this.processing = true;
-            axios.post('{{ route("createChecklist") }}', {
+            axios.post('{{ route("editChecklist") }}', {
               i_series_id: app.currentSeries,
               errorcodeList: app.errorcodeList
             })

@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>@yield('title',env('APP_NAME'))</title>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.css') }}">
 
   <style type="text/css">

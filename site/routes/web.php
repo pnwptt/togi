@@ -43,8 +43,10 @@ Route::get('/errorcodetype/delete/{id}', 'ErrorcodeTypeController@delete')->name
 Route::get('/checklist', 'ChecklistController@index')->name('checklist');
 Route::get('/checklist/create', 'ChecklistController@createForm')->name('createChecklistForm');
 Route::post('/checklist/create', 'ChecklistController@create')->name('createChecklist');
-// Route::get('/checklist/list/{id}', 'ChecklistController@list')->name('checklistList');
+Route::get('/checklist/edit/{id}', 'ChecklistController@editForm')->name('editChecklistForm');
+Route::post('/checklist/edit', 'ChecklistController@edit')->name('editChecklist');
 Route::get('/checklist/checkerrorcode', 'ChecklistController@checkerrorcode')->name('checkerrorcode');
+Route::get('/checklist/delete/{id}', 'ChecklistController@delete')->name('deleteChecklist');
 
 // Record
 Route::get('/record', 'RecordController@index')->name('record');
