@@ -25,9 +25,8 @@
                 <tr>
                   <td align="center">{{ $s->n_series_name }}</td>
                   <td align="center">
-                    @php($partName = App\PartName::where('i_series_id', $s->i_series_id)->get())
                     <ul align="left">
-                      @foreach($partName as $p)
+                      @foreach($s->getPartNameList as $p)
                         <li>{{ $p->n_part_name }}</li>
                       @endforeach
                     </ul>

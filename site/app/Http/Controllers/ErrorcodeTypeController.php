@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\ErrorcodeType;
+use App\Models\ErrorcodeType;
 
 class ErrorcodeTypeController extends Controller
 {

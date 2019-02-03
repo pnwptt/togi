@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,6 +12,6 @@ class Errorcode extends Model
 
     public function getType()
     {
-        return $this->belongsTo('App\ErrorcodeType', 'i_errorcode_type_id');
+        return $this->belongsTo('App\Models\ErrorcodeType', 'i_errorcode_type_id');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,6 +12,6 @@ class PartName extends Model
 
     public function getSeries()
     {
-        return $this->belongsTo('App\Series', 'i_series_id');
+        return $this->belongsTo('App\Models\Series', 'i_series_id');
     }
 }

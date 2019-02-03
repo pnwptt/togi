@@ -2,6 +2,19 @@
 
 @section('content')
   <div class="container">
+    @if(session()->has('error'))
+      <div class="row">
+        <div class="col-md-12">
+          <div class="alert alert-dismissible alert-warning">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <h4 class="alert-heading">{{ session()->get('error') }}</h4>
+            <p class="mb-0">
+              {{ session()->get('message') }}
+            </p>  
+          </div>
+        </div>
+      </div>
+    @endif
     <div class="row">
       <div class="col-sm-11"><h3>Part Name</h3></div>
       <div class="col-sm-1">

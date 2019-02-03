@@ -11,9 +11,12 @@
 |
 */
 
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+Route::get('/', 'DashboardController@index')->name('dashboard');
+
+// Auth
+Route::get('/login', 'LoginController@loginForm')->name('loginForm');
+Route::post('/login', 'LoginController@login')->name('login');
+Route::get('/logout', 'LoginController@logout')->name('logout');
 
 // Series
 Route::get('/series', 'SeriesController@index')->name('series');
@@ -27,7 +30,7 @@ Route::get('/series/delete/{id}', 'SeriesController@delete')->name('deleteSeries
 Route::get('/partname', 'PartNameController@index')->name('partName');
 Route::get('/partname/create', 'PartNameController@createForm')->name('createPartNameForm');
 Route::post('/partname/create', 'PartNameController@create')->name('createPartName');
-Route::get('/partname/edit{id}', 'PartNameController@editForm')->name('editPartNameForm');
+Route::get('/partname/edit/{id}', 'PartNameController@editForm')->name('editPartNameForm');
 Route::post('/partname/edit', 'PartNameController@edit')->name('editPartName');
 Route::get('/partname/delete/{id}', 'PartNameController@delete')->name('deletePartName');
 
@@ -54,7 +57,7 @@ Route::post('/checklist/create', 'ChecklistController@create')->name('createChec
 Route::get('/checklist/edit/{id}', 'ChecklistController@editForm')->name('editChecklistForm');
 Route::post('/checklist/edit', 'ChecklistController@edit')->name('editChecklist');
 Route::get('/checklist/checkerrorcode', 'ChecklistController@checkerrorcode')->name('checkerrorcode');
-Route::get('/checklist/delete/{id}', 'ChecklistController@delete')->name('deleteChecklist');
+// Route::get('/checklist/delete/{id}', 'ChecklistController@delete')->name('deleteChecklist');
 
 // Record
 Route::get('/record', 'RecordController@index')->name('record');

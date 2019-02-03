@@ -24,13 +24,14 @@
             <tbody>
               @foreach($forms as $value)
                 <tr>
-                  <td align="center">{{ $value->i_forms_id }}</td>
-                  <td align="center">{{ $value->d_forms_created }}</td>
-                  <td align="center">{{ $value->d_effactive_date }}</td>
+                  <td align="center">{{ $value->i_form_id }}</td>
+                  <td align="center">{{ $value->d_form_created }}</td>
+                  <td align="center">{{ $value->d_effective_date }}</td>
                   <td align="center">{{ $value->i_status == 1 ? 'Acitve' : 'Inactive' }}</td>
                   <td align="center">
-                    <a href="{{ route('editChecklistForm', $value->i_forms_id) }}" class="btn btn-warning btn-sm">Edit</a>
-                    <!-- <a href="{{ route('deleteChecklist', $value->i_forms_id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a> -->
+                    @if($value->i_status == 0 && !$value->d_effective_date)
+                      <a href="{{ route('editChecklistForm', $value->i_form_id) }}" class="btn btn-warning btn-sm">Edit</a>
+                    @endif
                   </td>
                 </tr>
               @endforeach

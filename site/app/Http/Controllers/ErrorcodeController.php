@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Errorcode;
-use App\ErrorcodeType;
+use App\Models\Errorcode;
+use App\Models\ErrorcodeType;
 
 class ErrorcodeController extends Controller
 {

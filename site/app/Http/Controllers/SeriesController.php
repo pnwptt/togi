@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Series;
-use App\PartName;
+use App\Models\Series;
+use App\Models\PartName;
 
 class SeriesController extends Controller
 {
@@ -38,7 +38,7 @@ class SeriesController extends Controller
       'n_series_name' => $req->n_series_name,
       'i_pallet_qty' => $req->i_pallet_qty
     ]);
-    return redirect()->route('errorcode');
+    return redirect()->route('series');
   }
 
   public function delete($id) {

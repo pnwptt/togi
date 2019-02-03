@@ -81,7 +81,8 @@
             <table class="table table-bordered">
               <thead>
                 <tr class="table-dark">
-                  <th>Measurement Errorcode</th>
+                  <th>Errorcode</th>
+                  <th>Measurement</th>
                   <th>Minimum Value</th>
                   <th>Maximum Value</th>
                   <th>Action</th>
@@ -89,7 +90,8 @@
               </thead>
               <tbody>
                 <tr v-for="(item, index) in errorcodeList" v-if="item.type == 1">
-                  <td align="left">@{{ item.code}} @{{ item.name }}</td>
+                  <td align="center">@{{ item.code}}</td>
+                  <td align="left">@{{ item.name }}</td>
                   <td align="center">@{{ item.min }}</td>
                   <td align="center">@{{ item.max }}</td>
                   <td align="center">
@@ -97,12 +99,13 @@
                   </td>
                 </tr>
                 <tr v-if="errorcodeList.filter(isMeasurement).length == 0">
-                  <td align="center" colspan="4"><i class="empty">Empty</i></td>
+                  <td align="center" colspan="6"><i class="empty">Empty</i></td>
                 </tr>
               </tbody>
               <thead>
                 <tr class="table-dark">
-                  <th>Test Specification Errorcode</th>
+                  <th>Errorcode</th>
+                  <th>Test Specification</th>
                   <th>Maximum Value</th>
                   <th>Minimum Value</th>
                   <th>Action</th>
@@ -110,7 +113,8 @@
               </thead>
               <tbody>
                 <tr v-for="(item, index) in errorcodeList" v-if="item.type == 2">
-                  <td align="left">@{{ item.code}} @{{ item.name }}</td>
+                  <td align="center">@{{ item.code}}</td>
+                  <td align="left">@{{ item.name }}</td>
                   <td align="center">@{{ item.min }}</td>
                   <td align="center">@{{ item.max }}</td>
                   <td align="center">
@@ -118,7 +122,7 @@
                   </td>
                 </tr>
                 <tr v-if="errorcodeList.filter(isTestSpecification).length == 0">
-                  <td align="center" colspan="4"><i class="empty">Empty</i></td>
+                  <td align="center" colspan="6"><i class="empty">Empty</i></td>
                 </tr>
               </tbody>
             </table>

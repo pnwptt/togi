@@ -7,16 +7,18 @@
     </div>
     <div class="row">
       <div class="col-md-4"></div>
-      <div class="col md-4">
-        <form action="{{ route('editPartName') }}" method="post" class="form form-horizontal"></form>
+      <div class="col-md-4">
+        <form action="{{ route('editPartName') }}" method="post" class="form form-horizontal">
           {{ csrf_field() }}
           <input type="hidden" name="i_part_name_id" value="{{ $partName->i_part_name_id }}">
           <div class="form-group">
             <label><b>Series</b></label>
-            <select class="form-control" name="i_series_id" >
+            <select class="form-control" name="i_series_id">
               <option value="" disabled selected>- Select Series -</option>
               @foreach( $seriesList as $s )
-                <option value="{{ $s->i_series_id }}">{{ $s->n_series_name }}</option>
+              <option value="{{ $s->i_series_id }}" {{ $partName->i_series_id == $s->i_series_id ? 'selected' : '' }} >
+                {{ $s->n_series_name }}
+              </option>
               @endforeach
             </select>
           </div>
@@ -28,6 +30,7 @@
             <button type="submit" class="btn btn-success">Save</button>
             <a href="{{ route('partName') }}" class="btn btn-light">Cancel</a>
           </div>
+        </form>
       </div>
     </div>
   </div>

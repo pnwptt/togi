@@ -1,7 +1,5 @@
 @extends('layouts.master')
 
-@section('title', 'Bla bla')
-
 @section('css')
 @endsection
 
