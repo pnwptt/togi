@@ -23,6 +23,14 @@ Route::get('/series/edit/{id}', 'SeriesController@editForm')->name('editSeriesFo
 Route::post('/series/edit', 'SeriesController@edit')->name('editSeries');
 Route::get('/series/delete/{id}', 'SeriesController@delete')->name('deleteSeries');
 
+// Part Name
+Route::get('/partname', 'PartNameController@index')->name('partName');
+Route::get('/partname/create', 'PartNameController@createForm')->name('createPartNameForm');
+Route::post('/partname/create', 'PartNameController@create')->name('createPartName');
+Route::get('/partname/edit{id}', 'PartNameController@editForm')->name('editPartNameForm');
+Route::post('/partname/edit', 'PartNameController@edit')->name('editPartName');
+Route::get('/partname/delete/{id}', 'PartNameController@delete')->name('deletePartName');
+
 // Errorcode
 Route::get('/errorcode', 'ErrorcodeController@index')->name('errorcode');
 Route::get('/errorcode/create', 'ErrorcodeController@createForm')->name('createErrorcodeForm');

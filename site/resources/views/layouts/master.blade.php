@@ -39,12 +39,15 @@
         <li class="nav-item {{ url()->current() == route('series') ? 'active' : '' }}">
           <a class="nav-link" href="{{ route('series') }}">Series</a>
         </li>
+        <li class="nav-item {{ url()->current() == route('partName') ? 'active' : '' }}">
+          <a class="nav-link" href="{{ route('partName') }}" >Part Name</a>
+        </li>
         <li class="nav-item {{ url()->current() == route('errorcode') ? 'active' : '' }}">
           <a class="nav-link" href="{{ route('errorcode') }}">Errorcode</a>
         </li>
-        <li class="nav-item {{ url()->current() == route('errorcodetype') ? 'active' : '' }}">
+        <!-- <li class="nav-item {{ url()->current() == route('errorcodetype') ? 'active' : '' }}">
           <a class="nav-link" href="{{ route('errorcodetype') }}">Errorcode Type</a>
-        </li>
+        </li> -->
         <li class="nav-item {{ url()->current() == route('checklist') ? 'active' : '' }}">
           <a class="nav-link" href="{{ route('checklist') }}">Checklist</a>
         </li>

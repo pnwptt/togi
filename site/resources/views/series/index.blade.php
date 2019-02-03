@@ -23,7 +23,7 @@
             <tbody>
               @foreach($seriesList as $s)
                 <tr>
-                  <td>{{ $s->n_series_name }}</td>
+                  <td align="center">{{ $s->n_series_name }}</td>
                   <td align="center">
                     @php($partName = App\PartName::where('i_series_id', $s->i_series_id)->get())
                     <ul align="left">

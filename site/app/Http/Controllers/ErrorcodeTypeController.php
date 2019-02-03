@@ -30,7 +30,7 @@ class ErrorcodeTypeController extends Controller
     }
 
     public function edit(Request $req){
-        ErrorcodeTYpe::where('i_errorcode_type_id', $req->i_errorcode_type_id)->update([
+        ErrorcodeType::where('i_errorcode_type_id', $req->i_errorcode_type_id)->update([
             'n_errorcode_type' => $req->i_errorcode_type,
         ]);
         return redirect()->route('errorcodetype');

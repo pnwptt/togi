@@ -12,11 +12,11 @@
           {{ csrf_field() }}
           <div class="form-group">
             <label><b>Series Name</b></label>
-            <input type="text" class="form-control" name="n_series_name" required>
+            <input type="text" class="form-control" name="n_series_name" placeholder="Enter Series Name" required>
           </div>
           <div class="form-group">
             <label><b>Pallet Quantity</b></label>
-            <input type="number" class="form-control" name="i_pallet_qty" required>
+            <input type="number" class="form-control" name="i_pallet_qty" placeholder="Enter Pallet Quantity" required>
           </div>
           <div class="form-group" align="center">
             <button type="submit" class="btn btn-success">Create</button>

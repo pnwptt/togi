@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Series;
+use App\PartName;
 
 class SeriesController extends Controller
 {
@@ -13,12 +14,14 @@ class SeriesController extends Controller
   }
 
   public function createForm() {
-    return view('series.createForm');
+    $partName = PartName::where('i_part_name_deleted', 0)->get();
+    return view('series.createForm', compact('partName'));
   }
 
   public function editForm($id) {
+    $partName = PartName::where('i_part_name_deleted', 0)->get();
     $series = Series::where('i_series_id', $id)->first();
-    return view('series.editForm', compact('series'));
+    return view('series.editForm', compact('partName', 'series'));
   }
 
   public function create(Request $req) {
