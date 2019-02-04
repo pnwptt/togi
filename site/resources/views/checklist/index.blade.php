@@ -15,6 +15,7 @@
             <thead>
               <tr class="table-dark">
                 <th>#</th>
+                <th>Series</th>
                 <th>Create Date</th>
                 <th>Effactive Date</th>
                 <th>Status</th>
@@ -25,6 +26,7 @@
               @foreach($forms as $value)
                 <tr>
                   <td align="center">{{ $value->i_form_id }}</td>
+                  <td align="center">{{ $value->getSeries->n_series_name }}</td>
                   <td align="center">{{ $value->d_form_created }}</td>
                   <td align="center">{{ $value->d_effective_date }}</td>
                   <td align="center">{{ $value->i_status == 1 ? 'Acitve' : 'Inactive' }}</td>

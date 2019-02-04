@@ -39,14 +39,14 @@ class ChecklistController extends Controller
           'i_form_deleted' => 0,
           'i_status' => 0,
           'd_form_created' => DB::raw('CURRENT_TIMESTAMP')
-        ]);
+        ], 'i_form_id');
         // Insert New Checklist
         foreach ($req->errorcodeList as $errorcode) {
           Checklist::insert([
             'i_form_id' => $formId,
             'i_errorcode_id' => $errorcode['id'],
-            'f_minvalue' => $errorcode['min'],
-            'f_maxvalue' => $errorcode['max'],
+            'f_min_value' => $errorcode['min'],
+            'f_max_value' => $errorcode['max'],
             'i_checklist_deleted' => 0
           ]);
         }
@@ -86,8 +86,8 @@ class ChecklistController extends Controller
           Checklist::insert([
             'i_form_id' => $req->i_form_id,
             'i_errorcode_id' => $errorcode['id'],
-            'f_minvalue' => $errorcode['min'],
-            'f_maxvalue' => $errorcode['max'],
+            'f_min_value' => $errorcode['min'],
+            'f_max_value' => $errorcode['max'],
             'i_checklist_deleted' => 0
           ]);
         }

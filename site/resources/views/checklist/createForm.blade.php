@@ -205,7 +205,7 @@
         },
 
         createForm() {
-          if (confirm('Comfirm?') && !this.processing) {
+          if (confirm('Confirm?') && !this.processing) {
             this.processing = true;
             axios.post('{{ route("createChecklist") }}', {
               i_series_id: app.currentSeries,

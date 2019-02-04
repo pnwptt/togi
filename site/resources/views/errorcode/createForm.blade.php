@@ -29,7 +29,12 @@
         </div>
         <div class="form-group">
           <label><b>Rank</b></label>
-          <input type="text" class="form-control" name="c_rank" required>
+          <select name="c_rank" class="form-control">
+            <option value="">- Select Rank -</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+          </select>
         </div>
         <div class="form-group" align="center">
           <button type="submit" class="btn btn-success">Create</button>
