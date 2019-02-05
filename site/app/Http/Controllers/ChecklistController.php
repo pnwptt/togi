@@ -12,18 +12,21 @@ use App\Models\Errorcode;
 
 class ChecklistController extends Controller
 {
-    public function index() {
+    public function index()
+    {
       $forms = Form::where('i_form_deleted', 0)->get();
       return view('checklist.index', compact('forms'));
     }
 
-    public function createForm() {
+    public function createForm()
+    {
       $seriesList = Series::where('i_series_deleted', 0)->get();
       $errorcode = Errorcode::where('i_errorcode_deleted', 0)->get();
       return view('checklist.createForm', compact('seriesList', 'errorcode'));
     }
 
-    public function editForm($id) {
+    public function editForm($id)
+    {
       $seriesList = Series::where('i_series_deleted', 0)->get();
       $errorcode = Errorcode::where('i_errorcode_deleted', 0)->get();
       $form = Form::where('i_form_id', $id)->first();
@@ -31,7 +34,8 @@ class ChecklistController extends Controller
       return view('checklist.editForm', compact('seriesList', 'errorcode', 'form', 'checklist'));
     }
 
-    public function create(Request $req) {
+    public function create(Request $req)
+    {
       try {
         // Insert New Form
         $formId = Form::insertGetId([
@@ -56,7 +60,8 @@ class ChecklistController extends Controller
       return 'success';
     }
 
-    public function edit(Request $req) {
+    public function edit(Request $req)
+    {
       try {
         // Update New Form
         Form::where('i_form_id', $req->i_form_id)->update([
@@ -97,17 +102,46 @@ class ChecklistController extends Controller
       return 'success';
     }
 
-    public function delete($id) {
-      Form::where('i_form_id', $req->i_form_id)->update([
-        'i_form_deleted' => 1
-      ]);
+    public function delete($id)
+    {
+      try {
+        Form::where('i_form_id', $id)->update([
+          'i_form_deleted' => 1
+        ]);
+      } catch (Exception $e) {
+        throw $e;
+      }
       return redirect()->back();
     }
 
-    public function checkerrorcode() {
+    public function checkerrorcode()
+    {
       if(isset($_GET['code'])) {
         return Errorcode::where('c_code', $_GET['code'])->first();
       }
       return null;
+    }
+
+    public function status(Request $req)
+    {
+      try {
+        $form = Form::where('i_form_id', $req->i_form_id)->first();
+        $i_series_id = $form->i_series_id;
+        Form::where('i_series_id', $i_series_id)->update([
+          'i_status' => 0
+        ]);
+        if ($req->i_status && $form->d_effective_date) {
+          Form::where('i_form_id', $req->i_form_id)->update([
+            'i_status' => 1,
+          ]);
+        } else if ($req->i_status && !$form->d_effective_date) {
+          Form::where('i_form_id', $req->i_form_id)->update([
+            'i_status' => 1,
+            'd_effective_date' => DB::raw('CURRENT_TIMESTAMP')
+          ]);
+        }
+      } catch (Exception $e) {
+        throw $e;
+      }
     }
 }

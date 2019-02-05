@@ -1,5 +1,17 @@
 @extends('layouts.master')
 
+@section('css')
+  <style type="text/css">
+    .active {
+      padding-right: 10px;
+      color: green;
+    }
+    .inactive {
+      color: gray;
+    }
+  </style>
+@endsection
+
 @section('content')
   <div class="container">
     <div class="row">
@@ -17,7 +29,7 @@
                 <th>#</th>
                 <th>Series</th>
                 <th>Create Date</th>
-                <th>Effactive Date</th>
+                <th>Effective Date</th>
                 <th>Status</th>
                 <th>Action</th>
               </tr>
@@ -29,7 +41,15 @@
                   <td align="center">{{ $value->getSeries->n_series_name }}</td>
                   <td align="center">{{ $value->d_form_created }}</td>
                   <td align="center">{{ $value->d_effective_date }}</td>
-                  <td align="center">{{ $value->i_status == 1 ? 'Acitve' : 'Inactive' }}</td>
+                  <td align="center">
+                    <div class="form-group">
+                      <div class="custom-control custom-switch" onclick="return !processing">
+                        <input type="checkbox" class="custom-control-input" id="status-{{ $value->i_form_id }}"
+                          onchange="updateStatus('{{ $value->i_form_id }}', '{{ $value->i_status ? 0 : 1}}')" {{ $value->i_status ? 'checked' : '' }}>
+                        <label class="custom-control-label {{ $value->i_status ? 'active' : 'inactive' }}" for="status-{{ $value->i_form_id }}">{{ $value->i_status ? 'Active' : 'Inactive' }}</label>
+                      </div>
+                    </div>
+                  </td>
                   <td align="center">
                     @if($value->i_status == 0 && !$value->d_effective_date)
                       <a href="{{ route('editChecklistForm', $value->i_form_id) }}" class="btn btn-warning btn-sm">Edit</a>
@@ -43,4 +63,30 @@
       </div>
     </div>
   </div>
+@endsection
+
+@section('js')
+  <script src="{{ asset('js/app.js') }}"></script>
+  <script type="text/javascript">
+    var processing = false;
+    function updateStatus(id, status) {
+      processing = true;
+      if (processing) {
+        axios.post('{{ route("statusChecklist") }}', 
+          {
+            i_form_id: id,
+            i_status: status
+          }
+        ).then((res) => {
+          window.location.reload();
+          processing = false;
+        })
+        .catch(function (error) {
+          alert('Ops! Something went wrong');
+          $('#status-' + id).prop('checked', Number(status) ? 1 : 0);
+          processing = false;
+        });
+      }
+    }
+  </script>
 @endsection

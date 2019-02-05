@@ -8,23 +8,27 @@ use App\Models\PartName;
 
 class SeriesController extends Controller
 {
-  public function index() {
+  public function index()
+  {
     $seriesList = Series::where('i_series_deleted', 0)->get();
     return view('series.index', compact('seriesList'));
   }
 
-  public function createForm() {
+  public function createForm()
+  {
     $partName = PartName::where('i_part_name_deleted', 0)->get();
     return view('series.createForm', compact('partName'));
   }
 
-  public function editForm($id) {
+  public function editForm($id)
+  {
     $partName = PartName::where('i_part_name_deleted', 0)->get();
     $series = Series::where('i_series_id', $id)->first();
     return view('series.editForm', compact('partName', 'series'));
   }
 
-  public function create(Request $req) {
+  public function create(Request $req)
+  {
     Series::insert([
       'n_series_name' => $req->n_series_name, 
       'i_series_deleted' => 0,
@@ -33,7 +37,8 @@ class SeriesController extends Controller
     return redirect()->route('series');
   }
 
-  public function edit(Request $req){
+  public function edit(Request $req)
+  {
     Series::where('i_series_id', $req->i_series_id)->update([
       'n_series_name' => $req->n_series_name,
       'i_pallet_qty' => $req->i_pallet_qty
@@ -41,7 +46,8 @@ class SeriesController extends Controller
     return redirect()->route('series');
   }
 
-  public function delete($id) {
+  public function delete($id)
+  {
     Series::where('i_series_id', $id)->update(['i_series_deleted' => 1]);
     return redirect()->route('series');
   }

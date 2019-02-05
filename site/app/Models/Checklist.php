@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Checklist extends Model
 {
-    protected $table = "b_checklists";
+    protected $table = 'b_checklists';
     protected $primaryKey = 'i_checklist_id';
     public $timestamps = false;
 

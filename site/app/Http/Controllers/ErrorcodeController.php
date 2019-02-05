@@ -8,23 +8,27 @@ use App\Models\ErrorcodeType;
 
 class ErrorcodeController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $errorcodeList = Errorcode::where('i_errorcode_deleted', 0)->get();
         return view('errorcode.index', compact('errorcodeList'));
     }
 
-    public function createForm() {
+    public function createForm()
+    {
         $types = ErrorcodeType::where('i_errorcode_type_deleted', 0)->get();
         return view('errorcode.createForm', compact('types'));
     }
 
-    public function editForm($id) {
+    public function editForm($id)
+    {
         $types = ErrorcodeType::where('i_errorcode_type_deleted', 0)->get();
         $errorcode = Errorcode::where('i_errorcode_id', $id)->first();
         return view('errorcode.editForm', compact('types', 'errorcode'));
     }
 
-    public function create(Request $req) {
+    public function create(Request $req)
+    {
         Errorcode::insert([ 
             'c_rank' => $req->c_rank,
             'c_code' => $req->c_code,
@@ -35,7 +39,8 @@ class ErrorcodeController extends Controller
         return redirect()->route('errorcode');
     }
 
-    public function edit(Request $req){
+    public function edit(Request $req)
+    {
         Errorcode::where('i_errorcode_id', $req->i_errorcode_id)->update([
             'c_rank' => $req->c_rank,
             'c_code' => $req->c_code,
@@ -45,7 +50,8 @@ class ErrorcodeController extends Controller
         return redirect()->route('errorcode');
     }
 
-    public function delete($id){
+    public function delete($id)
+    {
         Errorcode::where('i_errorcode_id', $id)->update(['i_errorcode_deleted'=> 1]);
         return redirect()->route('errorcode');
     }

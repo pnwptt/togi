@@ -7,16 +7,19 @@ use App\Models\Record;
 
 class RecordController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         $record = Record::where('i_record_id', 0)->get();
         return view('record.index', compact('record'));
     }
 
-    public function createForm() {
+    public function createForm()
+    {
         return view('record.createForm');
     }
 
-    public function create(Request $req) {
+    public function create(Request $req)
+    {
         Record::insert([
             'c_order_number' => $req->c_order_number,
             'c_part_number' => $req->c_part_number,

@@ -1,11 +1,12 @@
 
-@if(session()->get('n_member'))
+@if(session()->get('member'))
   <!DOCTYPE html>
   <html>
   <head>
     <title>@yield('title',env('APP_NAME'))</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/custom.min.css') }}">
 
     <style type="text/css">
     table {
@@ -34,36 +35,32 @@
 
       <div class="collapse navbar-collapse" id="navbar">
         <ul class="navbar-nav mr-auto">
+          @if(session()->get('admin'))
           <li class="nav-item {{ url()->current() == route('dashboard') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('dashboard') }}">Dashboard <span class="sr-only">(current)</span></a>
           </li>
-          <li class="nav-item {{ url()->current() == route('series') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('series') }}">Series</a>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="management" aria-expanded="false">
+              Management <span class="caret"></span>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="management">
+              <a class="dropdown-item" href="{{ route('series') }}">Series</a>
+              <a class="dropdown-item" href="{{ route('partName') }}">Part Name</a>
+              <!-- <a class="dropdown-item" href="{{ route('errorcodetype') }}">Errorcode Type</a> -->
+              <a class="dropdown-item" href="{{ route('errorcode') }}">Errorcode</a>
+              <a class="dropdown-item" href="{{ route('checklist') }}">Checklist</a>
+            </div>
           </li>
-          <li class="nav-item {{ url()->current() == route('partName') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('partName') }}" >Part Name</a>
-          </li>
-          <li class="nav-item {{ url()->current() == route('errorcode') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('errorcode') }}">Errorcode</a>
-          </li>
-          <!-- <li class="nav-item {{ url()->current() == route('errorcodetype') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('errorcodetype') }}">Errorcode Type</a>
-          </li> -->
-          <li class="nav-item {{ url()->current() == route('checklist') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('checklist') }}">Checklist</a>
-          </li>
+          @endif
           <li class="nav-item {{ url()->current() == route('record') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('record') }}">PPA Inspection Report</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">About</a>
           </li>
         </ul>
         <div class="form-inline text-white my-lg-0">
           <ul class="navbar-nav">
             <li class="nav-item">
               <a class="nav-link">
-                {{ session()->get('n_member') }}
+                {{ session()->get('member') }}
               </a>
             </li>
           </ul>
@@ -73,6 +70,10 @@
     </nav>
     @yield('content')
 
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/popper.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('js/custom.js') }}"></script>
     @yield('js')
   </body>
   </html>

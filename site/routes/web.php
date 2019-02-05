@@ -58,6 +58,7 @@ Route::get('/checklist/edit/{id}', 'ChecklistController@editForm')->name('editCh
 Route::post('/checklist/edit', 'ChecklistController@edit')->name('editChecklist');
 Route::get('/checklist/checkerrorcode', 'ChecklistController@checkerrorcode')->name('checkerrorcode');
 // Route::get('/checklist/delete/{id}', 'ChecklistController@delete')->name('deleteChecklist');
+Route::post('/checklist/status', 'ChecklistController@status')->name('statusChecklist');
 
 // Record
 Route::get('/record', 'RecordController@index')->name('record');
