@@ -1,5 +1,5 @@
 
-@if(session()->get('member'))
+@if(session()->get('c_user'))
   <!DOCTYPE html>
   <html>
   <head>
@@ -60,7 +60,7 @@
           <ul class="navbar-nav">
             <li class="nav-item">
               <a class="nav-link">
-                {{ session()->get('member') }}
+                {{ session()->get('c_user') }}
               </a>
             </li>
           </ul>

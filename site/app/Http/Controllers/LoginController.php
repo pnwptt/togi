@@ -16,7 +16,7 @@ class LoginController extends Controller
     {
         $user = User::where('c_user', $req->c_user)->where('c_password', $req->c_password)->first();
         if ($user) {
-            session()->put('member', $user->n_member);
+            session()->put('c_user', $user->c_user);
             session()->put('admin', $user->isAdmin());
             $page = $user->isAdmin() ? 'dashboard' : 'record';
             return redirect()->route($page);
@@ -27,7 +27,7 @@ class LoginController extends Controller
 
     public function logout()
     {
-        session()->forget('member');
+        session()->forget('c_user');
         session()->forget('admin');
         return redirect()->route('login');
     }

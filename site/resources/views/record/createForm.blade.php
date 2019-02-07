@@ -86,6 +86,7 @@
                     </div>
                     <div class="form-group row">
                       <label class="col-sm-4">NCR No.</label>
+                      
                       <div class="col-sm-8">
                         <input type="text" class="form-control" name="c_ncr_number">
                       </div>
@@ -139,7 +140,7 @@
     var app = new Vue({
       el: '#app',
       data: {
-        c_user: '{{ session()->get("member") }}',
+        c_user: '{{ session()->get("c_user") }}',
         series: '',
         record: {
         }
