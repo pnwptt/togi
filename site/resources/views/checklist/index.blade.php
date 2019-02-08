@@ -26,7 +26,7 @@
           <table class="table table-bordered">
             <thead>
               <tr class="table-dark">
-                <th>#</th>
+                <!-- <th>#</th> -->
                 <th>Series</th>
                 <th>Create Date</th>
                 <th>Effective Date</th>
@@ -37,13 +37,13 @@
             <tbody>
               @foreach($forms as $value)
                 <tr>
-                  <td align="center">{{ $value->i_form_id }}</td>
-                  <td align="center">{{ $value->getSeries->n_series_name }}</td>
+                  <!-- <td align="center">{{ $value->i_form_id }}</td> -->
+                  <td align="center">{{ isset($value->getSeries->n_series_name) ? $value->getSeries->n_series_name : '' }}</td>
                   <td align="center">{{ $value->d_form_created }}</td>
                   <td align="center">{{ $value->d_effective_date }}</td>
                   <td align="center">
                     <div class="form-group">
-                      <div class="custom-control custom-switch" onclick="return !processing">
+                      <div class="custom-control custom-switch" onclick="return !processing && {{isset($value->getSeries->n_series_name) ? 1 : 0}} == 1">
                         <input type="checkbox" class="custom-control-input" id="status-{{ $value->i_form_id }}"
                           onchange="updateStatus('{{ $value->i_form_id }}', '{{ $value->i_status ? 0 : 1}}')" {{ $value->i_status ? 'checked' : '' }}>
                         <label class="custom-control-label {{ $value->i_status ? 'active' : 'inactive' }}" for="status-{{ $value->i_form_id }}">{{ $value->i_status ? 'Active' : 'Inactive' }}</label>

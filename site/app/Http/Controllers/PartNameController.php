@@ -29,7 +29,7 @@ class PartNameController extends Controller
     
     public function create(Request $req)
     {
-        $partname = PartName::where('n_part_name', 'like', $req->n_part_name)->first();
+        $partname = PartName::where('n_part_name', $req->n_part_name)->first();
         if ($partname) {
             return redirect()->route('partName')->with('error', 'Create Fail!')->with('message', "Part Name: $req->n_part_name is already created.");
         } else {
@@ -44,7 +44,7 @@ class PartNameController extends Controller
         
     public function edit(Request $req)
     {
-        $partname = PartName::where('i_part_name_id', '!=', $req->i_part_name_id)->where('n_part_name', 'like', $req->n_part_name)->first();
+        $partname = PartName::where('i_part_name_id', '!=', $req->i_part_name_id)->where('n_part_name', $req->n_part_name)->first();
         if ($partname) {
             return redirect()->route('partName')->with('error', 'Edit Fail!')->with('message', "Part Name: $req->n_part_name is already created.");
         } else {
