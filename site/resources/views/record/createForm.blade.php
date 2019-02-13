@@ -60,13 +60,13 @@
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Sampling Qty:</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" name="i_sampling_qty" disabled>
+                        <input type="text" class="form-control" name="i_sampling_qty">
                       </div>
                     </div>
                   </td>
                   <td width="34%">
                     <div class="form-group row">
-                      <label class="col-sm-4 col-form-label">Series:</label>
+                      <label class="col-sm-4 col-form-label">Model:</label>
                       <div class="col-sm-8">
                         <input type="text" class="form-control" v-model="series" disabled>
                       </div>
@@ -125,6 +125,80 @@
                       </div>
                     </div>
                   </td>
+                </thead>
+              </table>
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th rowspan="2">Item no.</th>
+                    <th rowspan="2">Rank</th>
+                    <th rowspan="2">Errorcode</th>
+                    <th rowspan="2">Inspection detail</th>
+                    <th>Machine no.</th>
+                    <th rowspan="2">Reject detail</th>
+                    <th rowspan="2">Total</th>
+                  </tr>
+                  <tr>
+                    <th></th>
+                  </tr>
+                  <tr>
+                    <td colspan="7"><i>Measurement</i></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td colspan="7"><i>Test Specification</i></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td colspan="7"><i>Failure symotom</i></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <th colspan="4">Total</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                  </tr>
+                  <tr>
+                    <th colspan="4">Pallet#</th>
+                    <th></th>
+                    <th rowspan="3">Total R/J (M/C)</th>
+                    <th></th>
+                  </tr>
+                  <tr>
+                    <th colspan="4">Accept</th>
+                    <th></th>
+                    <th></th>
+                  </tr>
+                  <tr>
+                    <th colspan="4">Reject</th>
+                    <th></th>
+                    <th></th>
+                  </tr>
                 </thead>
               </table>
           </div>

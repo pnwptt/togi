@@ -14,8 +14,8 @@
           <table class="table table-bordered">
             <thead>
               <tr class="table-dark">
-                <th>Series</th>
-                <th>Code(s)</th>
+                <th>Model</th>
+                <th>Part Name Code(s)</th>
                 <th>Pallet Quantity</th>
                 <th>Action</th>
               </tr>

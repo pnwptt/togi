@@ -27,8 +27,8 @@
           <table class="table table-bordered">
             <thead>
               <tr class="table-dark">
-                <th>Part Name (Code)</th>
-                <th>Series</th>
+                <th>Part Name Code</th>
+                <th>Model</th>
                 <th>Action</th>
               </tr>
             </thead>
