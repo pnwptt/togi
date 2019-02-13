@@ -2,6 +2,9 @@
 
 @section('css')
   <style>
+    .container-fluid {
+      padding-bottom: 50px;
+    }
     .header-italic {
       text-align: center;
       font-style: italic;
@@ -10,14 +13,45 @@
       display: inline-block;
       margin: 10px;
     }
-    table {
+    .table thead th {
+      vertical-align: middle;
+      padding: 5px 0;
+    }
+    .rotate-90 {
+      -webkit-transform: rotate(-90deg); 
+      -moz-transform: rotate(-90deg);
+    }
+    .input-machine {
+      margin: 0 5px;
+      width: 50%;
+      display: inline-block;
+    }
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+    .top {
+      position: absolute;
+      margin-right: -25px;
+    }
+    .clear-machine {
+      position: absolute;
+      color: red;
+      font-size: 18pt;
+    }
+    .clear-machine:hover {
+      cursor: pointer;
+    }
+    .machineList {
+      height: 100px;
     }
   </style>
 @endsection
 
 @section('content')
   <div id="app">
-    <div class="container">
+    <div class="container-fluid">
       <div class="row">
         <div class="col-md-12"><h4>Create PPA Inspection Record Form</h4></div>
       </div>
@@ -30,37 +64,37 @@
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Order number:</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" name="c_order_number" autofocus>
+                        <input type="text" class="form-control" autofocus v-model="record.c_order_number">
                       </div>
                     </div>
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Part number:</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" name="c_part_number" disabled>
+                        <input type="text" class="form-control" disabled v-model="record.c_part_number">
                       </div>
                     </div>
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Part name:</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" name="c_part_name" disabled>
+                        <input type="text" class="form-control" disabled v-model="record.c_part_name">
                       </div>
                     </div>
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Customer:</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" name="c_customer" disabled>
+                        <input type="text" class="form-control" disabled v-model="record.c_customer">
                       </div>
                     </div>
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Quantity:</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" name="i_qty" disabled>
+                        <input type="text" class="form-control" disabled v-model="record.i_qty">
                       </div>
                     </div>
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Sampling Qty:</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" name="i_sampling_qty">
+                        <input type="number" class="form-control" v-model="record.i_sampling_qty">
                       </div>
                     </div>
                   </td>
@@ -68,7 +102,7 @@
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Model:</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" v-model="series" disabled>
+                        <input type="text" class="form-control" disabled v-model="record.series">
                       </div>
                     </div>
                     <h6>Refference to WI-QA-001</h6>
@@ -88,13 +122,13 @@
                       <label class="col-sm-4">NCR No.</label>
                       
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" name="c_ncr_number">
+                        <input type="text" class="form-control" v-model="record.c_ncr_number">
                       </div>
                     </div>
                     <div class="form-group row">
                       <label class="col-sm-4">8D Report No.</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" name="c_8d_report_no">
+                        <input type="text" class="form-control" v-model="record.c_8d_report_no">
                       </div>
                     </div>
                   </td>
@@ -102,13 +136,13 @@
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Check by</label>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" disabled v-model="c_user">
+                          <input type="text" class="form-control" disabled v-model="record.c_user">
                       </div>
                     </div>
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Date:</label>
                       <div class="col-sm-8">
-                          <input type="date" class="form-control">
+                          <input type="date" class="form-control" disabled v-model="record.today">
                       </div>
                     </div>
                     <hr>
@@ -121,7 +155,7 @@
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Date:</label>
                       <div class="col-sm-8">
-                          <input type="date" class="form-control">
+                          <input type="date" class="form-control" disabled>
                       </div>
                     </div>
                   </td>
@@ -130,73 +164,82 @@
               <table class="table table-bordered">
                 <thead>
                   <tr>
-                    <th rowspan="2">Item no.</th>
-                    <th rowspan="2">Rank</th>
-                    <th rowspan="2">Errorcode</th>
-                    <th rowspan="2">Inspection detail</th>
-                    <th>Machine no.</th>
-                    <th rowspan="2">Reject detail</th>
-                    <th rowspan="2">Total</th>
+                    <th rowspan="2" width="6%"><div class="rotate-90">Item no.</div></th>
+                    <th rowspan="2" width="6%"><div class="rotate-90">Rank</div></th>
+                    <th rowspan="2" width="6%"><div class="rotate-90">Errorcode</div></th>
+                    <th rowspan="2" width="20%">Inspection detail</th>
+                    <th :colspan="record.machineList.length > 0 ? record.machineList.length : 1">
+                      Machine no. 
+                      <input type="text" class="form-control input-machine" v-model="machineNo" @keyup.enter="addMachine">
+                      <span class="clear-machine" v-show="machineNo" @click="machineNo = ''">X</span>
+                    </th>
+                    <th rowspan="2" width="20%">Reject detail</th>
+                    <th rowspan="2" width="6%">Total</th>
                   </tr>
                   <tr>
-                    <th></th>
+                    <th class="machineList" v-for="(machineNo, index) in record.machineList">
+                      <div :class="rotateClass()">
+                        @{{ machineNo }}
+                      </div>
+                    </th>
+                    <th class="machineList" v-if="record.machineList.length < 1"></th>
                   </tr>
                   <tr>
-                    <td colspan="7"><i>Measurement</i></td>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td colspan="7"><i>Test Specification</i></td>
+
                   </tr>
                   <tr>
                     <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td></td>
+                    <td :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></td>
                     <td></td>
                     <td></td>
                   </tr>
                   <tr>
-                    <td colspan="7"><i>Failure symotom</i></td>
+                    <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7"><i>Test Specification</i></td>
                   </tr>
                   <tr>
                     <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
+                    <td :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></td>
                     <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7"><i>Failure symotom</i></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></td>
                     <td></td>
                     <td></td>
                   </tr>
                   <tr>
                     <th colspan="4">Total</th>
-                    <th></th>
+                    <th :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></th>
                     <th></th>
                     <th></th>
                   </tr>
                   <tr>
                     <th colspan="4">Pallet#</th>
-                    <th></th>
+                    <th :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></th>
                     <th rowspan="3">Total R/J (M/C)</th>
                     <th></th>
                   </tr>
                   <tr>
                     <th colspan="4">Accept</th>
-                    <th></th>
+                    <th :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></th>
                     <th></th>
                   </tr>
                   <tr>
                     <th colspan="4">Reject</th>
-                    <th></th>
+                    <th :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></th>
                     <th></th>
                   </tr>
                 </thead>
@@ -214,9 +257,47 @@
     var app = new Vue({
       el: '#app',
       data: {
-        c_user: '{{ session()->get("c_user") }}',
-        series: '',
+        machineNo: '',
         record: {
+          c_user: '{{ session()->get("c_user") }}',
+          series: '',
+          today: '{{ date("Y-m-d") }}',
+          c_order_number: '',
+          c_part_number: '',
+          c_part_name: '',
+          c_customer: '',
+          i_qty: '',
+          i_sampling_qty: 0,
+          c_ncr_number: '',
+          c_8d_report_no: '',
+          machineList: [],
+        }
+      },
+
+      methods: {
+        addMachine() {
+          var machineNo = this.validateMachineNo(this.machineNo)
+          if (machineNo) {
+            this.record.machineList.push(machineNo)
+            this.machineNo = ''
+          }
+        },
+
+        rotateClass() {
+          return this.record.i_sampling_qty > 4 ? 'rotate-90' : ''
+        },
+
+        isInArray(value, array) {
+          return array.indexOf(value) > -1
+        },
+
+        validateMachineNo(machineNo) {
+          var no = machineNo ? machineNo.split(' ') : undefined
+          if (no[1]) {
+            if (no[1].length == 8 && !this.isInArray(no[1], this.record.machineList))
+              return  no[1]
+          }
+          return undefined;
         }
       }
     })
