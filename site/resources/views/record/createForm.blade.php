@@ -60,7 +60,7 @@
           <div class="form-group">
               <table class="table table-bordered">
                 <thead>
-                  <td width="34%">
+                  <td width="33%">
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Order number:</label>
                       <div class="col-sm-8">
@@ -110,11 +110,11 @@
                     <h5 class="header-italic">Lot Judgement</h5>
                     <div class="form-group" align="center">
                       <div class="custom-control custom-radio">
-                        <input class="custom-control-input" type="radio" name="judgement" id="judgementAccept" onclick="return false">
+                        <input class="custom-control-input" type="radio" name="judgement" id="judgementAccept" :checked="judgement == 1" onclick="return false">
                         <label class="custom-control-label" for="judgementAccept">Accept</label>
                       </div>
                       <div class="custom-control custom-radio">
-                        <input class="custom-control-input" type="radio" name="judgement" id="judgementReject" onclick="return false">
+                        <input class="custom-control-input" type="radio" name="judgement" id="judgementReject" :checked="judgement == -1" onclick="return false">
                         <label class="custom-control-label" for="judgementReject">Reject</label>
                       </div>
                     </div>
@@ -122,17 +122,17 @@
                       <label class="col-sm-4">NCR No.</label>
                       
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" v-model="record.c_ncr_number">
+                        <input type="text" class="form-control" :disabled="judgement != -1" v-model="record.c_ncr_number">
                       </div>
                     </div>
                     <div class="form-group row">
                       <label class="col-sm-4">8D Report No.</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" v-model="record.c_8d_report_no">
+                        <input type="text" class="form-control" :disabled="judgement != -1" v-model="record.c_8d_report_no">
                       </div>
                     </div>
                   </td>
-                  <td width="32%">
+                  <td width="33%">
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Check by</label>
                       <div class="col-sm-8">
@@ -170,7 +170,7 @@
                     <th rowspan="2" width="20%">Inspection detail</th>
                     <th :colspan="record.machineList.length > 0 ? record.machineList.length : 1">
                       Machine no. 
-                      <input type="text" class="form-control input-machine" v-model="machineNo" @keyup.enter="addMachine">
+                      <input type="text" class="form-control input-machine" :disabled="!record.c_part_name" v-model="machineNo" @keyup.enter="addMachine">
                       <span class="clear-machine" v-show="machineNo" @click="machineNo = ''">X</span>
                     </th>
                     <th rowspan="2" width="20%">Reject detail</th>
@@ -185,7 +185,7 @@
                     <th class="machineList" v-if="record.machineList.length < 1"></th>
                   </tr>
                   <tr>
-
+                    <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7"><i>Mesurement</i></td>
                   </tr>
                   <tr>
                     <td></td>
@@ -258,13 +258,14 @@
       el: '#app',
       data: {
         machineNo: '',
+        judgement: 0,
         record: {
           c_user: '{{ session()->get("c_user") }}',
           series: '',
           today: '{{ date("Y-m-d") }}',
           c_order_number: '',
           c_part_number: '',
-          c_part_name: '',
+          c_part_name: '590',
           c_customer: '',
           i_qty: '',
           i_sampling_qty: 0,
@@ -276,30 +277,110 @@
 
       methods: {
         addMachine() {
-          var machineNo = this.validateMachineNo(this.machineNo)
+          var machineNo = this.validateMachineNo(this.machineNo);
           if (machineNo) {
-            this.record.machineList.push(machineNo)
-            this.machineNo = ''
+            this.record.machineList.push(machineNo);
+            console.log('Added MachineNo [' + machineNo + '] to list');
+            this.machineNo = '';
           }
         },
 
         rotateClass() {
-          return this.record.i_sampling_qty > 4 ? 'rotate-90' : ''
+          return this.record.machineList.length > 4 ? 'rotate-90' : '';
         },
 
         isInArray(value, array) {
-          return array.indexOf(value) > -1
+          return array.indexOf(value) > -1;
         },
 
-        validateMachineNo(machineNo) {
-          var no = machineNo ? machineNo.split(' ') : undefined
-          if (no[1]) {
-            if (no[1].length == 8 && !this.isInArray(no[1], this.record.machineList))
-              return  no[1]
+
+
+
+
+        // ====================================== Validate Section ======================================
+
+        validateMachineNo(value) {
+          console.warn('Validate is Starting :: Checking value = [' + value + ']');
+
+          var newValue = this.formatedMachineNo(value);
+          var machineNo = undefined;
+          if (newValue) {
+            if (this.checkSeries(newValue[0]) && this.checkIsExistMachineNo(newValue[1])) {
+              machineNo = newValue[1];
+            }
           }
+          console.warn('Validat Ended :: Current MachineNo = [' + machineNo + ']');
+          return machineNo;
+        },
+
+        checkSeries(value) {
+          console.log('=> Checking Series :: Current Series = [' + value + '], Expect Series = [' + this.record.c_part_name + ']');
+
+          if (value == this.record.c_part_name) {
+            console.log(' -> Series is ok :: Series value = [' + value + '=' + this.record.c_part_name + ']');
+            return true;
+          }
+          console.error(' -> Series is invalid :: [' + value + '!=' + this.record.c_part_name + ']');
+          return false;
+        },
+
+        checkIsExistMachineNo(value) {
+          console.log('=> Checking MachineNo :: Current MachineNo = [' + value + '], Current List = [' + this.record.machineList + ']');
+
+          if (!this.isInArray(value, this.record.machineList)) {
+            console.log(' -> MachineNo is not exist :: Checked value = [' + value + ']');
+            return true;
+          }
+          console.error(' -> MachineNo is exist :: MachineNo = [' + value + '], Current List = [' + this.record.machineList + ']');
+          this.machineNo = '';
+          return false;
+        },
+
+        formatedMachineNo(value) {
+          console.log('=> Checking format :: Current value = [' + value + ']');
+
+          var newValue = value.split(' ');
+          if (newValue.length == 2) {
+            var series = newValue[0]; var machineNo = newValue[1];
+            if (
+              this.checkLength('Series', series.length, 3) &&
+              this.checkLength('MachineNo', machineNo.length, 8) &&
+              this.checkIsNumber('Series', series) &&
+              this.checkIsNumber('MachineNo', machineNo)
+            ) {
+              console.log(' -> MachineNo format is ok :: Current value = [' + newValue + ']');
+              return newValue;
+            }
+          }
+          console.error(' -> MachineNo format is invalid :: Current value = [undefined]');
           return undefined;
+        },
+
+        checkIsNumber(type, value) {
+          console.log('  => Checking ' + type + ' is number :: Current value = [' + value + ']');
+
+          if (! isNaN(Number(value))) {
+            console.log('    -> ' + type + ' is number :: ' + type + ' = [' + value +']');
+            return true;
+          }
+          console.error('    -> ' + type + ' is not number :: ' + type + ' = [NaN]');
+          return false;
+        },
+
+        checkLength(type, length, expect) {
+          console.log('  => Checking ' + type + ' length :: Length = [' + length + '], Expect = [' + expect + ']');
+
+          if (length == expect) {
+            console.log('    -> ' + type + ' length is ok :: [' + length + '=' + expect + ']');
+            return true;
+          }
+          console.error('    -> ' + type + ' length is invalid :: [' + length + '!=' + expect + ']');
+          return false;
         }
+
+        // ====================================== Validate Section ======================================
+
       }
-    })
+    });
   </script>
 @endsection
