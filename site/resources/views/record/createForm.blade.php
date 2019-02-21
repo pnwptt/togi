@@ -88,7 +88,7 @@
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Quantity:</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" disabled v-model="record.i_qty">
+                        <input type="number" class="form-control" v-model="record.i_qty">
                       </div>
                     </div>
                     <div class="form-group row">
@@ -267,7 +267,7 @@
           c_part_number: '',
           c_part_name: '590',
           c_customer: '',
-          i_qty: '',
+          i_qty: 0,
           i_sampling_qty: 0,
           c_ncr_number: '',
           c_8d_report_no: '',
@@ -293,9 +293,28 @@
           return array.indexOf(value) > -1;
         },
 
-
-
-
+        findWorkOrder() {
+          if (this.record.c_order_number && !this.processing) {
+            this.processing = true;
+            axios.get('{{ route("findWorkOrder") }}', {
+              params: {
+                c_workorder: app.record.c_order_number
+              }
+            })
+            .than((response) => {
+              var data = response.data;
+              if (data) {
+                app.record.c_part_number = data.c_partnumber;
+                app.record.c_part_name = data.c_part_name;
+                app.record.c_customer = data.c_customer;
+              } else {
+                console.log("Order number is invalid.")
+                app.record.c_order_number = " ";
+              }
+              app.processing = false;
+            });
+          }
+        },
 
         // ====================================== Validate Section ======================================
 

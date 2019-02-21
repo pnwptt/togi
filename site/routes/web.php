@@ -67,3 +67,4 @@ Route::post('/record/create', 'RecordController@create')->name('createRecord');
 Route::get('/record/edit/{id}', 'RecordController@editForm')->name('editRecordForm');
 Route::post('/record/edit', 'RecordController@edit')->name('editRecord');
 Route::get('/record/delete/{id}', 'RecordController@delete')->name('deleteRecord');
+Route::get('/record/findworkorder', 'RecordController@findworkorder')->name('findWorkOrder');

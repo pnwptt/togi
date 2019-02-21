@@ -43,7 +43,7 @@ class ChecklistController extends Controller
           'i_form_deleted' => 0,
           'i_status' => 0,
           'd_form_created' => DB::raw('CURRENT_TIMESTAMP')
-        ], 'i_form_id');
+        ],'i_form_id');
         // Insert New Checklist
         foreach ($req->errorcodeList as $errorcode) {
           Checklist::insert([
@@ -59,7 +59,7 @@ class ChecklistController extends Controller
       }
       return 'success';
     }
-
+    
     public function edit(Request $req)
     {
       try {
