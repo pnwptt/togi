@@ -114,12 +114,11 @@ class ChecklistController extends Controller
       return redirect()->back();
     }
 
-    public function checkerrorcode()
+    public function checkerrorcode(Request $req)
     {
-      if(isset($_GET['code'])) {
+      if($req->code) {
         return Errorcode::where('c_code', $_GET['code'])->first();
       }
-      return null;
     }
 
     public function status(Request $req)

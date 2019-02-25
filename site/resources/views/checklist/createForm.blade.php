@@ -193,6 +193,8 @@
                   min: app.currentMin,
                   max: app.currentMax
                 });
+              } else {
+                alert('This Errorcode is already in list.');
               }
               app.currentErrorcode = '';
               app.processing = false;

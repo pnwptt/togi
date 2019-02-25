@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Record;
-use App\Models\Recorditem;
+use App\Models\RecordItem;
 
 class RecordController extends Controller
 {

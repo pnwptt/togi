@@ -14,4 +14,9 @@ class Form extends Model
     {
         return $this->belongsTo('App\Models\Series', 'i_series_id');
     }
+
+    public function getChecklist()
+    {
+        return $this->hasMany('App\Models\Checklist', 'i_form_id');
+    }
 }

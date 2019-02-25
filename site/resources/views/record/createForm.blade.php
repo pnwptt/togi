@@ -64,7 +64,7 @@
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Order number:</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" autofocus v-model="record.c_order_number">
+                        <input type="text" class="form-control" autofocus v-model="record.c_order_number" @keyup.enter="findChecklist">
                       </div>
                     </div>
                     <div class="form-group row">
@@ -187,7 +187,16 @@
                   <tr>
                     <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7"><i>Mesurement</i></td>
                   </tr>
-                  <tr>
+                  <tr v-for="(errorcode, index) in mesurementChecklist" v-show="mesurementChecklist.length > 0">
+                    <td>@{{ index+1 }}</td>
+                    <td>@{{ errorcode.c_rank }}</td>
+                    <td>@{{ errorcode.c_code }}</td>
+                    <td>@{{ errorcode.n_errorcode }}</td>
+                    <td :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr v-show="mesurementChecklist.length == 0">
                     <td></td>
                     <td></td>
                     <td></td>
@@ -199,7 +208,16 @@
                   <tr>
                     <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7"><i>Test Specification</i></td>
                   </tr>
-                  <tr>
+                  <tr v-for="(errorcode, index) in testSpecificationChecklist" v-show="testSpecificationChecklist.length > 0">
+                    <td>@{{ index+1 }}</td>
+                    <td>@{{ errorcode.c_rank }}</td>
+                    <td>@{{ errorcode.c_code }}</td>
+                    <td>@{{ errorcode.n_errorcode }}</td>
+                    <td :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr v-show="testSpecificationChecklist.length == 0">
                     <td></td>
                     <td></td>
                     <td></td>
@@ -259,13 +277,15 @@
       data: {
         machineNo: '',
         judgement: 0,
+        mesurementChecklist: [],
+        testSpecificationChecklist: [],
         record: {
           c_user: '{{ session()->get("c_user") }}',
           series: '',
           today: '{{ date("Y-m-d") }}',
           c_order_number: '',
           c_part_number: '',
-          c_part_name: '590',
+          c_part_name: '',
           c_customer: '',
           i_qty: 0,
           i_sampling_qty: 0,
@@ -293,23 +313,26 @@
           return array.indexOf(value) > -1;
         },
 
-        findWorkOrder() {
+        findChecklist() {
           if (this.record.c_order_number && !this.processing) {
             this.processing = true;
-            axios.get('{{ route("findWorkOrder") }}', {
+            axios.get('{{ route("findChecklist") }}', {
               params: {
                 c_workorder: app.record.c_order_number
               }
             })
-            .than((response) => {
-              var data = response.data;
-              if (data) {
-                app.record.c_part_number = data.c_partnumber;
-                app.record.c_part_name = data.c_part_name;
-                app.record.c_customer = data.c_customer;
+            .then((response) => {
+              if (response.data) {
+                var workOrder = response.data.workOrder;
+                app.record.series = response.data.series;
+                app.record.c_part_number = workOrder.c_item ? workOrder.c_item : '';
+                app.record.c_part_name = workOrder.c_part_name;
+                app.record.c_customer = workOrder.country;
+                app.mesurementChecklist = response.data.mesurementChecklist;
+                app.testSpecificationChecklist = response.data.testSpecificationChecklist;
               } else {
-                console.log("Order number is invalid.")
-                app.record.c_order_number = " ";
+                console.log('Order number is invalid or not found.');
+                app.record.c_order_number = "";
               }
               app.processing = false;
             });
@@ -397,7 +420,7 @@
           return false;
         }
 
-        // ====================================== Validate Section ======================================
+        // ==============================================================================================
 
       }
     });

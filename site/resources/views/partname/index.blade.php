@@ -33,7 +33,7 @@
               </tr>
             </thead>
             <tbody>
-              @foreach($partnameList as $pn)
+              @foreach($partNameList as $pn)
                 <tr>
                   <td align="center">{{ $pn->n_part_name }}</td>
                   <td align="center">{{ $pn->getSeries->n_series_name }}</td>

@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class WorkOrder extends Model
 {
+    protected $connection = 'pgsql3';
     protected $table = 'v_wo';
     protected $primaryKey = 'i_errorcode_id';
-    public $timestamps = false;
 
     public function getType()
     {

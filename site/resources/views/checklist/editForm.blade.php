@@ -206,7 +206,7 @@
                   max: app.currentMax
                 });
               } else {
-                alert('');
+                alert('This Errorcode is already in list.');
               }
               app.currentErrorcode = '';
               app.processing = false;
@@ -231,7 +231,7 @@
               app.processing = false;
             })
             .catch(function (error) {
-              alert('Ops! Something went wrong');
+              alert('Ops! Something went wrong.');
               app.processing = false;
             });
           }
