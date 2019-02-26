@@ -15,4 +15,12 @@ use Illuminate\Http\Request;
 
 Route::get('/checklist/checkerrorcode', 'ChecklistController@checkerrorcode')->name('checkerrorcode');
 
-Route::get('/workorder/findchecklist', 'WorkOrderController@findchecklist')->name('findChecklist');
+Route::get('/workorder/findchecklist', 'WorkOrderController@findChecklist')->name('findChecklist');
+
+Route::get('/test/wo', function () {
+    return App\Models\WorkOrder::where('c_series', '330')->get();
+});
+
+Route::get('/test/cl', function () {
+    return App\Models\Form::where('i_series_id', 5)->where('i_status', 1)->first();
+});

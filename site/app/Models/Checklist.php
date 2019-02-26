@@ -20,7 +20,6 @@ class Checklist extends Model
     {
         return DB::table('b_checklists')
             ->join('b_errorcode', 'b_errorcode.i_errorcode_id', '=', 'b_checklists.i_errorcode_id')
-            ->join('b_errorcode_type', 'b_errorcode_type.i_errorcode_type_id', '=', 'b_errorcode.i_errorcode_type_id')
             ->where('i_form_id', $i_form_id)
             ->where('i_errorcode_type_id', $i_errorcode_type_id)
             ->get();

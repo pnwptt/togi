@@ -331,7 +331,7 @@
                 app.mesurementChecklist = response.data.mesurementChecklist;
                 app.testSpecificationChecklist = response.data.testSpecificationChecklist;
               } else {
-                console.log('Order number is invalid or not found.');
+                alert('Order number is invalid or not found.');
                 app.record.c_order_number = "";
               }
               app.processing = false;
