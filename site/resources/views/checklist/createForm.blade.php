@@ -12,13 +12,12 @@
   <div id="app">
     <div class="container">
       <div class="row">
-        <div class="col-md-4"><h4>Create Form</h4></div>
+        <div class="col-md-4"><h4>Create Checklist</h4></div>
       </div>
       <div class="row">
         <div class="col-md-2"></div>
         <div class="col-md-3">
           <div class="form form-horizontal">
-            {{ csrf_field() }}
             <div class="form-group">
               <label><b>Series</b></label>
               <select class="form-control" v-model="currentSeries">
@@ -90,7 +89,7 @@
               </thead>
               <tbody>
                 <tr v-for="(item, index) in errorcodeList" v-if="item.type == 1">
-                  <td align="center">@{{ item.code}}</td>
+                  <td align="center">@{{ item.code }}</td>
                   <td align="left">@{{ item.name }}</td>
                   <td align="center">@{{ item.min }}</td>
                   <td align="center">@{{ item.max }}</td>
@@ -101,8 +100,6 @@
                 <tr v-if="errorcodeList.filter(isMeasurement).length == 0">
                   <td align="center" colspan="6"><i class="empty">Empty</i></td>
                 </tr>
-              </tbody>
-              <thead>
                 <tr class="table-dark">
                   <th>Errorcode</th>
                   <th>Test Specification</th>
@@ -110,10 +107,8 @@
                   <th>Minimum Value</th>
                   <th>Action</th>
                 </tr>
-              </thead>
-              <tbody>
                 <tr v-for="(item, index) in errorcodeList" v-if="item.type == 2">
-                  <td align="center">@{{ item.code}}</td>
+                  <td align="center">@{{ item.code }}</td>
                   <td align="left">@{{ item.name }}</td>
                   <td align="center">@{{ item.min }}</td>
                   <td align="center">@{{ item.max }}</td>
@@ -198,6 +193,10 @@
               }
               app.currentErrorcode = '';
               app.processing = false;
+            })
+            .catch((error) => {
+              alert('Ops! Something went wrong.');
+              app.processing = false;
             });
           }
         },
@@ -217,7 +216,7 @@
               window.location.href = '{{ route("checklist") }}';
               app.processing = false;
             })
-            .catch(function (error) {
+            .catch((error) => {
               alert('Ops! Something went wrong');
               app.processing = false;
             });

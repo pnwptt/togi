@@ -34,6 +34,14 @@ class ChecklistController extends Controller
       return view('checklist.editForm', compact('seriesList', 'errorcode', 'form', 'checklist'));
     }
 
+    public function viewForm($id)
+    {
+      $form = Form::where('i_form_id', $id)->first();
+      $errorcodeListMeasurement = Checklist::getChecklistByErrorcodeType($id, 1);
+      $errorcodeListTestSpecification = Checklist::getChecklistByErrorcodeType($id, 2);
+      return view('checklist.viewForm', compact('form', 'errorcodeListMeasurement', 'errorcodeListTestSpecification'));
+    }
+
     public function create(Request $req)
     {
       try {

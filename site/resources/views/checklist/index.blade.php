@@ -46,13 +46,19 @@
                       <div class="custom-control custom-switch" onclick="return !processing && {{isset($value->getSeries->n_series_name) ? 1 : 0}} == 1">
                         <input type="checkbox" class="custom-control-input" id="status-{{ $value->i_form_id }}"
                           onchange="updateStatus('{{ $value->i_form_id }}', '{{ $value->i_status ? 0 : 1}}')" {{ $value->i_status ? 'checked' : '' }}>
-                        <label class="custom-control-label {{ $value->i_status ? 'active' : 'inactive' }}" for="status-{{ $value->i_form_id }}">{{ $value->i_status ? 'Active' : 'Inactive' }}</label>
+                        @if($value->i_status)
+                          <label class="custom-control-label active" for="status-{{ $value->i_form_id }}">Active</label>
+                        @else
+                          <label class="custom-control-label inactive" for="status-{{ $value->i_form_id }}">Inactive</label>
+                        @endif
                       </div>
                     </div>
                   </td>
                   <td align="center">
                     @if($value->i_status == 0 && !$value->d_effective_date)
                       <a href="{{ route('editChecklistForm', $value->i_form_id) }}" class="btn btn-warning btn-sm">Edit</a>
+                    @elseif($value->d_effective_date)
+                      <a href="{{ route('viewChecklistForm', $value->i_form_id) }}" class="btn btn-info btn-sm">View</a>
                     @endif
                   </td>
                 </tr>
@@ -81,7 +87,7 @@
           window.location.reload();
           processing = false;
         })
-        .catch(function (error) {
+        .catch((error) => {
           alert('Ops! Something went wrong');
           $('#status-' + id).prop('checked', Number(status) ? 1 : 0);
           processing = false;
