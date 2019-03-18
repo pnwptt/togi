@@ -31,7 +31,7 @@ class PartNameController extends Controller
     {
         $partName = PartName::where('n_part_name', $req->n_part_name)->first();
         if ($partName) {
-            return redirect()->route('partName')->with('error', 'Create Fail!')->with('message', "Part Name: $req->n_part_name is already created.");
+            return redirect()->route('series')->with('error', 'Create Fail!')->with('message', "Part Name: $req->n_part_name is already taken.");
         } else {
             PartName::insert([
                 'i_series_id' => $req->i_series_id,
@@ -39,26 +39,26 @@ class PartNameController extends Controller
                 'i_part_name_deleted' => 0,
             ]);
         }
-        return redirect()->route('partName');
+        return redirect()->route('series');
     }
         
     public function edit(Request $req)
     {
         $partName = PartName::where('i_part_name_id', '!=', $req->i_part_name_id)->where('n_part_name', $req->n_part_name)->first();
         if ($partName) {
-            return redirect()->route('partName')->with('error', 'Edit Fail!')->with('message', "Part Name: $req->n_part_name is already created.");
+            return redirect()->route('series')->with('error', 'Edit Fail!')->with('message', "Part Name: $req->n_part_name is already taken.");
         } else {
             PartName::where('i_part_name_id', $req->i_part_name_id)->update([
                 'i_series_id' => $req->i_series_id,
                 'n_part_name' => $req->n_part_name
             ]);
         }
-        return redirect()->route('partName');
+        return redirect()->route('series');
     }
 
     public function delete($id)
     {
         PartName::where('i_part_name_id', $id)->update(['i_part_name_deleted' => 1]);
-        return redirect()->route('partName');
+        return redirect()->route('series');
     }
 }

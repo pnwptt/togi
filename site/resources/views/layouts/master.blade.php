@@ -45,7 +45,6 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="management">
               <a class="dropdown-item" href="{{ route('series') }}">Series</a>
-              <a class="dropdown-item" href="{{ route('partName') }}">Part Name</a>
               <!-- <a class="dropdown-item" href="{{ route('errorcodetype') }}">Errorcode Type</a> -->
               <a class="dropdown-item" href="{{ route('errorcode') }}">Errorcode</a>
               <a class="dropdown-item" href="{{ route('checklist') }}">Checklist</a>

@@ -13,7 +13,7 @@
         <div class="table-responsive">
           <table class="table table-bordered">
             <thead>
-              <tr class="table-dark">
+              <tr class="table-light">
                 <th>Oder No.</th>
                 <th>Insp. Date</th>
                 <th>P/N</th>

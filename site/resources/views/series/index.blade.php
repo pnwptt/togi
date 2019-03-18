@@ -2,10 +2,26 @@
 
 @section('content')
   <div class="container">
+    @if(session()->has('error'))
+      <div class="row">
+        <div class="col-md-12">
+          <div class="alert alert-dismissible alert-warning">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <h4 class="alert-heading">{{ session()->get('error') }}</h4>
+            <p class="mb-0">
+              {{ session()->get('message') }}
+            </p>  
+          </div>
+        </div>
+      </div>
+    @endif
     <div class="row">
-      <div class="col-sm-11"><h3>Series</h3></div>
-      <div class="col-sm-1">
-        <a href="{{ route('createSeriesForm') }}" class="btn btn-success btn-ms btn-block">Add</a>
+      <div class="col-sm-8"><h3>Series</h3></div>
+      <div class="col-sm-2">
+        <a href="{{ route('createSeriesForm') }}" class="btn btn-primary btn-ms btn-block">Add Series</a>
+      </div>
+      <div class="col-sm-2">
+        <a href="{{ route('createPartNameForm') }}" class="btn btn-success btn-ms btn-block">Add Part Name</a>
       </div>
     </div>
     <div class="row">
@@ -13,7 +29,7 @@
         <div class="table-responsive">
           <table class="table table-bordered">
             <thead>
-              <tr class="table-dark">
+              <tr class="table-light">
                 <th>Model</th>
                 <th>Part Name Code(s)</th>
                 <th>Pallet Quantity</th>
@@ -27,7 +43,7 @@
                   <td align="center">
                     <ul align="left">
                       @foreach($s->getPartNameList as $p)
-                        <li>{{ $p->n_part_name }}</li>
+                        <li><a href="{{ route('editPartNameForm', $p->i_part_name_id) }}">{{ $p->n_part_name }}</a></li>
                       @endforeach
                     </ul>
                   </td>

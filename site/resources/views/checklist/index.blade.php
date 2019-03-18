@@ -25,7 +25,7 @@
         <div class="table-responsive">
           <table class="table table-bordered">
             <thead>
-              <tr class="table-dark">
+              <tr class="table-light">
                 <!-- <th>#</th> -->
                 <th>Series</th>
                 <th>Create Date</th>

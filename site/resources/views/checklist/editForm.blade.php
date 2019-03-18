@@ -162,8 +162,8 @@
               code: '{{ $c->getErrorcode->c_code }}',
               name: '{{ $c->getErrorcode->n_errorcode }}',
               type: '{{ $c->getErrorcode->i_errorcode_type_id }}',
-              min: '{{ $c->f_minvalue }}',
-              max: '{{ $c->f_maxvalue }}'
+              min: '{{ $c->f_min_value }}',
+              max: '{{ $c->f_max_value }}'
             },
           @endforeach
         ],

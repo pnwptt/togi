@@ -29,20 +29,30 @@ class SeriesController extends Controller
 
   public function create(Request $req)
   {
-    Series::insert([
-      'n_series_name' => $req->n_series_name, 
-      'i_series_deleted' => 0,
-      'i_pallet_qty' => $req->i_pallet_qty
-    ]);
+    $series = Series::where('n_series_name', $req->n_series_name)->first();
+    if ($series) {
+        return redirect()->route('series')->with('error', 'Create Fail!')->with('message', "Model: $req->n_series_name is already taken.");
+    } else {
+      Series::insert([
+        'n_series_name' => $req->n_series_name, 
+        'i_series_deleted' => 0,
+        'i_pallet_qty' => $req->i_pallet_qty
+      ]);
+    }
     return redirect()->route('series');
   }
 
   public function edit(Request $req)
   {
-    Series::where('i_series_id', $req->i_series_id)->update([
-      'n_series_name' => $req->n_series_name,
-      'i_pallet_qty' => $req->i_pallet_qty
-    ]);
+    $series = Series::where('n_series_name', $req->n_series_name)->first();
+    if ($series) {
+        return redirect()->route('series')->with('error', 'Create Fail!')->with('message', "Model: $req->n_series_name is already taken.");
+    } else {
+      Series::where('i_series_id', $req->i_series_id)->update([
+        'n_series_name' => $req->n_series_name,
+        'i_pallet_qty' => $req->i_pallet_qty
+      ]);
+    }
     return redirect()->route('series');
   }
 

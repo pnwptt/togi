@@ -110,11 +110,11 @@
                     <h5 class="header-italic">Lot Judgement</h5>
                     <div class="form-group" align="center">
                       <div class="custom-control custom-radio">
-                        <input class="custom-control-input" type="radio" name="judgement" id="judgementAccept" :checked="judgement == 1" onclick="return false">
+                        <input class="custom-control-input" type="radio" v-model="judgement" value="1" id="judgementAccept">
                         <label class="custom-control-label" for="judgementAccept">Accept</label>
                       </div>
                       <div class="custom-control custom-radio">
-                        <input class="custom-control-input" type="radio" name="judgement" id="judgementReject" :checked="judgement == -1" onclick="return false">
+                        <input class="custom-control-input" type="radio" v-model="judgement" value="-1" id="judgementReject">
                         <label class="custom-control-label" for="judgementReject">Reject</label>
                       </div>
                     </div>
@@ -182,8 +182,9 @@
                         @{{ machineNo }}
                       </div>
                     </th>
-                    <th class="machineList" v-if="record.machineList.length < 1"></th>
+                    <th class="machineList" v-if="record.machineList.length == 0"></th>
                   </tr>
+                  <!-- ============================================= Mesurement ======================================== -->
                   <tr>
                     <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7"><i>Mesurement</i></td>
                   </tr>
@@ -192,7 +193,10 @@
                     <td>@{{ errorcode.c_rank }}</td>
                     <td>@{{ errorcode.c_code }}</td>
                     <td>@{{ errorcode.n_errorcode }}</td>
-                    <td :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></td>
+                    <td v-for="(item, i) in record.mesurement" v-if="item.i_checklist_id == errorcode.i_checklist_id">
+                      <input type="text" class="form-control" v-model="item.value">
+                    </td>
+                    <td v-if="record.machineList.length == 0"></td>
                     <td></td>
                     <td></td>
                   </tr>
@@ -201,10 +205,14 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></td>
+                    <td></td>
                     <td></td>
                     <td></td>
                   </tr>
+                  <!-- ============================================= Mesurement ======================================== -->
+
+
+                  <!-- ========================================== Test Specification =================================== -->
                   <tr>
                     <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7"><i>Test Specification</i></td>
                   </tr>
@@ -213,7 +221,10 @@
                     <td>@{{ errorcode.c_rank }}</td>
                     <td>@{{ errorcode.c_code }}</td>
                     <td>@{{ errorcode.n_errorcode }}</td>
-                    <td :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></td>
+                    <td v-for="(item, i) in record.testSpecification" v-if="item.i_checklist_id == errorcode.i_checklist_id">
+                      <input type="text" class="form-control" v-model="item.value">
+                    </td>
+                    <td v-if="record.machineList.length == 0"></td>
                     <td></td>
                     <td></td>
                   </tr>
@@ -226,6 +237,10 @@
                     <td></td>
                     <td></td>
                   </tr>
+                  <!-- ========================================== Test Specification =================================== -->
+
+
+                  <!-- ========================================== Failure symotom ====================================== -->
                   <tr>
                     <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7"><i>Failure symotom</i></td>
                   </tr>
@@ -238,6 +253,9 @@
                     <td></td>
                     <td></td>
                   </tr>
+                  <!-- ========================================== Failure symotom ====================================== -->
+
+
                   <tr>
                     <th colspan="4">Total</th>
                     <th :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></th>
@@ -279,6 +297,7 @@
         judgement: 0,
         mesurementChecklist: [],
         testSpecificationChecklist: [],
+        failureSymptomList: [],
         record: {
           c_user: '{{ session()->get("c_user") }}',
           series: '',
@@ -292,6 +311,9 @@
           c_ncr_number: '',
           c_8d_report_no: '',
           machineList: [],
+          mesurement: [],
+          testSpecification: [],
+          failureSymptom: []
         }
       },
 
@@ -300,6 +322,18 @@
           var machineNo = this.validateMachineNo(this.machineNo);
           if (machineNo) {
             this.record.machineList.push(machineNo);
+            this.mesurementChecklist.forEach((item) => {
+              app.record.mesurement.push({
+                machineNo: machineNo, 
+                i_checklist_id: item.i_checklist_id, 
+                value: ''})
+            });
+            this.testSpecificationChecklist.forEach((item) => {
+              app.record.testSpecification.push({
+                machineNo: machineNo, 
+                i_checklist_id: item.i_checklist_id, 
+                value: ''})
+            });
             console.log('Added MachineNo [' + machineNo + '] to list');
             this.machineNo = '';
           }
@@ -326,7 +360,7 @@
                 var workOrder = response.data.workOrder;
                 app.record.series = response.data.series;
                 app.record.c_part_number = workOrder.c_item ? workOrder.c_item : '';
-                app.record.c_part_name = workOrder.c_part_name;
+                app.record.c_part_name = workOrder.c_series;
                 app.record.c_customer = workOrder.country;
                 app.mesurementChecklist = response.data.mesurementChecklist;
                 app.testSpecificationChecklist = response.data.testSpecificationChecklist;
@@ -422,6 +456,15 @@
 
         // ==============================================================================================
 
+      },
+
+      watch: {
+        judgement: function (newValue, oldValue) {
+          if (newValue == 1) {
+            this.record.c_ncr_number = '';
+            this.record.c_8d_report_no = '';
+          }
+        }
       }
     });
   </script>

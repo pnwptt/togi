@@ -71,8 +71,8 @@
                   <tr>
                     <td align="center">{{ $item->c_code }}</td>
                     <td align="left">{{ $item->n_errorcode }}</td>
-                    <td align="center">{{ $item->f_minvalue }}</td>
-                    <td align="center">{{ $item->f_maxvalue }}</td>
+                    <td align="center">{{ $item->f_min_value }}</td>
+                    <td align="center">{{ $item->f_max_value }}</td>
                   </tr>
                 @endforeach
                 @if(count($errorcodeListMeasurement) == 0)
@@ -83,15 +83,15 @@
                 <tr class="table-dark">
                   <th>Errorcode</th>
                   <th>Test Specification</th>
-                  <th>Maximum Value</th>
                   <th>Minimum Value</th>
+                  <th>Maximum Value</th>
                 </tr>
                 @foreach($errorcodeListTestSpecification as $item)
                   <tr>
                     <td align="center">{{ $item->c_code }}</td>
                     <td align="left">{{ $item->n_errorcode }}</td>
-                    <td align="center">{{ $item->f_minvalue }}</td>
-                    <td align="center">{{ $item->f_maxvalue }}</td>
+                    <td align="center">{{ $item->f_min_value }}</td>
+                    <td align="center">{{ $item->f_max_value }}</td>
                   </tr>
                 @endforeach
                 @if(count($errorcodeListTestSpecification) == 0)

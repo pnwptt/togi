@@ -1,5 +1,15 @@
 @extends('layouts.master')
 
+@section('css')
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/datatables.min.css') }}">
+  <style type="text/css">
+    table {
+      border-radius: 0;
+      padding: 0;
+    }
+  </style>
+@endsection
+
 @section('content')
     <div class="container">
       @if(session()->has('error'))
@@ -24,9 +34,9 @@
         <div class="row">
           <div class="col-md-12">
             <div class="table-responsive">
-              <table class="table table-bordered">
+              <table class="table table-bordered" id="datatables">
                 <thead>
-                  <tr class="table-dark">
+                  <tr class="table-light">
                     <th>Rank</th>
                     <th>Error code</th>
                     <th>Inspection detail</th>
@@ -53,4 +63,11 @@
           </div>
         </div>
     </div>
-@endsection    
+@endsection
+
+@section('js')
+  <script type="text/javascript" src="{{ asset('js/datatables.min.js') }}"></script>
+  <script type="text/javascript">
+    $('#datatables').DataTable();
+  </script>
+@endsection
