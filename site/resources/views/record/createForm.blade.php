@@ -74,9 +74,9 @@
                       </div>
                     </div>
                     <div class="form-group row">
-                      <label class="col-sm-4 col-form-label">Part name:</label>
+                      <label class="col-sm-4 col-form-label">Series:</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" disabled v-model="record.c_part_name">
+                        <input type="text" class="form-control" disabled v-model="record.c_series">
                       </div>
                     </div>
                     <div class="form-group row">
@@ -102,7 +102,7 @@
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Model:</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" disabled v-model="record.series">
+                        <input type="text" class="form-control" disabled v-model="record.models">
                       </div>
                     </div>
                     <h6>Refference to WI-QA-001</h6>
@@ -170,7 +170,7 @@
                     <th rowspan="2" width="20%">Inspection detail</th>
                     <th :colspan="record.machineList.length > 0 ? record.machineList.length : 1">
                       Machine no. 
-                      <input type="text" class="form-control input-machine" :disabled="!record.c_part_name" v-model="machineNo" @keyup.enter="addMachine">
+                      <input type="text" class="form-control input-machine" :disabled="!record.c_series" v-model="machineNo" @keyup.enter="addMachine">
                       <span class="clear-machine" v-show="machineNo" @click="machineNo = ''">X</span>
                     </th>
                     <th rowspan="2" width="20%">Reject detail</th>
@@ -300,11 +300,11 @@
         failureSymptomList: [],
         record: {
           c_user: '{{ session()->get("c_user") }}',
-          series: '',
+          models: '',
           today: '{{ date("Y-m-d") }}',
           c_order_number: '',
           c_part_number: '',
-          c_part_name: '',
+          c_series: '',
           c_customer: '',
           i_qty: 0,
           i_sampling_qty: 0,
@@ -358,9 +358,9 @@
             .then((response) => {
               if (response.data) {
                 var workOrder = response.data.workOrder;
-                app.record.series = response.data.series;
+                app.record.models = response.data.models;
                 app.record.c_part_number = workOrder.c_item ? workOrder.c_item : '';
-                app.record.c_part_name = workOrder.c_series;
+                app.record.c_series = workOrder.c_series;
                 app.record.c_customer = workOrder.country;
                 app.mesurementChecklist = response.data.mesurementChecklist;
                 app.testSpecificationChecklist = response.data.testSpecificationChecklist;
@@ -381,7 +381,7 @@
           var newValue = this.formatedMachineNo(value);
           var machineNo = undefined;
           if (newValue) {
-            if (this.checkSeries(newValue[0]) && this.checkIsExistMachineNo(newValue[1])) {
+            if (this.checkModels(newValue[0]) && this.checkIsExistMachineNo(newValue[1])) {
               machineNo = newValue[1];
             }
           }
@@ -389,14 +389,14 @@
           return machineNo;
         },
 
-        checkSeries(value) {
-          console.log('=> Checking Series :: Current Series = [' + value + '], Expect Series = [' + this.record.c_part_name + ']');
+        checkModels(value) {
+          console.log('=> Checking Models :: Current Models = [' + value + '], Expect Models = [' + this.record.c_series + ']');
 
-          if (value == this.record.c_part_name) {
-            console.log(' -> Series is ok :: Series value = [' + value + '=' + this.record.c_part_name + ']');
+          if (value == this.record.c_series) {
+            console.log(' -> Models is ok :: Models value = [' + value + '=' + this.record.c_series + ']');
             return true;
           }
-          console.error(' -> Series is invalid :: [' + value + '!=' + this.record.c_part_name + ']');
+          console.error(' -> Models is invalid :: [' + value + '!=' + this.record.c_series + ']');
           return false;
         },
 
@@ -417,11 +417,11 @@
 
           var newValue = value.split(' ');
           if (newValue.length == 2) {
-            var series = newValue[0]; var machineNo = newValue[1];
+            var models = newValue[0]; var machineNo = newValue[1];
             if (
-              this.checkLength('Series', series.length, 3) &&
+              this.checkLength('Models', models.length, 3) &&
               this.checkLength('MachineNo', machineNo.length, 8) &&
-              this.checkIsNumber('Series', series) &&
+              this.checkIsNumber('Models', models) &&
               this.checkIsNumber('MachineNo', machineNo)
             ) {
               console.log(' -> MachineNo format is ok :: Current value = [' + newValue + ']');

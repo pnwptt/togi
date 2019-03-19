@@ -22,5 +22,5 @@ Route::get('/test/wo', function () {
 });
 
 Route::get('/test/cl', function () {
-    return App\Models\Form::where('i_series_id', 5)->where('i_status', 1)->first();
+    return App\Models\Form::where('i_models_id', 5)->where('i_status', 1)->first();
 });

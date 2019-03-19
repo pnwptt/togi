@@ -11,16 +11,24 @@
         <form action="{{ route('createSeries') }}" method="post" class="form form-horizontal">
           {{ csrf_field() }}
           <div class="form-group">
-            <label><b>Series Name</b></label>
-            <input type="text" class="form-control" name="n_series_name" placeholder="Enter Series Name" required>
+            <label><b>Models</b></label>
+            <select class="form-control" name="i_models_id">
+              <option value="" disabled selected>- Select Models -</option>
+              @foreach( $modelList as $m )
+                <option value="{{ $m->i_models_id }}">{{ $m->n_models_name }}</option>
+              @endforeach
+            </select>
           </div>
           <div class="form-group">
-            <label><b>Pallet Quantity</b></label>
-            <input type="number" class="form-control" name="i_pallet_qty" placeholder="Enter Pallet Quantity" required>
+            <label><b>Series</b></label>
+            <input type="text" class="form-control" name="n_series" placeholder="Enter Series" required>
+          </div>
+          <div class="form-group">
+            <label><b></b></label>
           </div>
           <div class="form-group" align="center">
             <button type="submit" class="btn btn-success">Create</button>
-            <a href="{{ route('series') }}" class="btn btn-light">Cancel</a>
+            <a href="{{ route('models') }}" class="btn btn-light">Cancel</a>
           </div>
         </form>
       </div>

@@ -10,8 +10,8 @@ class Series extends Model
     protected $primaryKey = 'i_series_id';
     public $timestamps = false;
 
-    public function getPartNameList()
+    public function getModels()
     {
-        return $this->hasMany('App\Models\PartName', 'i_series_id');
+        return $this->belongsTo('App\Models\Models', 'i_models_id');
     }
 }

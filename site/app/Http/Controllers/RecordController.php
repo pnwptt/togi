@@ -24,7 +24,7 @@ class RecordController extends Controller
         Record::insert([
             'c_order_number' => $req->c_order_number,
             'c_part_number' => $req->c_part_number,
-            'c_part_name' => $req->c_part_name,
+            'c_series' => $req->c_series,
             'c_customer' => $req->c_customer,
             'i_qty' => $req->i_qty,
             'i_sampling_qty' => $req->i_sampling_qty,

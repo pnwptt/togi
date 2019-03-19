@@ -7,7 +7,7 @@ use Carbon\Carbon;
 use DB;
 use App\Models\Form;
 use App\Models\Checklist;
-use App\Models\Series;
+use App\Models\Models;
 use App\Models\Errorcode;
 
 class ChecklistController extends Controller
@@ -20,18 +20,18 @@ class ChecklistController extends Controller
 
     public function createForm()
     {
-      $seriesList = Series::where('i_series_deleted', 0)->get();
+      $modelList = Models::where('i_models_deleted', 0)->get();
       $errorcode = Errorcode::where('i_errorcode_deleted', 0)->get();
-      return view('checklist.createForm', compact('seriesList', 'errorcode'));
+      return view('checklist.createForm', compact('modelList', 'errorcode'));
     }
 
     public function editForm($id)
     {
-      $seriesList = Series::where('i_series_deleted', 0)->get();
+      $modelList = Models::where('i_models_deleted', 0)->get();
       $errorcode = Errorcode::where('i_errorcode_deleted', 0)->get();
       $form = Form::where('i_form_id', $id)->first();
       $checklist = Checklist::where('i_form_id', $id)->where('i_checklist_deleted', 0)->get();
-      return view('checklist.editForm', compact('seriesList', 'errorcode', 'form', 'checklist'));
+      return view('checklist.editForm', compact('modelList', 'errorcode', 'form', 'checklist'));
     }
 
     public function viewForm($id)
@@ -47,7 +47,7 @@ class ChecklistController extends Controller
       try {
         // Insert New Form
         $formId = Form::insertGetId([
-          'i_series_id' => $req->i_series_id,
+          'i_models_id' => $req->i_models_id,
           'i_form_deleted' => 0,
           'i_status' => 0,
           'd_form_created' => DB::raw('CURRENT_TIMESTAMP')
@@ -73,7 +73,7 @@ class ChecklistController extends Controller
       try {
         // Update New Form
         Form::where('i_form_id', $req->i_form_id)->update([
-          'i_series_id' => $req->i_series_id
+          'i_models_id' => $req->i_models_id
         ]);
         // Delete Old Checklist (Hard Delete)
         $checklistDeleted = Checklist::where('i_form_id', $req->i_form_id)->where('i_checklist_deleted', 1)->get();
@@ -133,8 +133,8 @@ class ChecklistController extends Controller
     {
       try {
         $form = Form::where('i_form_id', $req->i_form_id)->first();
-        $i_series_id = $form->i_series_id;
-        Form::where('i_series_id', $i_series_id)->update([
+        $i_models_id = $form->i_models_id;
+        Form::where('i_models_id', $i_models_id)->update([
           'i_status' => 0
         ]);
         if ($req->i_status && $form->d_effective_date) {

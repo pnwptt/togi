@@ -19,11 +19,11 @@
         <div class="col-md-3">
           <div class="form form-horizontal">
             <div class="form-group">
-              <label><b>Series</b></label>
-              <select class="form-control" v-model="currentSeries">
-                <option value="" disabled selected>- Select Series -</option>
-                @foreach($seriesList as $s)
-                  <option value="{{ $s->i_series_id }}">{{ $s->n_series_name }}</option>
+              <label><b>Models</b></label>
+              <select class="form-control" v-model="currentModels">
+                <option value="" disabled selected>- Select Models -</option>
+                @foreach($modelList as $m)
+                  <option value="{{ $m->i_models_id }}">{{ $m->n_models_name }}</option>
                 @endforeach
               </select>
             </div>
@@ -151,7 +151,7 @@
       el: '#app',
       data: {
         currentFormId: '{{ $form->i_form_id }}',
-        currentSeries: '{{ $form->i_series_id }}',
+        currentModels: '{{ $form->i_models_id }}',
         currentErrorcode: '',
         currentMin: '',
         currentMax: '',
@@ -222,7 +222,7 @@
             this.processing = true;
             axios.post('{{ route("editChecklist") }}', {
               i_form_id: app.currentFormId,
-              i_series_id: app.currentSeries,
+              i_models_id: app.currentModels,
               errorcodeList: app.errorcodeList
             })
             .then((response) => {

@@ -44,7 +44,7 @@
               Management <span class="caret"></span>
             </a>
             <div class="dropdown-menu" aria-labelledby="management">
-              <a class="dropdown-item" href="{{ route('series') }}">Series</a>
+              <a class="dropdown-item" href="{{ route('models') }}">Model / Serie</a>
               <!-- <a class="dropdown-item" href="{{ route('errorcodetype') }}">Errorcode Type</a> -->
               <a class="dropdown-item" href="{{ route('errorcode') }}">Errorcode</a>
               <a class="dropdown-item" href="{{ route('checklist') }}">Checklist</a>

@@ -27,7 +27,7 @@
             <thead>
               <tr class="table-light">
                 <!-- <th>#</th> -->
-                <th>Series</th>
+                <th>Models</th>
                 <th>Create Date</th>
                 <th>Effective Date</th>
                 <th>Status</th>
@@ -38,12 +38,12 @@
               @foreach($forms as $value)
                 <tr>
                   <!-- <td align="center">{{ $value->i_form_id }}</td> -->
-                  <td align="center">{{ isset($value->getSeries->n_series_name) ? $value->getSeries->n_series_name : '' }}</td>
+                  <td align="center">{{ isset($value->getModels->n_models_name) ? $value->getModels->n_models_name : '' }}</td>
                   <td align="center">{{ $value->d_form_created }}</td>
                   <td align="center">{{ $value->d_effective_date }}</td>
                   <td align="center">
                     <div class="form-group">
-                      <div class="custom-control custom-switch" onclick="return !processing && {{isset($value->getSeries->n_series_name) ? 1 : 0}} == 1">
+                      <div class="custom-control custom-switch" onclick="return !processing && {{isset($value->getModels->n_models_name) ? 1 : 0}} == 1">
                         <input type="checkbox" class="custom-control-input" id="status-{{ $value->i_form_id }}"
                           onchange="updateStatus('{{ $value->i_form_id }}', '{{ $value->i_status ? 0 : 1}}')" {{ $value->i_status ? 'checked' : '' }}>
                         @if($value->i_status)

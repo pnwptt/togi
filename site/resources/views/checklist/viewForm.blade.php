@@ -29,14 +29,14 @@
         <div class="col-md-3">
           <div class="form form-horizontal">
             <div class="form-group">
-              <label><b>Series</b></label>
-              <input type="text" class="form-control" value="{{ $form->getSeries->n_series_name }}" readonly>
+              <label><b>Models</b></label>
+              <input type="text" class="form-control" value="{{ $form->getModels->n_models_name }}" readonly>
             </div>
           </div>
         </div>
         <div class="col-md-2">
           <label><b>Status</b></label>
-          <div class="custom-control custom-switch mg-t-8" onclick="return !processing && {{isset($form->getSeries->n_series_name) ? 1 : 0}} == 1">
+          <div class="custom-control custom-switch mg-t-8" onclick="return !processing && {{isset($form->getModels->n_models_name) ? 1 : 0}} == 1">
             <input type="checkbox" class="custom-control-input" id="status-form"
               onchange="updateStatus('{{ $form->i_form_id }}', '{{ $form->i_status ? 0 : 1}}')" {{ $form->i_status ? 'checked' : '' }}>
             @if($form->i_status)
