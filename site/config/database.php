@@ -68,7 +68,7 @@ return [
             'sslmode' => 'prefer',
         ],
 
-        'pgsql2' => [
+        'hr' => [
             'driver' => env('DB_CONNECTION_SECOND'),
             'host' => env('DB_HOST_SECOND'),
             'port' => env('DB_PORT_SECOND'),
@@ -81,7 +81,7 @@ return [
             'sslmode' => 'prefer',
         ],
 
-        'pgsql3' => [
+        'btdb01' => [
             'driver' => env('DB_CONNECTION_THIRD'),
             'host' => env('DB_HOST_THIRD'),
             'port' => env('DB_PORT_THIRD'),
@@ -93,6 +93,51 @@ return [
             'schema' => 'public',
             'sslmode' => 'prefer',
         ],
+
+        // 'pgsql' => [
+        //     'driver' => 'mysql',
+        //     'host' => env('DB_HOST', '127.0.0.1'),
+        //     'port' => env('DB_PORT', '3306'),
+        //     'database' => env('DB_DATABASE', 'forge'),
+        //     'username' => env('DB_USERNAME', 'forge'),
+        //     'password' => env('DB_PASSWORD', ''),
+        //     'unix_socket' => env('DB_SOCKET', ''),
+        //     'charset' => 'utf8mb4',
+        //     'collation' => 'utf8mb4_unicode_ci',
+        //     'prefix' => '',
+        //     'strict' => true,
+        //     'engine' => null,
+        // ],
+
+        // 'hr' => [
+        //     'driver' => 'mysql',
+        //     'host' => env('DB_HOST', '127.0.0.1'),
+        //     'port' => env('DB_PORT', '3306'),
+        //     'database' => 'hr',
+        //     'username' => env('DB_USERNAME', 'forge'),
+        //     'password' => env('DB_PASSWORD', ''),
+        //     'unix_socket' => env('DB_SOCKET', ''),
+        //     'charset' => 'utf8mb4',
+        //     'collation' => 'utf8mb4_unicode_ci',
+        //     'prefix' => '',
+        //     'strict' => true,
+        //     'engine' => null,
+        // ],
+
+        // 'btdb01' => [
+        //     'driver' => 'mysql',
+        //     'host' => env('DB_HOST', '127.0.0.1'),
+        //     'port' => env('DB_PORT', '3306'),
+        //     'database' => 'btdb01',
+        //     'username' => env('DB_USERNAME', 'forge'),
+        //     'password' => env('DB_PASSWORD', ''),
+        //     'unix_socket' => env('DB_SOCKET', ''),
+        //     'charset' => 'utf8mb4',
+        //     'collation' => 'utf8mb4_unicode_ci',
+        //     'prefix' => '',
+        //     'strict' => true,
+        //     'engine' => null,
+        // ],
 
         'sqlsrv' => [
             'driver' => 'sqlsrv',

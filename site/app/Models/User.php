@@ -7,7 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    protected $connection = 'pgsql2';
+    protected $connection = 'hr';
     protected $table = 'b_member';
     public $timestamps = false;
 

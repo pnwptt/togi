@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class WorkOrder extends Model
 {
-    protected $connection = 'pgsql3';
+    protected $connection = 'btdb01';
     protected $table = 'v_wo';
     protected $primaryKey = 'i_errorcode_id';
 

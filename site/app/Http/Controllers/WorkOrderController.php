@@ -14,7 +14,7 @@ class WorkOrderController extends Controller
   public function findChecklist(Request $req) {
     $workOrder = WorkOrder::where('c_workorder', $req->c_workorder)->first();
     if ($workOrder) {
-      $series = Series::where('n_series', $workOrder->c_models)->first();
+      $series = Series::where('n_series', $workOrder->c_series)->first();
       if ($series) {
         $form = Form::where('i_models_id', $series->i_models_id)->where('i_status', 1)->first();
         if ($form) {

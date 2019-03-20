@@ -1,6 +1,7 @@
 @extends('layouts.master')
 
 @section('css')
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/fontawesome.css') }}">
   <style>
     .container-fluid {
       padding-bottom: 50px;
@@ -45,6 +46,12 @@
     }
     .machineList {
       height: 100px;
+    }
+    .float-right {
+      float: right;
+    }
+    button.float-right {
+      margin-left: 5px;
     }
   </style>
 @endsection
@@ -197,7 +204,7 @@
                       <input type="text" class="form-control" v-model="item.value">
                     </td>
                     <td v-if="record.machineList.length == 0"></td>
-                    <td></td>
+                    <td><input type="text" class="form-control" v-model="record.mesurementRejectDetail"></td>
                     <td></td>
                   </tr>
                   <tr v-show="mesurementChecklist.length == 0">
@@ -225,7 +232,7 @@
                       <input type="text" class="form-control" v-model="item.value">
                     </td>
                     <td v-if="record.machineList.length == 0"></td>
-                    <td></td>
+                    <td><input type="text" class="form-control" v-model="record.testSpecificationRejectDetail"></td>
                     <td></td>
                   </tr>
                   <tr v-show="testSpecificationChecklist.length == 0">
@@ -242,14 +249,30 @@
 
                   <!-- ========================================== Failure symotom ====================================== -->
                   <tr>
-                    <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7"><i>Failure symotom</i></td>
+                    <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7">
+                      <i>Failure symotom</i> 
+                      <button class="btn btn-danger btn-sm float-right"><span class="fa fa-minus"></span></button>
+                      <button class="btn btn-success btn-sm float-right"><span class="fa fa-plus"></span></button>
+                    </td>
                   </tr>
-                  <tr>
+                  <tr v-show="record.failureSymptomChecklist.length > 0">
                     <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></td>
+                    <td v-for="(item, i) in record.testSpecification" v-if="item.i_checklist_id == errorcode.i_checklist_id">
+                      <input type="text" class="form-control" v-model="item.value">
+                    </td>
+                    <td v-if="record.machineList.length == 0"></td>
+                    <td><input type="text" class="form-control" v-model="record.failureSymptomRejectDetail"></td>
+                    <td></td>
+                  </tr>
+                  <tr v-show="record.failureSymptomChecklist.length == 0">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                     <td></td>
                     <td></td>
                   </tr>
@@ -293,11 +316,11 @@
     var app = new Vue({
       el: '#app',
       data: {
+        showValidateLog: false,
         machineNo: '',
         judgement: 0,
         mesurementChecklist: [],
         testSpecificationChecklist: [],
-        failureSymptomList: [],
         record: {
           c_user: '{{ session()->get("c_user") }}',
           models: '',
@@ -313,7 +336,11 @@
           machineList: [],
           mesurement: [],
           testSpecification: [],
-          failureSymptom: []
+          failureSymptom: [],
+          mesurementRejectDetail: [],
+          testSpecificationRejectDetail: [],
+          failureSymptomChecklist: [],
+          failureSymptomRejectDetail: [],
         }
       },
 
@@ -322,17 +349,27 @@
           var machineNo = this.validateMachineNo(this.machineNo);
           if (machineNo) {
             this.record.machineList.push(machineNo);
+
             this.mesurementChecklist.forEach((item) => {
               app.record.mesurement.push({
                 machineNo: machineNo, 
                 i_checklist_id: item.i_checklist_id, 
-                value: ''})
+                value: ''
+              });
             });
             this.testSpecificationChecklist.forEach((item) => {
               app.record.testSpecification.push({
                 machineNo: machineNo, 
                 i_checklist_id: item.i_checklist_id, 
-                value: ''})
+                value: ''
+              });
+            });
+            this.record.failureSymptomChecklist.forEach((item, index) => {
+              app.record.failureSymptom.push({
+                index: index,
+                machineNo: machineNo,
+                value: ''
+              });
             });
             console.log('Added MachineNo [' + machineNo + '] to list');
             this.machineNo = '';
@@ -373,88 +410,95 @@
           }
         },
 
+        addFailureSymotom() {
+          this.failureSymptomRejectDetail.push({
+            isValid: false,
+            c_rank: '',
+            c_code: '',
+            n_errorcode:
+          });
+        },
+
         // ====================================== Validate Section ======================================
+          validateMachineNo(value) {
+            this.showValidateLog && console.warn('Validate is Starting :: Checking value = [' + value + ']');
 
-        validateMachineNo(value) {
-          console.warn('Validate is Starting :: Checking value = [' + value + ']');
-
-          var newValue = this.formatedMachineNo(value);
-          var machineNo = undefined;
-          if (newValue) {
-            if (this.checkModels(newValue[0]) && this.checkIsExistMachineNo(newValue[1])) {
-              machineNo = newValue[1];
+            var newValue = this.formatedMachineNo(value);
+            var machineNo = undefined;
+            if (newValue) {
+              if (this.checkModels(newValue[0]) && this.checkIsExistMachineNo(newValue[1])) {
+                machineNo = newValue[1];
+              }
             }
-          }
-          console.warn('Validat Ended :: Current MachineNo = [' + machineNo + ']');
-          return machineNo;
-        },
+            this.showValidateLog && console.warn('Validat Ended :: Current MachineNo = [' + machineNo + ']');
+            return machineNo;
+          },
 
-        checkModels(value) {
-          console.log('=> Checking Models :: Current Models = [' + value + '], Expect Models = [' + this.record.c_series + ']');
+          checkModels(value) {
+            this.showValidateLog && console.log('=> Checking Models :: Current Models = [' + value + '], Expect Models = [' + this.record.c_series + ']');
 
-          if (value == this.record.c_series) {
-            console.log(' -> Models is ok :: Models value = [' + value + '=' + this.record.c_series + ']');
-            return true;
-          }
-          console.error(' -> Models is invalid :: [' + value + '!=' + this.record.c_series + ']');
-          return false;
-        },
-
-        checkIsExistMachineNo(value) {
-          console.log('=> Checking MachineNo :: Current MachineNo = [' + value + '], Current List = [' + this.record.machineList + ']');
-
-          if (!this.isInArray(value, this.record.machineList)) {
-            console.log(' -> MachineNo is not exist :: Checked value = [' + value + ']');
-            return true;
-          }
-          console.error(' -> MachineNo is exist :: MachineNo = [' + value + '], Current List = [' + this.record.machineList + ']');
-          this.machineNo = '';
-          return false;
-        },
-
-        formatedMachineNo(value) {
-          console.log('=> Checking format :: Current value = [' + value + ']');
-
-          var newValue = value.split(' ');
-          if (newValue.length == 2) {
-            var models = newValue[0]; var machineNo = newValue[1];
-            if (
-              this.checkLength('Models', models.length, 3) &&
-              this.checkLength('MachineNo', machineNo.length, 8) &&
-              this.checkIsNumber('Models', models) &&
-              this.checkIsNumber('MachineNo', machineNo)
-            ) {
-              console.log(' -> MachineNo format is ok :: Current value = [' + newValue + ']');
-              return newValue;
+            if (value == this.record.c_series) {
+              this.showValidateLog && console.log(' -> Models is ok :: Models value = [' + value + '=' + this.record.c_series + ']');
+              return true;
             }
+            console.error(' -> Models is invalid :: [' + value + '!=' + this.record.c_series + ']');
+            return false;
+          },
+
+          checkIsExistMachineNo(value) {
+            this.showValidateLog && console.log('=> Checking MachineNo :: Current MachineNo = [' + value + '], Current List = [' + this.record.machineList + ']');
+
+            if (!this.isInArray(value, this.record.machineList)) {
+              this.showValidateLog && console.log(' -> MachineNo is not exist :: Checked value = [' + value + ']');
+              return true;
+            }
+            this.showValidateLog && console.error(' -> MachineNo is exist :: MachineNo = [' + value + '], Current List = [' + this.record.machineList + ']');
+            this.machineNo = '';
+            return false;
+          },
+
+          formatedMachineNo(value) {
+            this.showValidateLog && console.log('=> Checking format :: Current value = [' + value + ']');
+
+            var newValue = value.split(' ');
+            if (newValue.length == 2) {
+              var models = newValue[0]; var machineNo = newValue[1];
+              if (
+                this.checkLength('Models', models.length, 3) &&
+                this.checkLength('MachineNo', machineNo.length, 8) &&
+                this.checkIsNumber('Models', models) &&
+                this.checkIsNumber('MachineNo', machineNo)
+              ) {
+                this.showValidateLog && console.log(' -> MachineNo format is ok :: Current value = [' + newValue + ']');
+                return newValue;
+              }
+            }
+            this.showValidateLog && console.error(' -> MachineNo format is invalid :: Current value = [undefined]');
+            return undefined;
+          },
+
+          checkIsNumber(type, value) {
+            this.showValidateLog && console.log('  => Checking ' + type + ' is number :: Current value = [' + value + ']');
+
+            if (! isNaN(Number(value))) {
+              this.showValidateLog && console.log('    -> ' + type + ' is number :: ' + type + ' = [' + value +']');
+              return true;
+            }
+            this.showValidateLog && console.error('    -> ' + type + ' is not number :: ' + type + ' = [NaN]');
+            return false;
+          },
+
+          checkLength(type, length, expect) {
+            this.showValidateLog && console.log('  => Checking ' + type + ' length :: Length = [' + length + '], Expect = [' + expect + ']');
+
+            if (length == expect) {
+              this.showValidateLog && console.log('    -> ' + type + ' length is ok :: [' + length + '=' + expect + ']');
+              return true;
+            }
+            this.showValidateLog && console.error('    -> ' + type + ' length is invalid :: [' + length + '!=' + expect + ']');
+            return false;
           }
-          console.error(' -> MachineNo format is invalid :: Current value = [undefined]');
-          return undefined;
-        },
-
-        checkIsNumber(type, value) {
-          console.log('  => Checking ' + type + ' is number :: Current value = [' + value + ']');
-
-          if (! isNaN(Number(value))) {
-            console.log('    -> ' + type + ' is number :: ' + type + ' = [' + value +']');
-            return true;
-          }
-          console.error('    -> ' + type + ' is not number :: ' + type + ' = [NaN]');
-          return false;
-        },
-
-        checkLength(type, length, expect) {
-          console.log('  => Checking ' + type + ' length :: Length = [' + length + '], Expect = [' + expect + ']');
-
-          if (length == expect) {
-            console.log('    -> ' + type + ' length is ok :: [' + length + '=' + expect + ']');
-            return true;
-          }
-          console.error('    -> ' + type + ' length is invalid :: [' + length + '!=' + expect + ']');
-          return false;
-        }
-
-        // ==============================================================================================
+        // ====================================== Validate Section ======================================
 
       },
 
