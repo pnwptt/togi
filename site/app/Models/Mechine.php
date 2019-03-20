@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Mechine extends Model
+class Machine extends Model
 {
-    protected $table = 'b_mechines';
-    protected $primaryKey = 'i_mechines_id';
+    protected $table = 'b_machines';
+    protected $primaryKey = 'i_machines_id';
     public $timestamps = false;
 }
