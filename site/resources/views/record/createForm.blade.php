@@ -71,7 +71,7 @@
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Order number:</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" autofocus v-model="record.c_order_number" @keyup.enter="findChecklist">
+                        <input type="text" class="form-control" autofocus v-model="record.c_order_number" @keyup.enter="findChecklist()">
                       </div>
                     </div>
                     <div class="form-group row">
@@ -177,7 +177,7 @@
                     <th rowspan="2" width="20%">Inspection detail</th>
                     <th :colspan="record.machineList.length > 0 ? record.machineList.length : 1">
                       Machine no. 
-                      <input type="text" class="form-control input-machine" :disabled="!record.c_series" v-model="machineNo" @keyup.enter="addMachine">
+                      <input type="text" class="form-control input-machine" :disabled="!record.c_series" v-model="machineNo" @keyup.enter="addMachine()">
                       <span class="clear-machine" v-show="machineNo" @click="machineNo = ''">X</span>
                     </th>
                     <th rowspan="2" width="20%">Reject detail</th>
@@ -195,16 +195,16 @@
                   <tr>
                     <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7"><i>Mesurement</i></td>
                   </tr>
-                  <tr v-for="(errorcode, index) in mesurementChecklist" v-show="mesurementChecklist.length > 0">
-                    <td>@{{ index+1 }}</td>
-                    <td>@{{ errorcode.c_rank }}</td>
-                    <td>@{{ errorcode.c_code }}</td>
-                    <td>@{{ errorcode.n_errorcode }}</td>
-                    <td v-for="(item, i) in record.mesurement" v-if="item.i_checklist_id == errorcode.i_checklist_id">
+                  <tr v-for="(cl, index) in mesurementChecklist" v-show="mesurementChecklist.length > 0">
+                    <td align="center">@{{ index + 1 }}</td>
+                    <td align="center">@{{ cl.c_rank }}</td>
+                    <td align="center">@{{ cl.c_code }}</td>
+                    <td>@{{ cl.n_errorcode }}</td>
+                    <td v-for="(item, i) in record.mesurement" v-if="item.i_checklist_id == cl.i_checklist_id">
                       <input type="text" class="form-control" v-model="item.value">
                     </td>
                     <td v-if="record.machineList.length == 0"></td>
-                    <td><input type="text" class="form-control" v-model="record.mesurementRejectDetail"></td>
+                    <td><input type="text" class="form-control" v-model="record.mesurementRejectDetail[index]"></td>
                     <td></td>
                   </tr>
                   <tr v-show="mesurementChecklist.length == 0">
@@ -223,16 +223,16 @@
                   <tr>
                     <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7"><i>Test Specification</i></td>
                   </tr>
-                  <tr v-for="(errorcode, index) in testSpecificationChecklist" v-show="testSpecificationChecklist.length > 0">
-                    <td>@{{ index+1 }}</td>
-                    <td>@{{ errorcode.c_rank }}</td>
-                    <td>@{{ errorcode.c_code }}</td>
-                    <td>@{{ errorcode.n_errorcode }}</td>
-                    <td v-for="(item, i) in record.testSpecification" v-if="item.i_checklist_id == errorcode.i_checklist_id">
+                  <tr v-for="(cl, index) in testSpecificationChecklist" v-show="testSpecificationChecklist.length > 0">
+                    <td align="center">@{{ index + 1 }}</td>
+                    <td align="center">@{{ cl.c_rank }}</td>
+                    <td align="center">@{{ cl.c_code }}</td>
+                    <td>@{{ cl.n_errorcode }}</td>
+                    <td v-for="(item, i) in record.testSpecification" v-if="item.i_checklist_id == cl.i_checklist_id">
                       <input type="text" class="form-control" v-model="item.value">
                     </td>
                     <td v-if="record.machineList.length == 0"></td>
-                    <td><input type="text" class="form-control" v-model="record.testSpecificationRejectDetail"></td>
+                    <td><input type="text" class="form-control" v-model="record.testSpecificationRejectDetail[index]"></td>
                     <td></td>
                   </tr>
                   <tr v-show="testSpecificationChecklist.length == 0">
@@ -249,31 +249,16 @@
 
                   <!-- ========================================== Failure symotom ====================================== -->
                   <tr>
-                    <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7">
-                      <i>Failure symotom</i> 
-                      <button class="btn btn-danger btn-sm float-right"><span class="fa fa-minus"></span></button>
-                      <button class="btn btn-success btn-sm float-right"><span class="fa fa-plus"></span></button>
-                    </td>
+                    <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7"><i>Failure symotom</i></td>
                   </tr>
-                  <tr v-show="record.failureSymptomChecklist.length > 0">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td v-for="(item, i) in record.testSpecification" v-if="item.i_checklist_id == errorcode.i_checklist_id">
-                      <input type="text" class="form-control" v-model="item.value">
-                    </td>
-                    <td v-if="record.machineList.length == 0"></td>
-                    <td><input type="text" class="form-control" v-model="record.failureSymptomRejectDetail"></td>
-                    <td></td>
-                  </tr>
-                  <tr v-show="record.failureSymptomChecklist.length == 0">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                  <tr v-for="(cl, index) in record.failureSymptomChecklist">
+                    <td align="center">@{{ index + 1 }}</td>
+                    <td align="center">@{{ cl.c_rank }}</td>
+                    <td align="center"><input type="text" class="form-control" v-model="cl.c_code" @keyup.enter="findErrorCode(index)"></td>
+                    <td>@{{ cl.n_errorcode }}</td>
+                    <td v-if="record.failureSymptom.length > 0"></td>
+                    <td v-if="record.failureSymptom.length == 0" :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></td>
+                    <td><input type="text" class="form-control" v-model="record.failureSymptomRejectDetail[index]"></td>
                     <td></td>
                   </tr>
                   <!-- ========================================== Failure symotom ====================================== -->
@@ -337,14 +322,29 @@
           i_sampling_qty: 0,
           c_ncr_number: '',
           c_8d_report_no: '',
+
           machineList: [],
+
           mesurement: [],
-          testSpecification: [],
-          failureSymptom: [],
           mesurementRejectDetail: [],
+
+          testSpecification: [],
           testSpecificationRejectDetail: [],
+
           failureSymptomChecklist: [],
+          failureSymptom: [],
           failureSymptomRejectDetail: [],
+        }
+      },
+
+      mounted() {
+        for (var i = 0; i < 5; i++) {
+          this.record.failureSymptomChecklist.push({
+            i_errorcode_id: '',
+            c_rank: '',
+            c_code: '',
+            n_errorcode: ''
+          });
         }
       },
 
@@ -365,13 +365,6 @@
               app.record.testSpecification.push({
                 machineNo: machineNo, 
                 i_checklist_id: item.i_checklist_id, 
-                value: ''
-              });
-            });
-            this.record.failureSymptomChecklist.forEach((item, index) => {
-              app.record.failureSymptom.push({
-                index: index,
-                machineNo: machineNo,
                 value: ''
               });
             });
@@ -397,31 +390,34 @@
               }
             })
             .then((response) => {
-              if (response.data) {
-                var workOrder = response.data.workOrder;
-                app.record.models = response.data.models;
-                app.record.c_part_number = workOrder.c_item ? workOrder.c_item : '';
-                app.record.c_series = workOrder.c_series;
-                app.record.c_customer = workOrder.country;
-                app.mesurementChecklist = response.data.mesurementChecklist;
-                app.testSpecificationChecklist = response.data.testSpecificationChecklist;
-              } else {
-                alert('Order number is invalid or not found.');
-                app.record.c_order_number = "";
-              }
+              var workOrder = response.data.workOrder;
+              app.record.models = response.data.models;
+              app.record.c_part_number = workOrder.c_item ? workOrder.c_item : '';
+              app.record.c_series = workOrder.c_series;
+              app.record.c_customer = workOrder.country;
+              app.mesurementChecklist = response.data.mesurementChecklist;
+              app.testSpecificationChecklist = response.data.testSpecificationChecklist;
               app.processing = false;
+            }).catch((error) => {
+              alert('Order number is invalid or not found.');
+              app.record.c_order_number = "";
+              this.processing = false;
             });
           }
         },
-
-        addFailureSymotom() {
-        //   this.failureSymptomRejectDetail.push({
-        //     isValid: false,
-        //     c_rank: '',
-        //     c_code: '',
-        //     n_errorcode: 
-        //   });
-         },
+        findErrorCode(index) {
+          axios.get('{{ route("findErrorcode") }}', {
+            params: {
+              c_code: this.record.failureSymptomChecklist[index].c_code
+            }
+          })
+          .then((response) => {
+            var errorcode = response.data;
+            this.record.failureSymptomChecklist[index].i_errorcode_id = errorcode.i_errorcode_id;
+            this.record.failureSymptomChecklist[index].c_rank = errorcode.c_rank;
+            this.record.failureSymptomChecklist[index].n_errorcode = errorcode.n_errorcode;
+          });
+        },
 
         // ====================================== Validate Section ======================================
           validateMachineNo(value) {
