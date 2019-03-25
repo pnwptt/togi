@@ -303,6 +303,10 @@
                   </tr>
                 </thead>
               </table>
+              <div class="form-group">
+                <label for="remark">Remark</label>
+                <textarea class="form-control" id="exampleTextarea" rows="3"> </textarea>
+              </div>
           </div>
         </div>
       </div>
@@ -411,13 +415,13 @@
         },
 
         addFailureSymotom() {
-          this.failureSymptomRejectDetail.push({
-            isValid: false,
-            c_rank: '',
-            c_code: '',
-            n_errorcode:
-          });
-        },
+        //   this.failureSymptomRejectDetail.push({
+        //     isValid: false,
+        //     c_rank: '',
+        //     c_code: '',
+        //     n_errorcode: 
+        //   });
+         },
 
         // ====================================== Validate Section ======================================
           validateMachineNo(value) {

@@ -22,7 +22,7 @@ class ModelsController extends Controller
 
   public function editForm($id)
   {
-    $series = Sereis::where('i_series_deleted', 0)->get();
+    $series = Series::where('i_series_deleted', 0)->get();
     $models = Models::where('i_models_id', $id)->first();
     return view('models.editForm', compact('series', 'models'));
   }

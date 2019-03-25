@@ -18,7 +18,7 @@
     <div class="row">
       <div class="col-sm-8"><h3>Models / Series</h3></div>
       <div class="col-sm-2">
-        <a href="{{ route('createModelsForm') }}" class="btn btn-primary btn-ms btn-block">Add Model</a>
+        <a href="{{ route('createModelsForm') }}" class="btn btn-info btn-ms btn-block">Add Model</a>
       </div>
       <div class="col-sm-2">
         <a href="{{ route('createSeriesForm') }}" class="btn btn-success btn-ms btn-block">Add Series</a>
