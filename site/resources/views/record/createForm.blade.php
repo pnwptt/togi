@@ -200,7 +200,7 @@
                   </tr>
                   <!-- ============================================= Mesurement ======================================== -->
                   <tr>
-                    <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7"><i>Mesurement</i></td>
+                    <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7" class="table-light"><i>Mesurement</i></td>
                   </tr>
                   <tr v-for="(cl, index) in record.mesurementChecklist" v-show="record.mesurementChecklist.length > 0">
                     <td align="center">@{{ index + 1 }}</td>
@@ -228,7 +228,7 @@
 
                   <!-- ========================================== Test Specification =================================== -->
                   <tr>
-                    <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7"><i>Test Specification</i></td>
+                    <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7" class="table-light"><i>Test Specification</i></td>
                   </tr>
                   <tr v-for="(cl, index) in record.testSpecificationChecklist" v-show="record.testSpecificationChecklist.length > 0">
                     <td align="center">@{{ index + 1 }}</td>
@@ -256,7 +256,7 @@
 
                   <!-- ========================================== Failure symotom ====================================== -->
                   <tr>
-                    <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7"><i>Failure symotom</i></td>
+                    <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7" class="table-light"><i>Failure symotom</i></td>
                   </tr>
                   <tr v-for="(cl, index) in record.failureSymptomChecklist">
                     <td align="center">@{{ index + 1 }}</td>
@@ -268,7 +268,7 @@
                     </td>
                     <td v-if="record.failureSymptom.length == 0" :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></td>
                     <td><input type="text" class="form-control" v-model="record.failureSymptomRejectDetail[index]"></td>
-                    <td class="table-secondary"></td>
+                    <td class="table-light"></td>
                   </tr>
                   <!-- ========================================== Failure symotom ====================================== -->
 
@@ -277,7 +277,7 @@
                     <th colspan="4">Total</th>
                     <th v-for="(machine, index) in record.machineList">@{{ totalByMachineNo(index) }}</th>
                     <th v-if="record.machineList.length == 0"></th>
-                    <th class="table-secondary"></th>
+                    <th class="table-light"></th>
                     <th>@{{ total() }}</th>
                   </tr>
                   <tr>
@@ -362,7 +362,7 @@
             n_errorcode: ''
           });
         }
-        this.record.c_order_number = 'wo-123456'; // for dev
+        //this.record.c_order_number = 'wo-123456'; // for dev
       },
 
       methods: {
