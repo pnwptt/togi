@@ -67,7 +67,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-11"><h4>Create PPA Inspection Record Form</h4></div>
-        <div class="col-md-1 pd-b-8"><button class="btn btn-success btn-block">Save</button></div>
+        <div class="col-md-1 pd-b-8"><button class="btn btn-success btn-block" @click="save()">Save</button></div>
       </div>
       <div class="row">
         <div class="col-md-12">
@@ -78,7 +78,7 @@
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Order number:</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" autofocus v-model="record.c_order_number" @keyup.enter="findChecklist()">
+                        <input type="text" class="form-control" autofocus v-model="record.c_order_number" @keyup="findChecklist($event)">
                       </div>
                     </div>
                     <div class="form-group row">
@@ -124,11 +124,11 @@
                     <h5 class="header-italic">Lot Judgement</h5>
                     <div class="form-group" align="center">
                       <div class="custom-control custom-radio">
-                        <input class="custom-control-input" type="radio" v-model="judgement" value="1" id="judgementAccept">
+                        <input class="custom-control-input" type="radio" v-model="record.judgement" value="1" id="judgementAccept">
                         <label class="custom-control-label" for="judgementAccept">Accept</label>
                       </div>
                       <div class="custom-control custom-radio">
-                        <input class="custom-control-input" type="radio" v-model="judgement" value="-1" id="judgementReject">
+                        <input class="custom-control-input" type="radio" v-model="record.judgement" value="-1" id="judgementReject">
                         <label class="custom-control-label" for="judgementReject">Reject</label>
                       </div>
                     </div>
@@ -136,13 +136,13 @@
                       <label class="col-sm-4">NCR No.</label>
                       
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" :disabled="judgement != -1" v-model="record.c_ncr_number">
+                        <input type="text" class="form-control" :disabled="record.judgement != -1" v-model="record.c_ncr_number">
                       </div>
                     </div>
                     <div class="form-group row">
                       <label class="col-sm-4">8D Report No.</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" :disabled="judgement != -1" v-model="record.c_8d_report_no">
+                        <input type="text" class="form-control" :disabled="record.judgement != -1" v-model="record.c_8d_report_no">
                       </div>
                     </div>
                   </td>
@@ -211,7 +211,7 @@
                       <input type="text" class="form-control" v-model="item.value" @blur="checkError(i, item.checklistIndex, 'mesurement')">
                     </td>
                     <td v-if="record.machineList.length == 0"></td>
-                    <td><input type="text" class="form-control" v-model="record.mesurementRejectDetail[index]"></td>
+                    <td><input type="text" class="form-control" v-model="record.mesurementRejectDetail[index].value" v-if="record.mesurementRejectDetail.length > 0"></td>
                     <td align="center">@{{ totalByErrorcode(index, 'mesurement') }}</td>
                   </tr>
                   <tr v-show="record.mesurementChecklist.length == 0">
@@ -239,7 +239,7 @@
                       <input type="text" class="form-control" v-model="item.value" @blur="checkError(i, item.checklistIndex, 'testSpecification')">
                     </td>
                     <td v-if="record.machineList.length == 0"></td>
-                    <td><input type="text" class="form-control" v-model="record.testSpecificationRejectDetail[index]"></td>
+                    <td><input type="text" class="form-control" v-model="record.testSpecificationRejectDetail[index].value" v-if="record.testSpecificationRejectDetail.length > 0"></td>
                     <td align="center">@{{ totalByErrorcode(index, 'testSpecification') }}</td>
                   </tr>
                   <tr v-show="record.testSpecificationChecklist.length == 0">
@@ -261,13 +261,13 @@
                   <tr v-for="(cl, index) in record.failureSymptomChecklist">
                     <td align="center">@{{ index + 1 }}</td>
                     <td align="center">@{{ cl.c_rank }}</td>
-                    <td align="center"><input type="text" class="form-control" v-model="cl.c_code" @keyup.enter="findErrorCode(index)"></td>
+                    <td align="center"><input type="text" class="form-control" v-model="cl.c_code"  @keyup="findErrorCode(index, $event)"></td>
                     <td>@{{ cl.n_errorcode }}</td>
                     <td v-for="(item, i) in record.failureSymptom" v-if="item.errorcodeIndex == index">
                       <input type="checkbox" class="form-control" v-model="item.value">
                     </td>
                     <td v-if="record.failureSymptom.length == 0" :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></td>
-                    <td><input type="text" class="form-control" v-model="record.failureSymptomRejectDetail[index]"></td>
+                    <td><input type="text" class="form-control" v-model="record.failureSymptomRejectDetail[index].value" v-if="record.failureSymptomRejectDetail[index]"></td>
                     <td class="table-light"></td>
                   </tr>
                   <!-- ========================================== Failure symotom ====================================== -->
@@ -287,7 +287,7 @@
                     </th>
                     <th v-if="record.machineList.length == 0"></th>
                     <th rowspan="2">Total R/J (M/C)</th>
-                    <th rowspan="2"></th>
+                    <td rowspan="2" align="center"><input type="number" class="form-control" v-model="record.totalRJMC"></td>
                   </tr>
                   <tr>
                     <th colspan="4">Accept/Reject</th>
@@ -317,21 +317,23 @@
       data: {
         showValidateLog: false,
         machineNo: '',
-        judgement: 0,
         palletClass: ['', 'table-success', 'table-danger', ''],
         totalFailByMachine: [],
         record: {
-          c_user: '{{ session()->get("c_user") }}',
           models: '',
-          today: '{{ date("Y-m-d") }}',
           c_order_number: '',
           c_part_number: '',
           c_series: '',
           c_customer: '',
           i_qty: 0,
+          c_user: '{{ session()->get("c_user") }}',
           i_sampling_qty: 0,
+          today: '{{ date("Y-m-d") }}',
+          judgement: 0,
           c_ncr_number: '',
           c_8d_report_no: '',
+          totalRJMC: 0,
+          i_models_id: '',
 
           machineList: [],
 
@@ -399,7 +401,7 @@
             });
 
             this.record.failureSymptomChecklist.forEach((item, index) => {
-              this.record.failureSymptom.push({
+              app.record.failureSymptom.push({
                 machineNo: machineNo,
                 errorcodeIndex: index,
                 i_errorcode_id: item.i_errorcode_id,
@@ -412,59 +414,114 @@
           }
         },
 
-        rotateClass() {
-          return this.record.machineList.length > 4 ? 'rotate-90' : '';
+        findChecklist(event) {
+          if (event.key == 'Enter') {
+            if (this.record.c_order_number && !this.processing) {
+              this.processing = true;
+              axios.get('{{ route("findChecklist") }}', {
+                params: {
+                  c_workorder: this.record.c_order_number.toUpperCase()
+                }
+              })
+              .then((response) => {
+                var workOrder = response.data.workOrder;
+                this.record.models = response.data.models.n_models_name;
+                this.record.c_part_number = workOrder.c_item ? workOrder.c_item : '';
+                this.record.c_series = workOrder.c_series;
+                this.record.c_customer = workOrder.country;
+                this.record.mesurementChecklist = response.data.mesurementChecklist;
+                this.record.testSpecificationChecklist = response.data.testSpecificationChecklist;
+                response.data.mesurementChecklist.forEach((item, index) => {
+                  app.record.mesurementRejectDetail.push({
+                    checklistIndex: index,
+                    i_checklist_id: item.i_checklist_id,
+                    value: ''
+                  });
+                });
+                response.data.testSpecificationChecklist.forEach((item, index) => {
+                  app.record.testSpecificationRejectDetail.push({
+                    checklistIndex: index,
+                    i_checklist_id: item.i_checklist_id,
+                    value: ''
+                  });
+                });
+                this.processing = false;
+              }).catch((error) => {
+                alert('Order number is invalid or not found.');
+                this.record.c_order_number = "";
+                this.processing = false;
+              });
+            }
+          } else {
+            this.record.models = '';
+            this.record.c_part_number = '';
+            this.record.c_series = '';
+            this.record.c_customer = '';
+            this.record.i_qty = 0;
+            this.record.i_sampling_qty = 0;
+            this.record.judgement = 0;
+            this.record.i_models_id = '';
+            this.record.machineList = [];
+            this.record.mesurementChecklist = [];
+            this.record.mesurement = [];
+            this.record.mesurementRejectDetail = [];
+            this.record.testSpecificationChecklist = [];
+            this.record.testSpecification = [];
+            this.record.testSpecificationRejectDetail = [];
+            this.record.failureSymptom = [];
+            this.record.palletList = [];
+            this.record.totalRJMC = 0;
+            this.totalFailByMachine = [];
+          }
         },
 
-        isInArray(value, array) {
-          return array.indexOf(value) > -1;
-        },
-
-        findChecklist() {
-          if (this.record.c_order_number && !this.processing) {
-            this.processing = true;
-            axios.get('{{ route("findChecklist") }}', {
+        findErrorCode(index, event) {
+          if (event.key == 'Enter') {
+            axios.get('{{ route("findErrorcode") }}', {
               params: {
-                c_workorder: app.record.c_order_number.toUpperCase()
+                c_code: this.record.failureSymptomChecklist[index].c_code
               }
             })
             .then((response) => {
-              var workOrder = response.data.workOrder;
-              app.record.models = response.data.models;
-              app.record.c_part_number = workOrder.c_item ? workOrder.c_item : '';
-              app.record.c_series = workOrder.c_series;
-              app.record.c_customer = workOrder.country;
-              app.record.mesurementChecklist = response.data.mesurementChecklist;
-              app.record.testSpecificationChecklist = response.data.testSpecificationChecklist;
-              app.processing = false;
-            }).catch((error) => {
-              alert('Order number is invalid or not found.');
-              app.record.c_order_number = "";
-              this.processing = false;
+              var errorcode = response.data;
+              this.record.failureSymptomChecklist[index].i_errorcode_id = errorcode.i_errorcode_id;
+              this.record.failureSymptomChecklist[index].c_rank = errorcode.c_rank;
+              this.record.failureSymptomChecklist[index].n_errorcode = errorcode.n_errorcode;
+              this.record.failureSymptomRejectDetail[index] = {
+                i_errorcode_id: errorcode.i_errorcode_id,
+                errorcodeIndex: index,
+                value: ''
+              };
+
+              this.record.failureSymptom.forEach((item) => {
+                if (item.errorcodeIndex == index) {
+                  item.i_errorcode_id = errorcode.i_errorcode_id;
+                  item.c_rank = errorcode.c_rank;
+                }
+              });
             });
+          } else {
+            this.record.failureSymptomRejectDetail[index] = null;
+            this.record.failureSymptomChecklist[index].i_errorcode_id = null;
+            this.record.failureSymptomChecklist[index].c_rank = null;
+            this.record.failureSymptomChecklist[index].n_errorcode = null;
           }
         },
-        findErrorCode(index) {
-          axios.get('{{ route("findErrorcode") }}', {
-            params: {
-              c_code: this.record.failureSymptomChecklist[index].c_code
-            }
-          })
-          .then((response) => {
-            var errorcode = response.data;
-            this.record.failureSymptomChecklist[index].i_errorcode_id = errorcode.i_errorcode_id;
-            this.record.failureSymptomChecklist[index].c_rank = errorcode.c_rank;
-            this.record.failureSymptomChecklist[index].n_errorcode = errorcode.n_errorcode;
 
-            this.record.failureSymptom.forEach((item) => {
-              if (item.errorcodeIndex == index) {
-                item.i_errorcode_id = errorcode.i_errorcode_id;
-                item.c_rank = errorcode.c_rank;
-              }
-            });
+        save() {
+          this.processing = true;
+          axios.post('{{ route("createRecord") }}', this.record)
+          .then((response) => {
+            alert('Saved.');
+            this.processing = false;
+          })
+          .catch((error) => {
+            alert('Ops! Something went wrong.');
+            this.processing = false;
           });
         },
 
+        // ====================================== Calulate Section ======================================
         checkError(index, checklistIndex, type) {
           switch(type) {
             case 'mesurement':
@@ -499,7 +556,14 @@
           }
         },
 
-        // ====================================== Calulate Section ======================================
+        rotateClass() {
+          return this.record.machineList.length > 4 ? 'rotate-90' : '';
+        },
+
+        isInArray(value, array) {
+          return array.indexOf(value) > -1;
+        },
+
         totalByMachineNo(index) {
           var total = 0, m = [], t = [], fa = [], fb = [], fc = [];
           m = this.record.mesurement.filter((m) => m.machineNo == this.record.machineList[index] && m.fail);
@@ -511,6 +575,7 @@
           this.totalFailByMachine[index] = total;
           return total;
         },
+
         totalByErrorcode(index, type) {
           var list = [];
           switch(type) {
@@ -523,6 +588,7 @@
           }
           return list.length;
         },
+
         total() {
           var total = 0;
           if (this.totalFailByMachine.length > 0) {
@@ -617,10 +683,14 @@
       },
 
       watch: {
-        judgement: function (newValue, oldValue) {
-          if (newValue == 1) {
-            this.record.c_ncr_number = '';
-            this.record.c_8d_report_no = '';
+        'record.judgement': function (newValue, oldValue) {
+          switch(newValue) {
+            case 0:
+            case 1:
+              this.record.c_ncr_number = '';
+              this.record.c_8d_report_no = '';
+              break;
+            default:
           }
         }
       }

@@ -20,7 +20,7 @@ class WorkOrderController extends Controller
         if ($form) {
           $mesurementChecklist = Checklist::getChecklistByErrorcodeType($form->i_form_id, 1);
           $testSpecificationChecklist = Checklist::getChecklistByErrorcodeType($form->i_form_id, 2);
-          $models = $series->getModels->n_models_name;
+          $models = $series->getModels;
           return compact('workOrder', 'models', 'mesurementChecklist', 'testSpecificationChecklist');
         } else {
           abort(400, 'Form not found.');          
