@@ -44,6 +44,7 @@ class ChecklistController extends Controller
 
     public function create(Request $req)
     {
+      DB::beginTransaction();
       try {
         // Insert New Form
         $formId = Form::insertGetId([
@@ -62,7 +63,10 @@ class ChecklistController extends Controller
             'i_checklist_deleted' => 0
           ]);
         }
+
+        DB::commit();
       } catch (Exception $e) {
+        DB::rollback();
         throw $e;
       }
       return 'success';
@@ -70,6 +74,7 @@ class ChecklistController extends Controller
     
     public function edit(Request $req)
     {
+      DB::beginTransaction();
       try {
         // Update New Form
         Form::where('i_form_id', $req->i_form_id)->update([
@@ -104,7 +109,10 @@ class ChecklistController extends Controller
             'i_checklist_deleted' => 0,
           ]);
         }
+        
+        DB::commit();
       } catch (Exception $e) {
+        DB::rollback();
         throw $e;
       }
       return 'success';

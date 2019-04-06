@@ -18,11 +18,30 @@
                 <th>Insp. Date</th>
                 <th>P/N</th>
                 <th>Destination</th>
-                <th>Order Qty</th>
-                <th>Insp. Qty</th>
-                <th>R/J Qty</th>
+                <th>Order Qty (m/c)</th>
+                <th>Insp. Qty (m/c)</th>
+                <th>R/J Qty (m/c)</th>
+                <th>Pallet Qty</th>
+                <th>Rework</th>
+                <th>Action</th>
               </tr>
             </thead>
+            <tbody>
+              @foreach($records as $record)
+                <tr>
+                  <td>{{ $record->c_order_number }}</td>
+                  <td>{{ $record->insp_date }}</td>
+                  <td>{{ $record->c_part_number }}</td>
+                  <td>{{ $record->c_customer }}</td>
+                  <td>{{ $record->i_qty }}</td>
+                  <td>{{ $record->sampling_qty }}</td>
+                  <td>{{ $record->total_rjmc }}</td>
+                  <td>{{ $record->pallet_qty }}</td>
+                  <td>{{ $record->rework }}</td>
+                  <td></td>
+                </tr>
+              @endforeach
+            </tbody>
           </table>
         </div>
       </div>

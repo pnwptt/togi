@@ -317,7 +317,7 @@
       data: {
         showValidateLog: false,
         machineNo: '',
-        palletClass: ['', 'table-success', 'table-danger', ''],
+        palletClass: ['table-success', 'table-danger'],
         totalFailByMachine: [],
         record: {
           models: '',
@@ -426,6 +426,7 @@
               .then((response) => {
                 var workOrder = response.data.workOrder;
                 this.record.models = response.data.models.n_models_name;
+                this.record.i_models_id = response.data.models.i_models_id;
                 this.record.c_part_number = workOrder.c_item ? workOrder.c_item : '';
                 this.record.c_series = workOrder.c_series;
                 this.record.c_customer = workOrder.country;
@@ -513,6 +514,7 @@
           axios.post('{{ route("createRecord") }}', this.record)
           .then((response) => {
             alert('Saved.');
+            window.location.href = '{{ route("record") }}';
             this.processing = false;
           })
           .catch((error) => {
@@ -550,10 +552,7 @@
         },
 
         togglePalletStatus(index) {
-          this.record.palletList[index].status = this.record.palletList[index].status + 1;
-          if (this.record.palletList[index].status > 2) {
-            this.record.palletList[index].status = 0;
-          }
+          this.record.palletList[index].status = this.record.palletList[index].status == 0 ? 1 : 0;
         },
 
         rotateClass() {
