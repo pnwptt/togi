@@ -62,7 +62,7 @@
           <div class="form form-horizontal">
             <label><b>Action</b></label>
             <div class="form-group" align="center">
-              <button type="button" class="btn btn-success btn-block" @click="addErrorcode">Add</button>
+              <button type="button" class="btn btn-success btn-block" @click="addErrorcode()">Add</button>
             </div>
           </div>
         </div>
@@ -187,28 +187,30 @@
             this.processing = true;
             axios.get('{{ route("checkerrorcode") }}', {
               params: {
-                code: app.currentErrorcode
+                code: this.currentErrorcode
               }
             })
             .then((response) => {
-              if (response.data && app.errorcodeList.filter(app.isOnList).length == 0) {
-                app.errorcodeList.push({
+              if (response.data && this.errorcodeList.filter(this.isOnList).length == 0) {
+                this.errorcodeList.push({
                   id: response.data.i_errorcode_id,
                   code: response.data.c_code,
                   name: response.data.n_errorcode,
                   type: response.data.i_errorcode_type_id,
-                  min: app.currentMin,
-                  max: app.currentMax
+                  min: this.currentMin,
+                  max: this.currentMax
                 });
               } else {
                 alert('This Errorcode is already in list.');
               }
-              app.currentErrorcode = '';
-              app.processing = false;
+              this.currentErrorcode = '';
+              this.currentMin = '';
+              this.currentMax = '';
+              this.processing = false;
             })
             .catch((error) => {
               alert('Ops! Something went wrong.');
-              app.processing = false;
+              this.processing = false;
             });
           }
         },

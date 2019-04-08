@@ -18,9 +18,12 @@
                 <th>Insp. Date</th>
                 <th>P/N</th>
                 <th>Destination</th>
-                <th>Order Qty</th>
-                <th>Insp. Qty</th>
-                <th>R/J Qty</th>
+                <th>Order Qty (m/c)</th>
+                <th>Insp. Qty (m/c)</th>
+                <th>R/J Qty (m/c)</th>
+                <th>Pallet Qty</th>
+                <th>Rework</th>
+
               </tr>
             </thead>
           </table>

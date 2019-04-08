@@ -12,7 +12,7 @@ use App\Models\Checklist;
 class WorkOrderController extends Controller
 {
   public function findChecklist(Request $req) {
-    $workOrder = WorkOrder::where('c_workorder', $req->c_workorder)->first();
+    $workOrder = WorkOrder::where('c_workorder_sell', $req->c_workorder)->whereNotNull('c_series')->first();
     if ($workOrder) {
       $series = Series::where('n_series', $workOrder->c_series)->first();
       if ($series) {

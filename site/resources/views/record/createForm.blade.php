@@ -525,25 +525,24 @@
         checkError(index, checklistIndex, type) {
           switch(type) {
             case 'mesurement':
-              this.record.mesurement[index].fail = false;
-              if (this.record.mesurement[index].value) {
-                if (
-                  Number(this.record.mesurement[index].value) < Number(this.record.mesurementChecklist[checklistIndex].f_min_value) ||
-                  Number(this.record.mesurement[index].value) > Number(this.record.mesurementChecklist[checklistIndex].f_max_value)
-                ) {
-                  this.record.mesurement[index].fail = true;
-                }
+              var value = this.record.mesurement[index].value;
+              if (value) {
+                var min = this.record.mesurementChecklist[checklistIndex].f_min_value;
+                var max = this.record.mesurementChecklist[checklistIndex].f_max_value;
+                
+                this.record.mesurement[index].fail = 
+                  (min && Number(value) < Number(min)) || (max && Number(value) > Number(max)) 
+                  ? true : false;
               }
               break;
             case 'testSpecification':
-              this.record.testSpecification[index].fail = false;
-              if (this.record.testSpecification[index].value) {
-                if (
-                  Number(this.record.testSpecification[index].value) < Number(this.record.testSpecificationChecklist[checklistIndex].f_min_value) ||
-                  Number(this.record.testSpecification[index].value) > Number(this.record.testSpecificationChecklist[checklistIndex].f_max_value)
-                ) {
-                  this.record.testSpecification[index].fail = true;
-                }
+              var value = this.record.testSpecification[index].value;
+              if (value) {
+                var min = this.record.testSpecificationChecklist[checklistIndex].f_min_value;
+                var max = this.record.testSpecificationChecklist[checklistIndex].f_max_value;
+                this.record.testSpecification[index].fail = 
+                  (min && Number(value) < Number(min)) || (max && Number(value) > Number(max)) 
+                  ? true : false;
               }
               break;
           }

@@ -33,7 +33,7 @@
           <div class="form-group">
             <label><b>Rank</b></label>
               <select name="c_rank" class="form-control">
-                <option value="">- Select Rank - </option>
+                <option value=" ">- Select Rank -</option>
                   <option value="A">A</option>
                   <option value="B">B</option>
                   <option value="C">C</option>
