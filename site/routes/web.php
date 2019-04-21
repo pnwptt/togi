@@ -64,6 +64,9 @@ Route::post('/checklist/status', 'ChecklistController@status')->name('statusChec
 Route::get('/record', 'RecordController@index')->name('record');
 Route::get('/record/create', 'RecordController@createForm')->name('createRecordForm');
 Route::post('/record/create', 'RecordController@create')->name('createRecord');
-Route::get('/record/edit/{id}', 'RecordController@editForm')->name('editRecordForm');
+Route::get('/record/edit/{wo}', 'RecordController@editForm')->name('editRecordForm');
 Route::post('/record/edit', 'RecordController@edit')->name('editRecord');
-Route::get('/record/delete/{id}', 'RecordController@delete')->name('deleteRecord');
+Route::get('/record/view/{wo}', 'RecordController@viewRecord')->name('viewRecord');
+Route::get('/record/approve/{wo}', 'RecordController@approve')->name('approveRecord');
+Route::get('/record/reject/{wo}', 'RecordController@reject')->name('rejectRecord');
+// Route::get('/record/delete/{id}', 'RecordController@delete')->name('deleteRecord');

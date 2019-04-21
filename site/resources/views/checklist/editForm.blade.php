@@ -191,17 +191,21 @@
               }
             })
             .then((response) => {
-              if (response.data && this.errorcodeList.filter(this.isOnList).length == 0) {
-                this.errorcodeList.push({
-                  id: response.data.i_errorcode_id,
-                  code: response.data.c_code,
-                  name: response.data.n_errorcode,
-                  type: response.data.i_errorcode_type_id,
-                  min: this.currentMin,
-                  max: this.currentMax
-                });
+              if (response.data) {
+                if (this.errorcodeList.filter(this.isOnList).length == 0) {
+                  this.errorcodeList.push({
+                    id: response.data.i_errorcode_id,
+                    code: response.data.c_code,
+                    name: response.data.n_errorcode,
+                    type: response.data.i_errorcode_type_id,
+                    min: this.currentMin,
+                    max: this.currentMax
+                  });
+                } else {
+                  alert('This Errorcode is already in list.');
+                }
               } else {
-                alert('This Errorcode is already in list.');
+                alert('This Errorcode has invalid type.');
               }
               this.currentErrorcode = '';
               this.currentMin = '';

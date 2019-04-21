@@ -16,7 +16,7 @@ class Checklist extends Model
         return $this->belongsTo('App\Models\Errorcode', 'i_errorcode_id');
     }
 
-    static function getChecklistByErrorcodeType($i_form_id, $i_errorcode_type_id)
+    static function getChecklistByFromId($i_form_id, $i_errorcode_type_id)
     {
         return DB::table('b_checklists')
             ->join('b_errorcode', 'b_errorcode.i_errorcode_id', '=', 'b_checklists.i_errorcode_id')
@@ -24,5 +24,11 @@ class Checklist extends Model
             ->where('i_errorcode_type_id', $i_errorcode_type_id)
             ->where('i_checklist_deleted', 0)
             ->get();
+    }
+
+    static function getChecklistByModelsId($i_models_id, $i_errorcode_type_id)
+    {
+        $form = Form::where('i_models_id', $i_models_id)->where('i_status', 1)->first();
+        return Checklist::getChecklistByFromId($form->i_form_id, $i_errorcode_type_id);
     }
 }

@@ -44,14 +44,14 @@ class ModelsController extends Controller
 
   public function edit(Request $req)
   {
-    $models = Models::where('n_models_name', $req->n_models_name)->first();
+    $models = Models::where('i_models_id', $req->i_models_id)->first();
     if ($models) {
-        return redirect()->route('models')->with('error', 'Create Fail!')->with('message', "Model: $req->n_models_name is already taken.");
-    } else {
       Models::where('i_models_id', $req->i_models_id)->update([
         'n_models_name' => $req->n_models_name,
         'i_pallet_qty' => $req->i_pallet_qty
       ]);
+    } else {
+      return redirect()->route('models')->with('error', 'Edit Fail!')->with('message', "Something went wrong.");
     }
     return redirect()->route('models');
   }

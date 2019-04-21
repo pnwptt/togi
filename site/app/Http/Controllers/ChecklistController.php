@@ -37,8 +37,8 @@ class ChecklistController extends Controller
     public function viewForm($id)
     {
       $form = Form::where('i_form_id', $id)->first();
-      $errorcodeListMeasurement = Checklist::getChecklistByErrorcodeType($id, 1);
-      $errorcodeListTestSpecification = Checklist::getChecklistByErrorcodeType($id, 2);
+      $errorcodeListMeasurement = Checklist::getChecklistByFromId($id, 1);
+      $errorcodeListTestSpecification = Checklist::getChecklistByFromId($id, 2);
       return view('checklist.viewForm', compact('form', 'errorcodeListMeasurement', 'errorcodeListTestSpecification'));
     }
 
@@ -53,7 +53,7 @@ class ChecklistController extends Controller
           'i_status' => 0,
           'd_form_created' => DB::raw('CURRENT_TIMESTAMP')
         ],'i_form_id');
-        
+
         // Insert New Checklist
         $checklistItem = [];
         foreach ($req->errorcodeList as $errorcode) {
@@ -79,10 +79,11 @@ class ChecklistController extends Controller
     {
       DB::beginTransaction();
       try {
-        // Update New Form
+        // Update Old Form
         Form::where('i_form_id', $req->i_form_id)->update([
           'i_models_id' => $req->i_models_id
         ]);
+        
         // Delete Old Checklist (Hard Delete)
         $checklistDeleted = Checklist::where('i_form_id', $req->i_form_id)->where('i_checklist_deleted', 1)->get();
         if (count($checklistDeleted) > 1) {
@@ -92,6 +93,7 @@ class ChecklistController extends Controller
           }
           Checklist::whereIn('i_checklist_id', $checklistDeletedIdList)->delete();
         }
+
         // Delete Old Checklist (Soft Delete)
         $checklist = Checklist::where('i_form_id', $req->i_form_id)->where('i_checklist_deleted', 0)->get();
         $checklistIdList = [];
@@ -103,15 +105,17 @@ class ChecklistController extends Controller
         ]);
 
         // Insert New Checklist
+        $checklistItem = [];
         foreach ($req->errorcodeList as $errorcode) {
-          Checklist::insert([
+          $checklistItem[] = [
             'i_form_id' => $req->i_form_id,
             'i_errorcode_id' => $errorcode['id'],
             'f_min_value' => $errorcode['min'],
             'f_max_value' => $errorcode['max'],
-            'i_checklist_deleted' => 0,
-          ]);
+            'i_checklist_deleted' => 0
+          ];
         }
+        Checklist::insert($checklistItem);
         
         DB::commit();
       } catch (Exception $e) {
@@ -136,7 +140,7 @@ class ChecklistController extends Controller
     public function checkerrorcode(Request $req)
     {
       if($req->code) {
-        return Errorcode::where('c_code', $_GET['code'])->first();
+        return Errorcode::where('c_code', $_GET['code'])->where('i_errorcode_type_id', '!=', 3)->first();
       }
     }
 

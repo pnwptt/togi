@@ -34,9 +34,9 @@
             <label><b>Rank</b></label>
               <select name="c_rank" class="form-control">
                 <option value=" ">- Select Rank -</option>
-                  <option value="A">A</option>
-                  <option value="B">B</option>
-                  <option value="C">C</option>
+                  <option value="A" {{ $errorcode->c_rank === 'A' ? 'selected' : '' }}>A</option>
+                  <option value="B" {{ $errorcode->c_rank === 'B' ? 'selected' : '' }}>B</option>
+                  <option value="C" {{ $errorcode->c_rank === 'C' ? 'selected' : '' }}>C</option>
               </select>
           </div>
           <div class="form-group" align="center">

@@ -199,77 +199,77 @@
                     <th class="machineList" v-if="record.machineList.length == 0"></th>
                   </tr>
                   <!-- ============================================= Mesurement ======================================== -->
-                  <tr>
-                    <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7" class="table-light"><i>Mesurement</i></td>
-                  </tr>
-                  <tr v-for="(cl, index) in record.mesurementChecklist" v-show="record.mesurementChecklist.length > 0">
-                    <td align="center">@{{ index + 1 }}</td>
-                    <td align="center">@{{ cl.c_rank }}</td>
-                    <td align="center">@{{ cl.c_code }}</td>
-                    <td>@{{ cl.n_errorcode }}</td>
-                    <td v-for="(item, i) in record.mesurement" v-if="item.i_checklist_id == cl.i_checklist_id">
-                      <input type="text" class="form-control" v-model="item.value" @blur="checkError(i, item.checklistIndex, 'mesurement')">
-                    </td>
-                    <td v-if="record.machineList.length == 0"></td>
-                    <td><input type="text" class="form-control" v-model="record.mesurementRejectDetail[index].value" v-if="record.mesurementRejectDetail.length > 0"></td>
-                    <td align="center">@{{ totalByErrorcode(index, 'mesurement') }}</td>
-                  </tr>
-                  <tr v-show="record.mesurementChecklist.length == 0">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
+                    <tr>
+                      <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7" class="table-light"><i>Mesurement</i></td>
+                    </tr>
+                    <tr v-for="(cl, index) in record.mesurementChecklist" v-show="record.mesurementChecklist.length > 0">
+                      <td align="center">@{{ index + 1 }}</td>
+                      <td align="center">@{{ cl.c_rank }}</td>
+                      <td align="center">@{{ cl.c_code }}</td>
+                      <td>@{{ cl.n_errorcode }}</td>
+                      <td v-for="(item, i) in record.mesurement" v-if="item.i_checklist_id == cl.i_checklist_id">
+                        <input type="text" class="form-control" v-model="item.value" @blur="checkError(i, item.checklistIndex, 'mesurement')">
+                      </td>
+                      <td v-if="record.machineList.length == 0"></td>
+                      <td><input type="text" class="form-control" v-model="record.mesurementRejectDetail[index].value" v-if="record.mesurementRejectDetail.length > 0"></td>
+                      <td align="center">@{{ totalByErrorcode(index, 'mesurement') }}</td>
+                    </tr>
+                    <tr v-show="record.mesurementChecklist.length == 0">
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
                   <!-- ============================================= Mesurement ======================================== -->
 
 
                   <!-- ========================================== Test Specification =================================== -->
-                  <tr>
-                    <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7" class="table-light"><i>Test Specification</i></td>
-                  </tr>
-                  <tr v-for="(cl, index) in record.testSpecificationChecklist" v-show="record.testSpecificationChecklist.length > 0">
-                    <td align="center">@{{ index + 1 }}</td>
-                    <td align="center">@{{ cl.c_rank }}</td>
-                    <td align="center">@{{ cl.c_code }}</td>
-                    <td>@{{ cl.n_errorcode }}</td>
-                    <td v-for="(item, i) in record.testSpecification" v-if="item.i_checklist_id == cl.i_checklist_id">
-                      <input type="text" class="form-control" v-model="item.value" @blur="checkError(i, item.checklistIndex, 'testSpecification')">
-                    </td>
-                    <td v-if="record.machineList.length == 0"></td>
-                    <td><input type="text" class="form-control" v-model="record.testSpecificationRejectDetail[index].value" v-if="record.testSpecificationRejectDetail.length > 0"></td>
-                    <td align="center">@{{ totalByErrorcode(index, 'testSpecification') }}</td>
-                  </tr>
-                  <tr v-show="record.testSpecificationChecklist.length == 0">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
+                    <tr>
+                      <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7" class="table-light"><i>Test Specification</i></td>
+                    </tr>
+                    <tr v-for="(cl, index) in record.testSpecificationChecklist" v-show="record.testSpecificationChecklist.length > 0">
+                      <td align="center">@{{ index + 1 }}</td>
+                      <td align="center">@{{ cl.c_rank }}</td>
+                      <td align="center">@{{ cl.c_code }}</td>
+                      <td>@{{ cl.n_errorcode }}</td>
+                      <td v-for="(item, i) in record.testSpecification" v-if="item.i_checklist_id == cl.i_checklist_id">
+                        <input type="text" class="form-control" v-model="item.value" @blur="checkError(i, item.checklistIndex, 'testSpecification')">
+                      </td>
+                      <td v-if="record.machineList.length == 0"></td>
+                      <td><input type="text" class="form-control" v-model="record.testSpecificationRejectDetail[index].value" v-if="record.testSpecificationRejectDetail.length > 0"></td>
+                      <td align="center">@{{ totalByErrorcode(index, 'testSpecification') }}</td>
+                    </tr>
+                    <tr v-show="record.testSpecificationChecklist.length == 0">
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
                   <!-- ========================================== Test Specification =================================== -->
 
 
                   <!-- ========================================== Failure symotom ====================================== -->
-                  <tr>
-                    <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7" class="table-light"><i>Failure symotom</i></td>
-                  </tr>
-                  <tr v-for="(cl, index) in record.failureSymptomChecklist">
-                    <td align="center">@{{ index + 1 }}</td>
-                    <td align="center">@{{ cl.c_rank }}</td>
-                    <td align="center"><input type="text" class="form-control" v-model="cl.c_code"  @keyup="findErrorCode(index, $event)"></td>
-                    <td>@{{ cl.n_errorcode }}</td>
-                    <td v-for="(item, i) in record.failureSymptom" v-if="item.errorcodeIndex == index">
-                      <input type="checkbox" class="form-control" v-model="item.value">
-                    </td>
-                    <td v-if="record.failureSymptom.length == 0" :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></td>
-                    <td><input type="text" class="form-control" v-model="record.failureSymptomRejectDetail[index].value" v-if="record.failureSymptomRejectDetail[index]"></td>
-                    <td class="table-light"></td>
-                  </tr>
+                    <tr>
+                      <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7" class="table-light"><i>Failure symotom</i></td>
+                    </tr>
+                    <tr v-for="(cl, index) in record.failureSymptomChecklist">
+                      <td align="center">@{{ index + 1 }}</td>
+                      <td align="center">@{{ cl.c_rank }}</td>
+                      <td align="center"><input type="text" class="form-control" v-model="cl.c_code"  @keyup="findErrorCode(index, $event)"></td>
+                      <td>@{{ cl.n_errorcode }}</td>
+                      <td v-for="(item, i) in record.failureSymptom" v-if="item.errorcodeIndex == index">
+                        <input type="checkbox" class="form-control" v-model="item.value">
+                      </td>
+                      <td v-if="record.failureSymptom.length == 0" :colspan="record.machineList.length > 0 ? record.machineList.length : 1"></td>
+                      <td><input type="text" class="form-control" v-model="record.failureSymptomRejectDetail[index].value" v-if="record.failureSymptomRejectDetail[index]"></td>
+                      <td class="table-light"></td>
+                    </tr>
                   <!-- ========================================== Failure symotom ====================================== -->
 
 
@@ -524,76 +524,76 @@
         },
 
         // ====================================== Calulate Section ======================================
-        checkError(index, checklistIndex, type) {
-          switch(type) {
-            case 'mesurement':
-              var value = this.record.mesurement[index].value;
-              if (value) {
-                var min = this.record.mesurementChecklist[checklistIndex].f_min_value;
-                var max = this.record.mesurementChecklist[checklistIndex].f_max_value;
-                
-                this.record.mesurement[index].fail = 
-                  (min && Number(value) < Number(min)) || (max && Number(value) > Number(max)) 
-                  ? true : false;
-              }
-              break;
-            case 'testSpecification':
-              var value = this.record.testSpecification[index].value;
-              if (value) {
-                var min = this.record.testSpecificationChecklist[checklistIndex].f_min_value;
-                var max = this.record.testSpecificationChecklist[checklistIndex].f_max_value;
-                this.record.testSpecification[index].fail = 
-                  (min && Number(value) < Number(min)) || (max && Number(value) > Number(max)) 
-                  ? true : false;
-              }
-              break;
-          }
-        },
+          checkError(index, checklistIndex, type) {
+            switch(type) {
+              case 'mesurement':
+                var value = this.record.mesurement[index].value;
+                if (value) {
+                  var min = this.record.mesurementChecklist[checklistIndex].f_min_value;
+                  var max = this.record.mesurementChecklist[checklistIndex].f_max_value;
+                  
+                  this.record.mesurement[index].fail = 
+                    (min && Number(value) < Number(min)) || (max && Number(value) > Number(max)) 
+                    ? true : false;
+                }
+                break;
+              case 'testSpecification':
+                var value = this.record.testSpecification[index].value;
+                if (value) {
+                  var min = this.record.testSpecificationChecklist[checklistIndex].f_min_value;
+                  var max = this.record.testSpecificationChecklist[checklistIndex].f_max_value;
+                  this.record.testSpecification[index].fail = 
+                    (min && Number(value) < Number(min)) || (max && Number(value) > Number(max)) 
+                    ? true : false;
+                }
+                break;
+            }
+          },
 
-        togglePalletStatus(index) {
-          this.record.palletList[index].status = this.record.palletList[index].status == 0 ? 1 : 0;
-        },
+          togglePalletStatus(index) {
+            this.record.palletList[index].status = this.record.palletList[index].status == 0 ? 1 : 0;
+          },
 
-        rotateClass() {
-          return this.record.machineList.length > 4 ? 'rotate-90' : '';
-        },
+          rotateClass() {
+            return this.record.machineList.length > 4 ? 'rotate-90' : '';
+          },
 
-        isInArray(value, array) {
-          return array.indexOf(value) > -1;
-        },
+          isInArray(value, array) {
+            return array.indexOf(value) > -1;
+          },
 
-        totalByMachineNo(index) {
-          var total = 0, m = [], t = [], fa = [], fb = [], fc = [];
-          m = this.record.mesurement.filter((m) => m.machineNo == this.record.machineList[index] && m.fail);
-          t = this.record.testSpecification.filter((m) => m.machineNo == this.record.machineList[index] && m.fail);
-          fa = this.record.failureSymptom.filter((m) => m.machineNo == this.record.machineList[index] && m.c_rank == 'A' && m.value);
-          fb = this.record.failureSymptom.filter((m) => m.machineNo == this.record.machineList[index] && m.c_rank == 'B' && m.value);
-          fc = this.record.failureSymptom.filter((m) => m.machineNo == this.record.machineList[index] && m.c_rank == 'C' && m.value);
-          total = m.length + t.length + fa.length + parseInt(fb.length / 2) + parseInt(fc.length / 2);
-          this.totalFailByMachine[index] = total;
-          return total;
-        },
+          totalByMachineNo(index) {
+            var total = 0, m = [], t = [], fa = [], fb = [], fc = [];
+            m = this.record.mesurement.filter((m) => m.machineNo == this.record.machineList[index] && m.fail);
+            t = this.record.testSpecification.filter((m) => m.machineNo == this.record.machineList[index] && m.fail);
+            fa = this.record.failureSymptom.filter((m) => m.machineNo == this.record.machineList[index] && m.c_rank == 'A' && m.value);
+            fb = this.record.failureSymptom.filter((m) => m.machineNo == this.record.machineList[index] && m.c_rank == 'B' && m.value);
+            fc = this.record.failureSymptom.filter((m) => m.machineNo == this.record.machineList[index] && m.c_rank == 'C' && m.value);
+            total = m.length + t.length + fa.length + parseInt(fb.length / 2) + parseInt(fc.length / 3);
+            this.totalFailByMachine[index] = total;
+            return total;
+          },
 
-        totalByErrorcode(index, type) {
-          var list = [];
-          switch(type) {
-            case 'mesurement':
-              list = this.record.mesurement.filter((machine, i) => machine.checklistIndex == index && machine.value && machine.fail);
-              break;
-            case 'testSpecification':
-              list = this.record.testSpecification.filter((machine, i) => machine.checklistIndex == index && machine.value && machine.fail);
-              break;
-          }
-          return list.length;
-        },
+          totalByErrorcode(index, type) {
+            var list = [];
+            switch(type) {
+              case 'mesurement':
+                list = this.record.mesurement.filter((machine, i) => machine.checklistIndex == index && machine.value && machine.fail);
+                break;
+              case 'testSpecification':
+                list = this.record.testSpecification.filter((machine, i) => machine.checklistIndex == index && machine.value && machine.fail);
+                break;
+            }
+            return list.length;
+          },
 
-        total() {
-          var total = 0;
-          if (this.totalFailByMachine.length > 0) {
-            total = this.totalFailByMachine.reduce((current, next) => current + next);
-          }
-          return total;
-        },
+          total() {
+            var total = 0;
+            if (this.totalFailByMachine.length > 0) {
+              total = this.totalFailByMachine.reduce((current, next) => current + next);
+            }
+            return total;
+          },
         // ====================================== Calulate Section ======================================
 
 
@@ -679,6 +679,7 @@
         // ====================================== Validate Section ======================================
 
       },
+
 
       watch: {
         'record.judgement': function (newValue, oldValue) {

@@ -10,7 +10,7 @@ class ErrorcodeController extends Controller
 {
     public function index()
     {
-        $errorcodeList = Errorcode::where('i_errorcode_deleted', 0)->get();
+        $errorcodeList = Errorcode::whereNotNull('i_errorcode_type_id')->where('i_errorcode_deleted', 0)->get();
         return view('errorcode.index', compact('errorcodeList'));
     }
 
