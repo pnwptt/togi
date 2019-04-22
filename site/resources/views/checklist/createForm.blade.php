@@ -103,8 +103,8 @@
                 <tr class="table-dark">
                   <th>Errorcode</th>
                   <th>Test Specification</th>
-                  <th>Maximum Value</th>
                   <th>Minimum Value</th>
+                  <th>Maximum Value</th>
                   <th>Action</th>
                 </tr>
                 <tr v-for="(item, index) in errorcodeList" v-if="item.type == 2">
