@@ -1,20 +1,20 @@
 @extends('layouts.master')
 
 @section('content')
-  <div class="container">
+  <div class="container-fluid">
     @if(session()->has('error'))
-        <div class="row">
-          <div class="col-md-12">
-            <div class="alert alert-dismissible alert-warning">
-              <button type="button" class="close" data-dismiss="alert">&times;</button>
-              <h4 class="alert-heading">{{ session()->get('error') }}</h4>
-              <p class="mb-0">
-                {{ session()->get('message') }}
-              </p>  
-            </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="alert alert-dismissible alert-warning">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <h4 class="alert-heading">{{ session()->get('error') }}</h4>
+            <p class="mb-0">
+              {{ session()->get('message') }}
+            </p>  
           </div>
         </div>
-      @endif
+      </div>
+    @endif
     <div class="row">
       <div class="col-sm-11"><h3>Lot Inspection Result</h3></div>
       <div class="col-sm-1">
@@ -36,6 +36,7 @@
                 <th>R/J Qty (m/c)</th>
                 <th>Pallet Qty</th>
                 <th>Rework</th>
+                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -51,6 +52,7 @@
                   <td>{{ $record->total_rjmc }}</td>
                   <td>{{ $record->pallet_qty }}</td>
                   <td>{{ $record->rework }}</td>
+                  <td>{{ $record->c_approve_date ? 'Approved' : '' }}</td>
                   <td>
                     <a href="{{ route('viewRecord', $record->c_order_number) }}" class="btn btn-info">View</a>
                     @if($record->can_edit)

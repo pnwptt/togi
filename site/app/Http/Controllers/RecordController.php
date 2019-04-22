@@ -20,9 +20,9 @@ class RecordController extends Controller
         $records = DB::select(DB::raw("
             SELECT * 
             FROM (
-                SELECT c_order_number, MAX(d_record_date) AS insp_date, c_part_number, c_customer, MAX(i_qty) as i_qty, SUM(i_total_rjmc) AS total_rjmc 
+                SELECT c_order_number, MAX(d_record_date) AS insp_date, MAX(c_part_number) AS c_part_number, MAX(c_customer) AS c_customer, MAX(i_qty) as i_qty, SUM(i_total_rjmc) AS total_rjmc, c_approve_date
                 FROM b_record
-                GROUP BY c_order_number
+                GROUP BY c_order_number, c_approve_date
             ) a 
             INNER JOIN (
                 SELECT c_order_number, COUNT(DISTINCT c_machine_no) AS sampling_qty
@@ -81,8 +81,6 @@ class RecordController extends Controller
             ));
         } else {
             return redirect()->route('record')->with('error', 'Permission denied!');
-
-            echo 'You no have permission.';
         }
     }
 
@@ -321,17 +319,21 @@ class RecordController extends Controller
             $record = DB::table('b_record')
                 ->join('b_models', 'b_models.i_models_id', '=', 'b_record.i_models_id')
                 ->select(DB::raw("
-                    c_order_number, c_part_number, c_series, c_customer, c_approveby, c_approve_date, c_8d_report_no,
+                    c_order_number, c_series, c_approveby, c_approve_date,
+                    MAX(c_part_number) AS c_part_number, 
+                    MAX(c_customer) AS c_customer, 
+                    MAX(c_8d_report_no) AS c_8d_report_no,
                     MAX(c_ncr_number) AS c_ncr_number, 
                     MAX(i_qty) AS i_qty, 
                     MAX(d_record_date) AS d_record_date,
                     MIN(i_judgement) AS i_judgement,
                     SUM(i_total_rjmc) AS i_total_rjmc,
                     MAX(i_pallet_qty) AS i_pallet_qty,
-                    b_models.*
+                    b_models.i_models_id,
+                    b_models.n_models_name
                 "))
                 ->where('c_order_number', $req->wo)
-                ->groupBy('c_order_number')
+                ->groupBy('c_order_number', 'c_series', 'c_approveby', 'c_approve_date', 'b_models.i_models_id', 'b_models.n_models_name')
                 ->first();
             $i_sampling_qty = DB::table('b_record')
                 ->join('b_record_item', 'b_record_item.i_record_id', '=', 'b_record.i_record_id')
@@ -367,11 +369,25 @@ class RecordController extends Controller
 
     public function approve(Request $req)
     {
+        if (session()->get('admin')) {
+            DB::beginTransaction();
+            try {
+                Record::where('c_order_number', $req->wo)
+                ->whereNull('c_approveby')
+                ->whereNull('c_approve_date')
+                ->update([
+                    'c_approveby' => session()->get('c_user'),
+                    'c_approve_date' => date('Y-m-d')
+                ]);
 
-    }
-
-    public function reject(Request $req)
-    {
-
+                DB::commit();
+                return redirect()->route('record');
+            } catch (Exception $e) {
+                DB::rollback();
+                return redirect()->route('record')->with('error', 'Ops! something went wrong.')->with('message', 'Please try again.');
+            }
+        } else {
+            return redirect()->route('record')->with('error', 'Permission denied!');
+        }
     }
 }

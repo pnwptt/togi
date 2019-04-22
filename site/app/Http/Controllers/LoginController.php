@@ -18,8 +18,8 @@ class LoginController extends Controller
         if ($user) {
             session()->put('c_user', $user->c_user);
             session()->put('admin', $user->isAdmin());
-            $page = $user->isAdmin() ? 'dashboard' : 'record';
-            return redirect()->route($page);
+            
+            return redirect()->route($user->isAdmin() ? 'dashboard' : 'record');
         } else {
             return redirect()->back()->with('error', 'Username or Password does not match our database.')->withInput($req->only('c_user'));;
         }

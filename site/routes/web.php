@@ -68,5 +68,4 @@ Route::get('/record/edit/{wo}', 'RecordController@editForm')->name('editRecordFo
 Route::post('/record/edit', 'RecordController@edit')->name('editRecord');
 Route::get('/record/view/{wo}', 'RecordController@viewRecord')->name('viewRecord');
 Route::get('/record/approve/{wo}', 'RecordController@approve')->name('approveRecord');
-Route::get('/record/reject/{wo}', 'RecordController@reject')->name('rejectRecord');
 // Route::get('/record/delete/{id}', 'RecordController@delete')->name('deleteRecord');

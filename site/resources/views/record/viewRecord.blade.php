@@ -64,6 +64,21 @@
 
 @section('content')
   <div id="app">
+    <div class="container">
+      @if(session()->has('error'))
+        <div class="row">
+          <div class="col-md-12">
+            <div class="alert alert-dismissible alert-warning">
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+              <h4 class="alert-heading">{{ session()->get('error') }}</h4>
+              <p class="mb-0">
+                {{ session()->get('message') }}
+              </p>  
+            </div>
+          </div>
+        </div>
+      @endif
+    </div>
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-11"><h4>PPA Inspection Record</h4></div>
@@ -171,6 +186,14 @@
                           <input type="date" class="form-control" disabled value="{{ $record->c_approve_date }}">
                       </div>
                     </div>
+                    @if(session()->get('admin') && !$record->c_approve_date)
+                      <hr>
+                      <div class="form-group row">
+                        <div class="col-sm-12">
+                          <a href="{{ route('approveRecord', $record->c_order_number) }}" onclick="return confirm('Approve {{$record->c_order_number}}?')" class="btn btn-primary btn-block">APPROVE</a>
+                        </div>
+                      </div> 
+                    @endif
                   </td>
                 </thead>
               </table>
@@ -194,6 +217,9 @@
                         </div>
                       </th>
                       @php($totalFailByMachine[$value] = 0)
+                      @php($totalA[$value] = 0)
+                      @php($totalB[$value] = 0)
+                      @php($totalC[$value] = 0)
                     @endforeach
                     @if(count($machineList) == 0)
                       <th class="machineList"></th>
@@ -215,7 +241,7 @@
                             @php($totalMesurementErrorcodeFail += $v->i_record_item_fail)
                             @php($totalFailByMachine[$v->c_machine_no] += $v->i_record_item_fail)
                             <td align="center">
-                              {{ $v->i_record_item_value }}
+                              {{ $v->i_record_item_value > 999 ? number_format($v->i_record_item_value) : $v->i_record_item_value }}
                             </td>
                           @endif
                         @endforeach
@@ -292,6 +318,13 @@
                           <td>{{ $value->n_errorcode }}</td>
                           @foreach($recordFailure as $i => $v)
                             @if($value->i_errorcode_id == $v->i_errorcode_id)
+                              @if($value->c_rank == 'A' && $v->i_record_failure == 1)
+                                @php($totalA[$v->c_machine_no]++)
+                              @elseif($value->c_rank == 'B' && $v->i_record_failure == 1)
+                                @php($totalB[$v->c_machine_no]++)
+                              @elseif($value->c_rank == 'C' && $v->i_record_failure == 1)
+                                @php($totalC[$v->c_machine_no]++)
+                              @endif
                               <td align="center">
                                 <input type="checkbox" class="form-control" onclick="return false" {{ $v->i_record_failure == 1 ? 'checked' : '' }}>
                               </td>
@@ -310,6 +343,7 @@
                   <tr>
                     <th colspan="4">Total</th>
                     @foreach($machineList as $value)
+                      @php($totalFailByMachine[$value] += $totalA[$value] + floor($totalB[$value]/2) + floor($totalC[$value]/3))
                       <th>{{ $totalFailByMachine[$value] }}</th>
                     @endforeach
                     @if(count($machineList) == 0)
@@ -318,22 +352,28 @@
                     <th class="table-light"></th>
                     <th>-</th>
                   </tr>
-                  <!-- <tr>
+                  <tr>
                     <th colspan="4">Pallet#</th>
-                    <th :colspan="(record.machineList.length / 2) < (index + 1)  ? 1 : 2" v-for="(value, index) in record.palletList">
-                      @{{ index + 1 }}
-                    </th>
-                    <th v-if="record.machineList.length == 0"></th>
+                    @foreach($recordPallet as $index => $value)
+                      <th colspan="{{ (count($machineList) / 2) < ($index + 1) ? 1 : 2 }}">
+                        {{ $index + 1 }}
+                      </th>
+                    @endforeach
+                    @if(count($machineList) == 0)
+                      <th></th>
+                    @endif
                     <th rowspan="2">Total R/J (M/C)</th>
-                    <td rowspan="2" align="center"><input type="number" class="form-control" v-model="record.totalRJMC"></td>
+                    <td rowspan="2" align="center">{{ $record->i_total_rjmc }}</td>
                   </tr>
                   <tr>
                     <th colspan="4">Accept/Reject</th>
-                    <th :colspan="(record.machineList.length / 2) < (index + 1) ? 1 : 2" v-for="(value, index) in record.palletList" class="clickable"
-                      :class="palletClass[value.status]"
-                      @click="togglePalletStatus(index)"></th>
-                    <th v-if="record.machineList.length == 0"></th>
-                  </tr> -->
+                    @foreach($recordPallet as $index => $value)
+                      <th colspan="{{ (count($machineList) / 2) < ($index + 1) ? 1 : 2 }}" class="{{ $value->i_record_pallet_status == 1 ? 'table-danger' : 'table-success' }}"></th>
+                    @endforeach
+                    @if(count($machineList) == 0)
+                      <th></th>
+                    @endif
+                  </tr>
                 </thead>
               </table>
 

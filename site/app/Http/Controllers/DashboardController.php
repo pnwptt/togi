@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Models;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        return view('dashboard');
+        $models = Models::get();
+        return view('dashboard', compact('models'));
     }
 }
