@@ -8,6 +8,9 @@
       border-radius: 0;
       padding: 0;
     }
+    .chart {
+      margin-bottom: 25px;
+    }
   </style>
 @endsection
 
@@ -15,40 +18,47 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-sm-1"></div>
-      <div class="col-sm-3">
+      <div class="col-sm-2">
         Model: 
-        <select class="form-control">
+        <select class="form-control" id="i_models_id">
+          <option value="all">All</option>
           @foreach($models as $value)
             <option value="{{ $value->i_models_id }}">{{ $value->n_models_name }}</option>
           @endforeach
         </select>
       </div>
-      <div class="col-sm-3">
+      <!-- <div class="col-sm-2"></div> -->
+      <div class="col-sm-2">
+        Group by: 
+        <select class="form-control" id="grouping">
+          <option value="week">Week</option>
+          <option value="month" selected>Month</option>
+        </select>
+      </div>
+      <div class="col-sm-2">
         From: 
-        <input type="date" class="form-control" name="" value="{{ date('Y-m-d') }}">
+        <input type="date" class="form-control" id="dateFrom">
       </div>
-      <div class="col-sm-3">
+      <div class="col-sm-2">
         To: 
-        <input type="date"class="form-control" name="" value="{{ date('Y-m-d') }}">
+        <input type="date"class="form-control" id="dateTo">
       </div>
-      <div class="col-sm-1">
-        Action: 
-        <button type="button" class="btn btn-primary btn-block">Reload</button>
+      <div class="col-sm-2">
+        Action: <br>
+        <button type="button" class="btn btn-primary" onclick="reload()">Reload</button>
+        <button type="button" class="btn btn-info" onclick="reset()">Reset</button>
       </div>
-      <div class="col-sm-1"></div>
     </div>
     <hr>
     <div class="row">
-      <div class="col-md-6"><canvas id="myChart1" height="150"></canvas></div>
-      <div class="col-md-6"><canvas id="myChart2" height="150"></canvas></div>
-      <div class="col-md-12"><hr></div>
-      <div class="col-md-6"><canvas id="myChart3" height="150"></canvas></div>
-      <div class="col-md-6"><canvas id="myChart4" height="150"></canvas></div>
-      <div class="col-md-12"><hr></div>
-      <div class="col-md-6"><canvas id="myChart5" height="150"></canvas></div>
+      <div class="col-md-6"><canvas class="chart" id="palletBar" height="150"></canvas></div>
+      <div class="col-md-6"><canvas class="chart" id="palletLine" height="150"></canvas></div>
+      <div class="col-md-6"><canvas class="chart" id="machineBar" height="150"></canvas></div>
+      <div class="col-md-6"><canvas class="chart" id="machineLine" height="150"></canvas></div>
+      <div class="col-md-6"><canvas class="chart" id="topErrorcodeBar" height="150"></canvas></div>
       <div class="col-md-6">
         <div class="table-responsive">
-          <table class="table table-bordered" id="datatables">
+          <table class="table table-bordered" id="topErrorcodeTable">
             <thead>
               <tr>
                 <th>Errorcode</th>
@@ -57,54 +67,22 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Code1</td>
-                <td>test</td>
-                <td>55</td>
-              </tr>
-              <tr>
-                <td>Code2</td>
-                <td>test</td>
-                <td>46</td>
-              </tr>
-              <tr>
-                <td>Code3</td>
-                <td>test</td>
-                <td>73</td>
-              </tr>
-              <tr>
-                <td>Code4</td>
-                <td>test</td>
-                <td>16</td>
-              </tr>
-              <tr>
-                <td>Code5</td>
-                <td>test</td>
-                <td>64</td>
-              </tr>
-              <tr>
-                <td>Code6</td>
-                <td>test</td>
-                <td>28</td>
-              </tr>
-              <tr>
-                <td>Code7</td>
-                <td>test</td>
-                <td>38</td>
-              </tr>
-              <tr>
-                <td>Code8</td>
-                <td>test</td>
-                <td>54</td>
-              </tr>
-              <tr>
-                <td>Code9</td>
-                <td>test</td>
-                <td>67</td>
-              </tr>
+              @foreach($topErrorcodeData as $val)
+                <tr>
+                  <td>{{ $val->c_code }}</td>
+                  <td>{{ $val->n_errorcode }}</td>
+                  <td>{{ $val->qty }}</td>
+                </tr>
+              @endforeach
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-2">
+        <button type="button" class="btn btn-success" onclick="gotoTop()">To top</button>
+        <button type="button" class="btn btn-primary" onclick="reload()">Reload</button>
       </div>
     </div>
   </div>
@@ -116,8 +94,8 @@
   <script src="{{ asset('js/chartjs-plugin-datalabels.js') }}"></script>
   <script type="text/javascript">
     Chart.plugins.unregister(ChartDataLabels);
-    var ctx1 = document.getElementById('myChart1').getContext('2d');
-    var myChart1 = new Chart(ctx1, {
+    var ctx1 = document.getElementById('palletBar').getContext('2d');
+    var palletBar = new Chart(ctx1, {
         type: 'bar',
         plugins: [ChartDataLabels],
         data: {
@@ -125,14 +103,22 @@
           datasets: [
             {
               label: 'Total Pallet',
-              data: [12, 19, 13, 15, 12, 13, 16, 19, 13, 15, 14, 11],
+              data: [
+                @foreach($palletBarTotal as $val)
+                  {{ $val }},
+                @endforeach
+              ],
               backgroundColor: 'rgba(54, 162, 235, 0.2)',
               borderColor: 'rgba(54, 162, 235, 1)',
               borderWidth: 1
             },
             {
-              label: 'Fail',
-              data: [3, 6, 2, 2, 3, 4, 3, 5, 1, 2, 3, 1],
+              label: 'Total Reject',
+              data: [
+                @foreach($palletBarReject as $val)
+                  {{ $val }},
+                @endforeach
+              ],
               backgroundColor: 'rgba(255, 99, 132, 0.2)',
               borderColor: 'rgba(255, 99, 132, 1)',
               borderWidth: 1
@@ -161,8 +147,8 @@
         }
     });
 
-    var ctx2 = document.getElementById('myChart2').getContext('2d');
-    var myChart2 = new Chart(ctx2, {
+    var ctx2 = document.getElementById('palletLine').getContext('2d');
+    var palletLine = new Chart(ctx2, {
         type: 'line',
         plugins: [ChartDataLabels],
         data: {
@@ -206,8 +192,8 @@
         }
     });
 
-    var ctx3 = document.getElementById('myChart3').getContext('2d');
-    var myChart3 = new Chart(ctx3, {
+    var ctx3 = document.getElementById('machineBar').getContext('2d');
+    var machineBar = new Chart(ctx3, {
         type: 'bar',
         plugins: [ChartDataLabels],
         data: {
@@ -215,14 +201,22 @@
           datasets: [
             {
               label: 'Total M/C',
-              data: [12, 19, 13, 15, 12, 13, 16, 19, 13, 15, 14, 11],
+              data: [
+                @foreach($machineBarTotal as $val)
+                  {{ $val }},
+                @endforeach
+              ],
               backgroundColor: 'rgba(54, 162, 235, 0.2)',
               borderColor: 'rgba(54, 162, 235, 1)',
               borderWidth: 1
             },
             {
-              label: 'Fail',
-              data: [3, 6, 2, 2, 3, 4, 3, 5, 1, 2, 3, 1],
+              label: 'Total Fail',
+              data: [
+                @foreach($machineBarFail as $val)
+                  {{ $val }},
+                @endforeach
+              ],
               backgroundColor: 'rgba(255, 99, 132, 0.2)',
               borderColor: 'rgba(255, 99, 132, 1)',
               borderWidth: 1
@@ -251,8 +245,8 @@
         }
     });
 
-    var ctx4 = document.getElementById('myChart4').getContext('2d');
-    var myChart4 = new Chart(ctx4, {
+    var ctx4 = document.getElementById('machineLine').getContext('2d');
+    var machineLine = new Chart(ctx4, {
         type: 'line',
         plugins: [ChartDataLabels],
         data: {
@@ -296,15 +290,23 @@
         }
     });
 
-    var ctx5 = document.getElementById('myChart5').getContext('2d');
-    var myChart5 = new Chart(ctx5, {
+    var ctx5 = document.getElementById('topErrorcodeBar').getContext('2d');
+    var topErrorcodeBar = new Chart(ctx5, {
         type: 'bar',
         plugins: [ChartDataLabels],
         data: {
-          labels: ['Errorcode1', 'Errorcode2', 'Errorcode3', 'Errorcode4', 'Errorcode5'],
+          labels: [
+            @foreach($top5ErrorcodeBarLabels as $val)
+              '{{ $val }}',
+            @endforeach
+          ],
           datasets: [{
             label: 'Top 5 Errorcode',
-            data: [73, 67, 64, 55, 54],
+            data: [
+              @foreach($top5ErrorcodeData as $val)
+                {{ $val }},
+              @endforeach
+            ],
             backgroundColor: [
               'rgba(255, 99, 132, 0.2)',
               'rgba(153, 102, 255, 0.2)',
@@ -344,9 +346,57 @@
         }
     });
 
-    $('#datatables').DataTable({
+    $('#topErrorcodeTable').DataTable({
       sorting: [[2, 'desc']],
-      lengthMenu: [5, 25, 50, 100]
+      lengthMenu: [5, 10, 50, 100]
     });
+
+    var processing = false;
+
+    function reload() {
+      processing = true;
+
+      var i_models_id = $('#i_models_id').val();
+      var grouping = $('#grouping').val();
+      var dateFrom = $('#dateFrom').val();
+      var dateTo = $('#dateTo').val();
+
+      $.get('{{ route("getChartData") }}', {
+        i_models_id: i_models_id,
+        grouping: grouping,
+        dateFrom: dateFrom,
+        dateTo: dateTo
+      })
+      .done((response) => {
+        var data = JSON.parse(response);
+
+        palletBar.data.labels = data.palletBar.palletBarLabels;
+        palletBar.data.datasets[0].data = data.palletBar.palletBar1;
+        palletBar.data.datasets[1].data = data.palletBar.palletBar2;
+        palletBar.update();
+
+        machineBar.data.labels = data.machineBar.machineBarLabels;
+        machineBar.data.datasets[0].data = data.machineBar.machineBar1;
+        machineBar.data.datasets[1].data = data.machineBar.machineBar2;
+        machineBar.update();
+
+        topErrorcodeBar.data.labels = data.topErrorcode.top5ErrorcodeBarLabels;
+        topErrorcodeBar.data.datasets[0].data = data.topErrorcode.top5ErrorcodeBarData;
+        topErrorcodeBar.update();
+
+        processing = false;
+      })
+      .fail((error) => {
+        processing = false;
+      });
+    }
+
+    function reset() {
+      window.location.reload();
+    }
+
+    function gotoTop() {
+      $('html, body').animate({ scrollTop: 0 }, 'slow');
+    }
   </script>
 @endsection

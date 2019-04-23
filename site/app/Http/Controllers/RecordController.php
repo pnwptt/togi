@@ -20,9 +20,9 @@ class RecordController extends Controller
         $records = DB::select(DB::raw("
             SELECT * 
             FROM (
-                SELECT c_order_number, MAX(d_record_date) AS insp_date, MAX(c_part_number) AS c_part_number, MAX(c_customer) AS c_customer, MAX(i_qty) as i_qty, SUM(i_total_rjmc) AS total_rjmc, c_approve_date
-                FROM b_record
-                GROUP BY c_order_number, c_approve_date
+                SELECT c_order_number, MAX(d_record_date) AS insp_date, MAX(c_part_number) AS c_part_number, MAX(c_customer) AS c_customer, MAX(i_qty) as i_qty, SUM(i_total_rjmc) AS total_rjmc, c_approve_date, n_models_name
+                FROM b_record INNER JOIN b_models ON b_models.i_models_id = b_record.i_models_id
+                GROUP BY c_order_number, c_approve_date, n_models_name
             ) a 
             INNER JOIN (
                 SELECT c_order_number, COUNT(DISTINCT c_machine_no) AS sampling_qty

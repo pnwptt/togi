@@ -17,14 +17,16 @@ Route::get('/checklist/checkerrorcode', 'ChecklistController@checkerrorcode')->n
 
 Route::get('/workorder/findchecklist', 'WorkOrderController@findChecklist')->name('findChecklist');
 
-Route::get('findErrorcode', function (Request $req) {
+Route::get('/findErrorcode', function (Request $req) {
     return App\Models\Errorcode::where('c_code', $req['c_code'])->first();
 })->name('findErrorcode');
 
-Route::get('/test/wo', function () {
-    return App\Models\WorkOrder::where('c_series', '330')->get();
-});
+Route::get('/getChartData', 'DashboardController@getChartData')->name('getChartData');
 
-Route::get('/test/cl', function () {
-    return App\Models\Form::where('i_models_id', 5)->where('i_status', 1)->first();
-});
+// Route::get('/test/wo', function () {
+//     return App\Models\WorkOrder::where('c_series', '330')->get();
+// });
+
+// Route::get('/test/cl', function () {
+//     return App\Models\Form::where('i_models_id', 5)->where('i_status', 1)->first();
+// });
