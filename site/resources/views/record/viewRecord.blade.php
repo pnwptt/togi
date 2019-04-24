@@ -183,10 +183,10 @@
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Date:</label>
                       <div class="col-sm-8">
-                          <input type="date" class="form-control" disabled value="{{ $record->c_approve_date }}">
+                          <input type="date" class="form-control" disabled value="{{ $record->d_approve_date }}">
                       </div>
                     </div>
-                    @if(session()->get('admin') && !$record->c_approve_date)
+                    @if(session()->get('admin') && !$record->d_approve_date)
                       <hr>
                       <div class="form-group row">
                         <div class="col-sm-12">
@@ -241,7 +241,7 @@
                             @php($totalMesurementErrorcodeFail += $v->i_record_item_fail)
                             @php($totalFailByMachine[$v->c_machine_no] += $v->i_record_item_fail)
                             <td align="center">
-                              {{ $v->i_record_item_value > 999 ? number_format($v->i_record_item_value) : $v->i_record_item_value }}
+                              {{ $v->i_record_item_value > 999 ? number_format((float) $v->i_record_item_value) : $v->i_record_item_value }}
                             </td>
                           @endif
                         @endforeach

@@ -20,9 +20,9 @@ class RecordController extends Controller
         $records = DB::select(DB::raw("
             SELECT * 
             FROM (
-                SELECT c_order_number, MAX(d_record_date) AS insp_date, MAX(c_part_number) AS c_part_number, MAX(c_customer) AS c_customer, MAX(i_qty) as i_qty, SUM(i_total_rjmc) AS total_rjmc, c_approve_date, n_models_name
+                SELECT c_order_number, MAX(d_record_date) AS insp_date, MAX(c_part_number) AS c_part_number, MAX(c_customer) AS c_customer, MAX(i_qty) as i_qty, SUM(i_total_rjmc) AS total_rjmc, d_approve_date, n_models_name
                 FROM b_record INNER JOIN b_models ON b_models.i_models_id = b_record.i_models_id
-                GROUP BY c_order_number, c_approve_date, n_models_name
+                GROUP BY c_order_number, d_approve_date, n_models_name
             ) a 
             INNER JOIN (
                 SELECT c_order_number, COUNT(DISTINCT c_machine_no) AS sampling_qty
@@ -105,7 +105,7 @@ class RecordController extends Controller
                 'i_total_rjmc' => $req->totalRJMC,
                 'c_remark' => $req->remark,
                 'i_models_id' => $req->i_models_id
-            ]);
+            ], 'i_record_id');
 
             $recordItems = [];
             foreach ($req->mesurement as $msm) {
@@ -319,7 +319,7 @@ class RecordController extends Controller
             $record = DB::table('b_record')
                 ->join('b_models', 'b_models.i_models_id', '=', 'b_record.i_models_id')
                 ->select(DB::raw("
-                    c_order_number, c_series, c_approveby, c_approve_date,
+                    c_order_number, c_series, c_approveby, d_approve_date,
                     MAX(c_part_number) AS c_part_number, 
                     MAX(c_customer) AS c_customer, 
                     MAX(c_8d_report_no) AS c_8d_report_no,
@@ -333,7 +333,7 @@ class RecordController extends Controller
                     b_models.n_models_name
                 "))
                 ->where('c_order_number', $req->wo)
-                ->groupBy('c_order_number', 'c_series', 'c_approveby', 'c_approve_date', 'b_models.i_models_id', 'b_models.n_models_name')
+                ->groupBy('c_order_number', 'c_series', 'c_approveby', 'd_approve_date', 'b_models.i_models_id', 'b_models.n_models_name')
                 ->first();
             $i_sampling_qty = DB::table('b_record')
                 ->join('b_record_item', 'b_record_item.i_record_id', '=', 'b_record.i_record_id')
@@ -374,10 +374,10 @@ class RecordController extends Controller
             try {
                 Record::where('c_order_number', $req->wo)
                 ->whereNull('c_approveby')
-                ->whereNull('c_approve_date')
+                ->whereNull('d_approve_date')
                 ->update([
                     'c_approveby' => session()->get('c_user'),
-                    'c_approve_date' => date('Y-m-d')
+                    'd_approve_date' => date('Y-m-d')
                 ]);
 
                 DB::commit();

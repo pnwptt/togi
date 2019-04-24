@@ -9,7 +9,7 @@ use DB;
 
 class DashboardController extends Controller
 {
-  private $mySql = true;
+  private $mySql = false;
   private $month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
   public function index ()
@@ -125,14 +125,14 @@ class DashboardController extends Controller
         break;
       }
       $top5ErrorcodeBarLabels[] = $value->c_code;
-      $top5ErrorcodeData[] = $value->qty;
+      $top5ErrorcodeBarData[] = $value->qty;
       $i++;
     }
     // End topErrorcode
 
 
     // echo json_encode($top5ErrorcodeBarLabels);
-    return view('dashboard', compact('models', 'palletBarTotal', 'palletBarReject', 'machineBarTotal', 'machineBarFail', 'topErrorcodeData', 'top5ErrorcodeBarLabels', 'top5ErrorcodeData'));
+    return view('dashboard', compact('models', 'palletBarTotal', 'palletBarReject', 'machineBarTotal', 'machineBarFail', 'topErrorcodeData', 'top5ErrorcodeBarLabels', 'top5ErrorcodeBarData'));
   }
 
   public function getChartData (Request $req)

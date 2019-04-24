@@ -303,7 +303,7 @@
           datasets: [{
             label: 'Top 5 Errorcode',
             data: [
-              @foreach($top5ErrorcodeData as $val)
+              @foreach($top5ErrorcodeBarData as $val)
                 {{ $val }},
               @endforeach
             ],
