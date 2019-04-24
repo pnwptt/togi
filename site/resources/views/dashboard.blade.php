@@ -17,33 +17,26 @@
 @section('content')
   <div class="container-fluid">
     <div class="row">
-      <div class="col-sm-1"></div>
-      <div class="col-sm-2">
+      <div class="col-md-2"></div>
+      <div class="col-md-2">
         Model: 
-        <select class="form-control" id="i_models_id">
+        <select class="form-control" id="barModelId">
           <option value="all">All</option>
           @foreach($models as $value)
             <option value="{{ $value->i_models_id }}">{{ $value->n_models_name }}</option>
           @endforeach
         </select>
       </div>
-      <!-- <div class="col-sm-2"></div> -->
-      <div class="col-sm-2">
-        Group by: 
-        <select class="form-control" id="grouping">
-          <option value="week">Week</option>
-          <option value="month" selected>Month</option>
-        </select>
-      </div>
-      <div class="col-sm-2">
+      <!-- <div class="col-md-2"></div> -->
+      <div class="col-md-2">
         From: 
-        <input type="date" class="form-control" id="dateFrom">
+        <input type="date" class="form-control" id="barDateFrom">
       </div>
-      <div class="col-sm-2">
+      <div class="col-md-2">
         To: 
-        <input type="date"class="form-control" id="dateTo">
+        <input type="date"class="form-control" id="barDateTo">
       </div>
-      <div class="col-sm-2">
+      <div class="col-md-2">
         Action: <br>
         <button type="button" class="btn btn-primary" onclick="reload()">Reload</button>
         <button type="button" class="btn btn-info" onclick="reset()">Reset</button>
@@ -52,9 +45,64 @@
     <hr>
     <div class="row">
       <div class="col-md-6"><canvas class="chart" id="palletBar" height="150"></canvas></div>
-      <div class="col-md-6"><canvas class="chart" id="palletLine" height="150"></canvas></div>
       <div class="col-md-6"><canvas class="chart" id="machineBar" height="150"></canvas></div>
+    </div>
+    <div class="row">
+      <div class="col-md-4"></div>
+      <div class="col-md-2">
+        Model: 
+        <select class="form-control" id="lineModelId">
+          <option value="all">All</option>
+          @foreach($models as $value)
+            <option value="{{ $value->i_models_id }}">{{ $value->n_models_name }}</option>
+          @endforeach
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        Year: 
+        <select class="form-control" id="lineYear">
+          <option value="week">Week</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        Action: <br>
+        <button type="button" class="btn btn-primary" onclick="reload()">Reload</button>
+        <button type="button" class="btn btn-info" onclick="reset()">Reset</button>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-6"><canvas class="chart" id="palletLine" height="150"></canvas></div>
       <div class="col-md-6"><canvas class="chart" id="machineLine" height="150"></canvas></div>
+    </div>
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-2">
+        Model: 
+        <select class="form-control" id="top5ModelId">
+          <option value="all">All</option>
+          @foreach($models as $value)
+            <option value="{{ $value->i_models_id }}">{{ $value->n_models_name }}</option>
+          @endforeach
+        </select>
+      </div>
+      <div class="col-md-2">
+        From: 
+        <input type="date" class="form-control" id="top5DateFrom">
+      </div>
+      <div class="col-md-2">
+        To: 
+        <input type="date"class="form-control" id="top5DateTo">
+      </div>
+      <div class="col-md-2">
+        Action: <br>
+        <button type="button" class="btn btn-primary" onclick="reload()">Reload</button>
+        <button type="button" class="btn btn-info" onclick="reset()">Reset</button>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
       <div class="col-md-6"><canvas class="chart" id="topErrorcodeBar" height="150"></canvas></div>
       <div class="col-md-6">
         <div class="table-responsive">
@@ -82,7 +130,6 @@
     <div class="row">
       <div class="col-sm-2">
         <button type="button" class="btn btn-success" onclick="gotoTop()">To top</button>
-        <button type="button" class="btn btn-primary" onclick="reload()">Reload</button>
       </div>
     </div>
   </div>
@@ -156,14 +203,22 @@
           datasets: [
             {
               label: 'Total Pallet',
-              data: [6, 8, 6, 7, 6, 6, 8, 9, 6, 7, 7, 5],
+              data: [
+                @foreach($palletLineBlue as $val)
+                  {{ $val }},
+                @endforeach
+              ],
               backgroundColor: 'rgba(54, 162, 235, 0.2)',
               borderColor: 'rgba(54, 162, 235, 1)',
               borderWidth: 1
             },
             {
               label: 'Fail',
-              data: [1, 3, 2, 2, 1, 2, 4, 3, 1, 1, 2, 1],
+              data: [
+                @foreach($palletLineRed as $val)
+                  {{ $val }},
+                @endforeach
+              ],
               backgroundColor: 'rgba(255, 99, 132, 0.2)',
               borderColor: 'rgba(255, 99, 132, 1)',
               borderWidth: 1
@@ -254,14 +309,22 @@
           datasets: [
             {
               label: 'Total M/C',
-              data: [6, 8, 6, 7, 6, 6, 8, 9, 6, 7, 7, 5],
+              data: [
+                @foreach($machineLineBlue as $val)
+                  {{ $val }},
+                @endforeach
+              ],
               backgroundColor: 'rgba(54, 162, 235, 0.2)',
               borderColor: 'rgba(54, 162, 235, 1)',
               borderWidth: 1
             },
             {
               label: 'Fail',
-              data: [1, 3, 2, 2, 1, 2, 4, 3, 1, 1, 2, 1],
+              data: [
+                @foreach($machineLineRed as $val)
+                  {{ $val }},
+                @endforeach
+              ],
               backgroundColor: 'rgba(255, 99, 132, 0.2)',
               borderColor: 'rgba(255, 99, 132, 1)',
               borderWidth: 1
@@ -356,28 +419,34 @@
     function reload() {
       processing = true;
 
-      var i_models_id = $('#i_models_id').val();
-      var grouping = $('#grouping').val();
-      var dateFrom = $('#dateFrom').val();
-      var dateTo = $('#dateTo').val();
+      var barModelId = $('#barModelId').val();
+      var barDateFrom = $('#barDateFrom').val();
+      var barDateTo = $('#barDateTo').val();
+      var lineModelId = $('#lineModelId').val();
+      var lineYear = $('#lineYear').val();
+      var top5ModelId = $('#top5ModelId').val();
+      var top5DateFrom = $('#top5DateFrom').val();
+      var top5DateTo = $('#top5DateTo').val();
 
       $.get('{{ route("getChartData") }}', {
-        i_models_id: i_models_id,
-        grouping: grouping,
-        dateFrom: dateFrom,
-        dateTo: dateTo
+        barModelId: barModelId,
+        barDateFrom: barDateFrom,
+        barDateTo: barDateTo,
+        lineModelId: lineModelId,
+        lineYear: lineYear,
+        top5ModelId: top5ModelId,
+        top5DateFrom: top5DateFrom,
+        top5DateTo: top5DateTo
       })
       .done((response) => {
         var data = JSON.parse(response);
 
-        palletBar.data.labels = data.palletBar.palletBarLabels;
-        palletBar.data.datasets[0].data = data.palletBar.palletBar1;
-        palletBar.data.datasets[1].data = data.palletBar.palletBar2;
+        palletBar.data.datasets[0].data = data.palletBar.palletBarTotal;
+        palletBar.data.datasets[1].data = data.palletBar.palletBarReject;
         palletBar.update();
 
-        machineBar.data.labels = data.machineBar.machineBarLabels;
-        machineBar.data.datasets[0].data = data.machineBar.machineBar1;
-        machineBar.data.datasets[1].data = data.machineBar.machineBar2;
+        machineBar.data.datasets[0].data = data.machineBar.machineBarTotal;
+        machineBar.data.datasets[1].data = data.machineBar.machineBarFail;
         machineBar.update();
 
         topErrorcodeBar.data.labels = data.topErrorcode.top5ErrorcodeBarLabels;
