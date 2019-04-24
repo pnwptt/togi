@@ -9,7 +9,7 @@ use DB;
 
 class DashboardController extends Controller
 {
-  private $mySql = false;
+  private $mySql = true;
   private $month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
   public function index ()
@@ -157,7 +157,7 @@ class DashboardController extends Controller
 
 
     // echo json_encode($top5ErrorcodeBarLabels);
-    return view('dashboard', compact('models', 'palletBarTotal', 'palletBarReject', 'machineBarTotal', 'machineBarFail', 'topErrorcodeData', 'top5ErrorcodeBarLabels', 'top5ErrorcodeBarData'));
+    return view('dashboard', compact('models', 'palletBarTotal', 'palletBarReject', 'machineBarTotal', 'machineBarFail', 'palletLineRed', 'palletLineBlue', 'machineLineRed', 'machineLineBlue', 'topErrorcodeData', 'top5ErrorcodeBarLabels', 'top5ErrorcodeBarData'));
   }
 
   public function getChartData (Request $req)
@@ -183,7 +183,7 @@ class DashboardController extends Controller
       $month_number = $this->mySql ? "MONTH(tab.d_record_date)" : "date_part('MONTH', d_record_date)";
 
       $whereModel = $barModelId != 'all' ? "AND tab.i_models_id = ${barModelId}" : '';
-      for ($i = 1; $i <= 12; $i++) {
+      for ($i = 0; $i < 12; $i++) {
         $palletBarTotal[] = 0;
         $palletBarReject[] = 0;
         $machineBarTotal[] = 0;
@@ -207,8 +207,8 @@ class DashboardController extends Controller
       $palletBarData = DB::select(DB::raw($palletBarSql));
 
       foreach ($palletBarData as $value) {
-        $palletBarTotal[$value->grouping] = $value->total_pallet;
-        $palletBarReject[$value->grouping] = $value->total_reject;
+        $palletBarTotal[$value->grouping-1] = $value->total_pallet;
+        $palletBarReject[$value->grouping-1] = $value->total_reject;
       }
       $palletBar = compact('palletBarLabels', 'palletBarTotal', 'palletBarReject');
     // End palletBar
@@ -235,8 +235,8 @@ class DashboardController extends Controller
       $machineBarData = DB::select(DB::raw($machineBarSql));
 
       foreach ($machineBarData as $value) {
-        $machineBarTotal[$value->grouping] = $value->total_machine;
-        $machineBarFail[$value->grouping] = $value->total_fail;
+        $machineBarTotal[$value->grouping-1] = $value->total_machine;
+        $machineBarFail[$value->grouping-1] = $value->total_fail;
       }
       $machineBar = compact('machineBarLabels', 'machineBarTotal', 'machineBarFail');
     // End machineBar
