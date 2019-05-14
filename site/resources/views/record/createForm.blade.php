@@ -90,7 +90,7 @@
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Series:</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" v-model="record.c_series">
+                        <input type="text" class="form-control" disabled v-model="record.c_series">
                       </div>
                     </div>
                     <div class="form-group row">
@@ -116,7 +116,7 @@
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Model:</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" v-model="record.models">
+                        <input type="text" class="form-control" disabled v-model="record.models">
                       </div>
                     </div>
                     <h6>Refference to WI-QA-001</h6>

@@ -215,7 +215,7 @@
               borderWidth: 1
             },
             {
-              label: 'Reject Machine',
+              label: 'Reject M/C',
               data: [
                 @foreach($machineBarFail as $val)
                   {{ $val }},
