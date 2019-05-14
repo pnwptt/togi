@@ -66,9 +66,9 @@
                   <td>{{ $record->rework }}</td>
                   <td>{{ $record->d_approve_date ? 'Approved' : '' }}</td>
                   <td>
-                    <a href="{{ route('viewRecord', trim($record->c_order_number)) }}" class="btn btn-info">View</a>
+                    <a href="{{ route('viewRecord', trim($record->c_order_number)) }}" class="btn-sm btn-info">View</a>
                     @if($record->can_edit)
-                      <a href="{{ route('editRecordForm', trim($record->c_order_number)) }}" class="btn btn-warning">Edit</a>
+                      <a href="{{ route('editRecordForm', trim($record->c_order_number)) }}" class="btn-sm btn-warning">Edit</a>
                     @endif
                   </td>
                 </tr>

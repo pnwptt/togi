@@ -287,7 +287,7 @@
                     </th>
                     <th v-if="record.machineList.length == 0"></th>
                     <th rowspan="2">Total R/J (M/C)</th>
-                    <td rowspan="2" align="center"><input type="number" class="form-control" v-model="record.totalRJMC"></td>
+                    <td rowspan="2" align="center"><input type="number" class="form-control" id="total-rjmc" v-model="record.totalRJMC"></td>
                   </tr>
                   <tr>
                     <th colspan="4">Accept/Reject</th>
@@ -360,32 +360,32 @@
             @endforeach
           ],
           mesurement: [
-            @php($i = 0)
+            @php($mIndex = 0)
             @foreach($recordMesurementItems as $value)
               {
-                checklistIndex: '{{ $i }}',
+                checklistIndex: '{{ $mIndex }}',
                 fail: false,
                 i_checklist_id: '{{ $value->i_checklist_id }}',
                 machineNo: '{{ $value->c_machine_no }}',
                 value: '{{ $value->i_record_item_value }}',
               },
-              @php($i++)
-              @if($i >= count($mesurementChecklist))
-                @php($i = 0)
+              @php($mIndex++)
+              @if($mIndex >= count($mesurementChecklist))
+                @php($mIndex = 0)
               @endif
             @endforeach
           ],
           mesurementRejectDetail: [
-            @php($i = 0)
+            @php($mdIndex = 0)
             @foreach($recordMesurementDetails as $value)
               {
-                checklistIndex: '{{ $i }}',
+                checklistIndex: '{{ $mdIndex }}',
                 i_checklist_id: '{{ $value->i_checklist_id }}',
                 value: '{{ $value->c_detail }}'
               },
-              @php($i++)
-              @if($i >= count($mesurementChecklist))
-                @php($i = 0)
+              @php($mdIndex++)
+              @if($mdIndex >= count($mesurementChecklist))
+                @php($mdIndex = 0)
               @endif
             @endforeach
           ],
@@ -408,32 +408,32 @@
             @endforeach
           ],
           testSpecification: [
-            @php($i = 0)
+            @php($tsIndex = 0)
             @foreach($recordTestSpecificationItems as $value)
               {
-                checklistIndex: '{{ $i }}',
+                checklistIndex: '{{ $tsIndex }}',
                 fail: false,
                 i_checklist_id: '{{ $value->i_checklist_id }}',
                 machineNo: '{{ $value->c_machine_no }}',
                 value: '{{ $value->i_record_item_value }}',
               },
-              @php($i++)
-              @if($i >= count($testSpecificationChecklist))
-                @php($i = 0)
+              @php($tsIndex++)
+              @if($tsIndex >= count($testSpecificationChecklist))
+                @php($tsIndex = 0)
               @endif
             @endforeach
           ],
           testSpecificationRejectDetail: [
-            @php($i = 0)
+            @php($tsdIndex = 0)
             @foreach($recordTestSpecificationDetails as $value)
               {
-                checklistIndex: '{{ $i }}',
+                checklistIndex: '{{ $tsdIndex }}',
                 i_checklist_id: '{{ $value->i_checklist_id }}',
                 value: '{{ $value->c_detail }}'
               },
-              @php($i++)
-              @if($i >= count($testSpecificationChecklist))
-                @php($i = 0)
+              @php($tsdIndex++)
+              @if($tsdIndex >= count($testSpecificationChecklist))
+                @php($tsdIndex = 0)
               @endif
             @endforeach
           ],
@@ -530,9 +530,9 @@
           this.checkError(index, item.checklistIndex, 'mesurement');
         });
         this.record.testSpecification.forEach((item, index) => {
+          console.log(index, item)
           this.checkError(index, item.checklistIndex, 'testSpecification');
         });
-        //this.record.c_order_number = 'wo-123456'; // for dev
       },
 
       methods: {
@@ -617,17 +617,24 @@
         },
 
         save() {
-          this.processing = true;
-          axios.post('{{ route("editRecord") }}', this.record)
-          .then((response) => {
-            alert('Saved.');
-            window.location.href = '{{ route("record") }}';
-            this.processing = false;
-          })
-          .catch((error) => {
-            alert('Ops! Something went wrong.');
-            this.processing = false;
-          });
+          if (this.record.totalRJMC == '') {
+            alert('Please enter total reject machines.');
+            $('#total-rjmc').focus();
+          } else if (this.record.judgement == 0) {
+            alert('Please select lot judgement.');
+          } else {
+            this.processing = true;
+            axios.post('{{ route("editRecord") }}', this.record)
+            .then((response) => {
+              alert('Saved.');
+              window.location.href = '{{ route("record") }}';
+              this.processing = false;
+            })
+            .catch((error) => {
+              alert('Ops! Something went wrong.');
+              this.processing = false;
+            });
+          }
         },
 
         // ====================================== Calulate Section ======================================
@@ -673,10 +680,8 @@
             var total = 0, m = [], t = [], fa = [], fb = [], fc = [];
             m = this.record.mesurement.filter((m) => m.machineNo == this.record.machineList[index] && m.fail);
             t = this.record.testSpecification.filter((m) => m.machineNo == this.record.machineList[index] && m.fail);
-            fa = this.record.failureSymptom.filter((m) => m.machineNo == this.record.machineList[index] && m.c_rank == 'A' && m.value);
-            fb = this.record.failureSymptom.filter((m) => m.machineNo == this.record.machineList[index] && m.c_rank == 'B' && m.value);
-            fc = this.record.failureSymptom.filter((m) => m.machineNo == this.record.machineList[index] && m.c_rank == 'C' && m.value);
-            total = m.length + t.length + fa.length + parseInt(fb.length / 2) + parseInt(fc.length / 3);
+            f = this.record.failureSymptom.filter((m) => m.machineNo == this.record.machineList[index] && m.value);
+            total = m.length + t.length + f.length;
             this.totalFailByMachine[index] = total;
             return total;
           },

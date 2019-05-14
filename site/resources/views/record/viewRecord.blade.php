@@ -217,9 +217,7 @@
                         </div>
                       </th>
                       @php($totalFailByMachine[$value] = 0)
-                      @php($totalA[$value] = 0)
-                      @php($totalB[$value] = 0)
-                      @php($totalC[$value] = 0)
+                      @php($totalFail[$value] = 0)
                     @endforeach
                     @if(count($machineList) == 0)
                       <th class="machineList"></th>
@@ -267,7 +265,7 @@
                   
                   <!-- ========================================== Test Specification =================================== -->
                     <tr>
-                      <td colspan="{{ count($machineList) + 7 > 7 ? count($machineList) + 7 : 7 }}" class="table-light"><i>Mesurement</i></td>
+                      <td colspan="{{ count($machineList) + 7 > 7 ? count($machineList) + 7 : 7 }}" class="table-light"><i>Test Specification</i></td>
                     </tr>
                     @foreach($testSpecificationChecklist as $index => $value)
                       <tr>
@@ -308,7 +306,7 @@
                   <!-- ========================================== Failure symotom ====================================== -->
                     @if(count($recordFailure) != 0)
                       <tr>
-                        <td colspan="{{ count($machineList) + 7 > 7 ? count($machineList) + 7 : 7 }}" class="table-light"><i>Mesurement</i></td>
+                        <td colspan="{{ count($machineList) + 7 > 7 ? count($machineList) + 7 : 7 }}" class="table-light"><i>Failure symptom</i></td>
                       </tr>
                       @foreach($failureSymptomChecklist as $index => $value)
                         <tr>
@@ -318,12 +316,8 @@
                           <td>{{ $value->n_errorcode }}</td>
                           @foreach($recordFailure as $i => $v)
                             @if($value->i_errorcode_id == $v->i_errorcode_id)
-                              @if($value->c_rank == 'A' && $v->i_record_failure == 1)
-                                @php($totalA[$v->c_machine_no]++)
-                              @elseif($value->c_rank == 'B' && $v->i_record_failure == 1)
-                                @php($totalB[$v->c_machine_no]++)
-                              @elseif($value->c_rank == 'C' && $v->i_record_failure == 1)
-                                @php($totalC[$v->c_machine_no]++)
+                              @if($v->i_record_failure == 1)
+                                @php($totalFail[$v->c_machine_no]++)
                               @endif
                               <td align="center">
                                 <input type="checkbox" class="form-control" onclick="return false" {{ $v->i_record_failure == 1 ? 'checked' : '' }}>
@@ -343,7 +337,7 @@
                   <tr>
                     <th colspan="4">Total</th>
                     @foreach($machineList as $value)
-                      @php($totalFailByMachine[$value] += $totalA[$value] + floor($totalB[$value]/2) + floor($totalC[$value]/3))
+                      @php($totalFailByMachine[$value] += $totalFail[$value])
                       <th>{{ $totalFailByMachine[$value] }}</th>
                     @endforeach
                     @if(count($machineList) == 0)

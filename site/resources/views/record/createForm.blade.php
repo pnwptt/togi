@@ -90,7 +90,7 @@
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Series:</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" disabled v-model="record.c_series">
+                        <input type="text" class="form-control" v-model="record.c_series">
                       </div>
                     </div>
                     <div class="form-group row">
@@ -116,7 +116,7 @@
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Model:</label>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" disabled v-model="record.models">
+                        <input type="text" class="form-control" v-model="record.models">
                       </div>
                     </div>
                     <h6>Refference to WI-QA-001</h6>
@@ -287,7 +287,7 @@
                     </th>
                     <th v-if="record.machineList.length == 0"></th>
                     <th rowspan="2">Total R/J (M/C)</th>
-                    <td rowspan="2" align="center"><input type="number" class="form-control" v-model="record.totalRJMC"></td>
+                    <td rowspan="2" align="center"><input type="number" class="form-control" id="total-rjmc" v-model="record.totalRJMC"></td>
                   </tr>
                   <tr>
                     <th colspan="4">Accept/Reject</th>
@@ -510,17 +510,24 @@
         },
 
         save() {
-          this.processing = true;
-          axios.post('{{ route("createRecord") }}', this.record)
-          .then((response) => {
-            alert('Saved.');
-            window.location.href = '{{ route("record") }}';
-            this.processing = false;
-          })
-          .catch((error) => {
-            alert('Ops! Something went wrong.');
-            this.processing = false;
-          });
+          if (this.record.totalRJMC == '') {
+            alert('Please enter total reject machines.');
+            $('#total-rjmc').focus();
+          } else if (this.record.judgement == 0) {
+            alert('Please select lot judgement.');
+          } else {
+            this.processing = true;
+            axios.post('{{ route("createRecord") }}', this.record)
+            .then((response) => {
+              alert('Saved.');
+              window.location.href = '{{ route("record") }}';
+              this.processing = false;
+            })
+            .catch((error) => {
+              alert('Ops! Something went wrong.');
+              this.processing = false;
+            });
+          }
         },
 
         // ====================================== Calulate Section ======================================
@@ -566,10 +573,8 @@
             var total = 0, m = [], t = [], fa = [], fb = [], fc = [];
             m = this.record.mesurement.filter((m) => m.machineNo == this.record.machineList[index] && m.fail);
             t = this.record.testSpecification.filter((m) => m.machineNo == this.record.machineList[index] && m.fail);
-            fa = this.record.failureSymptom.filter((m) => m.machineNo == this.record.machineList[index] && m.c_rank == 'A' && m.value);
-            fb = this.record.failureSymptom.filter((m) => m.machineNo == this.record.machineList[index] && m.c_rank == 'B' && m.value);
-            fc = this.record.failureSymptom.filter((m) => m.machineNo == this.record.machineList[index] && m.c_rank == 'C' && m.value);
-            total = m.length + t.length + fa.length + parseInt(fb.length / 2) + parseInt(fc.length / 3);
+            f = this.record.failureSymptom.filter((m) => m.machineNo == this.record.machineList[index] && m.value);
+            total = m.length + t.length + f.length;
             this.totalFailByMachine[index] = total;
             return total;
           },

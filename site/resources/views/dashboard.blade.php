@@ -20,7 +20,7 @@
       <div class="col-md-2"></div>
       <div class="col-md-2">
         Model: 
-        <select class="form-control" id="barModelId">
+        <select class="form-control" id="barModelId" onchange="onChangeModel('barModelId')">
           <option value="all">All</option>
           @foreach($models as $value)
             <option value="{{ $value->i_models_id }}">{{ $value->n_models_name }}</option>
@@ -44,14 +44,14 @@
     </div>
     <hr>
     <div class="row">
-      <div class="col-md-6"><canvas class="chart" id="palletBar" height="150"></canvas></div>
-      <div class="col-md-6"><canvas class="chart" id="machineBar" height="150"></canvas></div>
+      <div class="col-md-6"><center>PPA Inspection Report (% by Pallet)</center><canvas class="chart" id="palletBar" height="150"></canvas></div>
+      <div class="col-md-6"><center>PPA Inspection Report (% by M/C)</center><canvas class="chart" id="machineBar" height="150"></canvas></div>
     </div>
     <div class="row">
       <div class="col-md-4"></div>
       <div class="col-md-2">
         Model: 
-        <select class="form-control" id="lineModelId">
+        <select class="form-control" id="lineModelId" onchange="onChangeModel('lineModelId')">
           <option value="all">All</option>
           @foreach($models as $value)
             <option value="{{ $value->i_models_id }}">{{ $value->n_models_name }}</option>
@@ -62,7 +62,9 @@
       <div class="col-md-2">
         Year: 
         <select class="form-control" id="lineYear">
-          <option value="week">Week</option>
+          @foreach($years as $value)
+            <option value="{{ $value->year }}">{{ $value->year }}</option>
+          @endforeach
         </select>
       </div>
       <div class="col-md-2">
@@ -73,8 +75,8 @@
     </div>
     <hr>
     <div class="row">
-      <div class="col-md-6"><canvas class="chart" id="palletLine" height="150"></canvas></div>
-      <div class="col-md-6"><canvas class="chart" id="machineLine" height="150"></canvas></div>
+      <div class="col-md-6"><center>ACC Rej Ratio (% by Pallet)</center><canvas class="chart" id="palletLine" height="150"></canvas></div>
+      <div class="col-md-6"><center>ACC Rej Ratio (% by M/C)</center><canvas class="chart" id="machineLine" height="150"></canvas></div>
     </div>
     <div class="row">
       <div class="col-md-2"></div>
@@ -103,7 +105,7 @@
     </div>
     <hr>
     <div class="row">
-      <div class="col-md-6"><canvas class="chart" id="topErrorcodeBar" height="150"></canvas></div>
+      <div class="col-md-6"><center>Top 5 Errorcode</center><canvas class="chart" id="topErrorcodeBar" height="150"></canvas></div>
       <div class="col-md-6">
         <div class="table-responsive">
           <table class="table table-bordered" id="topErrorcodeTable">
@@ -160,7 +162,7 @@
               borderWidth: 1
             },
             {
-              label: 'Total Reject',
+              label: 'Rework Pallet',
               data: [
                 @foreach($palletBarReject as $val)
                   {{ $val }},
@@ -194,17 +196,17 @@
         }
     });
 
-    var ctx2 = document.getElementById('palletLine').getContext('2d');
-    var palletLine = new Chart(ctx2, {
-        type: 'line',
+    var ctx2 = document.getElementById('machineBar').getContext('2d');
+    var machineBar = new Chart(ctx2, {
+        type: 'bar',
         plugins: [ChartDataLabels],
         data: {
           labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
           datasets: [
             {
-              label: 'Total Pallet',
+              label: 'Total M/C',
               data: [
-                @foreach($palletLineBlue as $val)
+                @foreach($machineBarTotal as $val)
                   {{ $val }},
                 @endforeach
               ],
@@ -213,9 +215,9 @@
               borderWidth: 1
             },
             {
-              label: 'Fail',
+              label: 'Reject Machine',
               data: [
-                @foreach($palletLineRed as $val)
+                @foreach($machineBarFail as $val)
                   {{ $val }},
                 @endforeach
               ],
@@ -247,17 +249,17 @@
         }
     });
 
-    var ctx3 = document.getElementById('machineBar').getContext('2d');
-    var machineBar = new Chart(ctx3, {
-        type: 'bar',
+    var ctx3 = document.getElementById('palletLine').getContext('2d');
+    var palletLine = new Chart(ctx3, {
+        type: 'line',
         plugins: [ChartDataLabels],
         data: {
           labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
           datasets: [
             {
-              label: 'Total M/C',
+              label: 'Accumulative',
               data: [
-                @foreach($machineBarTotal as $val)
+                @foreach($palletLineBlue as $val)
                   {{ $val }},
                 @endforeach
               ],
@@ -266,9 +268,9 @@
               borderWidth: 1
             },
             {
-              label: 'Total Fail',
+              label: 'Ratio by Pallet',
               data: [
-                @foreach($machineBarFail as $val)
+                @foreach($palletLineRed as $val)
                   {{ $val }},
                 @endforeach
               ],
@@ -308,7 +310,7 @@
           labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
           datasets: [
             {
-              label: 'Total M/C',
+              label: 'Accumulative',
               data: [
                 @foreach($machineLineBlue as $val)
                   {{ $val }},
@@ -319,7 +321,7 @@
               borderWidth: 1
             },
             {
-              label: 'Fail',
+              label: 'Ratio by M/C',
               data: [
                 @foreach($machineLineRed as $val)
                   {{ $val }},
@@ -409,9 +411,14 @@
         }
     });
 
-    $('#topErrorcodeTable').DataTable({
+    var datatable = $('#topErrorcodeTable').DataTable({
       sorting: [[2, 'desc']],
-      lengthMenu: [5, 10, 50, 100]
+      lengthMenu: [5, 10, 50, 100],
+      aoColumns: [
+         { mData: 'code' },
+         { mData: 'detail' },
+         { mData: 'qty' }
+      ]
     });
 
     var processing = false;
@@ -449,9 +456,27 @@
         machineBar.data.datasets[1].data = data.machineBar.machineBarFail;
         machineBar.update();
 
+        palletLine.data.datasets[0].data = data.palletLine.palletLineBlue;
+        palletLine.data.datasets[1].data = data.palletLine.palletLineRed;
+        palletLine.update();
+
+        machineLine.data.datasets[0].data = data.machineLine.machineLineBlue;
+        machineLine.data.datasets[1].data = data.machineLine.machineLineRed;
+        machineLine.update();
+
         topErrorcodeBar.data.labels = data.topErrorcode.top5ErrorcodeBarLabels;
         topErrorcodeBar.data.datasets[0].data = data.topErrorcode.top5ErrorcodeBarData;
         topErrorcodeBar.update();
+
+        datatable.clear();
+        data.topErrorcode.topErrorcodeData.forEach((errorcode) => {
+          datatable.row.add({
+            'code': errorcode.c_code,
+            'detail': errorcode.n_errorcode,
+            'qty': errorcode.qty
+          });
+        });
+        datatable.draw();
 
         processing = false;
       })
@@ -462,6 +487,18 @@
 
     function reset() {
       window.location.reload();
+    }
+
+    function onChangeModel(id) {
+      var value = $('#' + id).val();
+      switch (id) {
+        case 'barModelId':
+          $('#lineModelId').val(value);
+          break;
+        case 'lineModelId':
+          $('#barModelId').val(value);
+          break;
+      }
     }
 
     function gotoTop() {

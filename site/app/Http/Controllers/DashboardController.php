@@ -9,12 +9,14 @@ use DB;
 
 class DashboardController extends Controller
 {
-  private $mySql = true;
+  private $mySql = false;
   private $month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
   public function index ()
   {
     $models = Models::get();
+
+    $years = DB::select(DB::raw("SELECT DISTINCT date_part('year', d_record_date) AS year FROM b_record ORDER BY year DESC"));
 
     // Start Prepare data
       $curDate = date('Y-m-d');
@@ -57,12 +59,12 @@ class DashboardController extends Controller
         SELECT 
           ${month_number} AS month_number, 
           COUNT(c_machine_no) AS total_machine,
-          SUM(fail) AS total_fail
+          MAX(fail) AS total_fail
         FROM ( 
           SELECT 
             c_machine_no, 
             MAX(d_record_date) as d_record_date, 
-            MAX(i_record_item_fail) AS fail 
+            MAX(i_total_rjmc) AS fail
           FROM b_models 
             INNER JOIN b_record ON b_record.i_models_id = b_models.i_models_id 
             INNER JOIN b_record_item ON b_record_item.i_record_id = b_record.i_record_id
@@ -131,14 +133,37 @@ class DashboardController extends Controller
 
     // Start topErrorcode
       $topErrorcodeSql = "
-        SELECT ec.i_errorcode_id, ec.c_code, ec.n_errorcode, SUM(i_record_item_fail) AS qty
-        FROM b_errorcode ec
-          INNER JOIN b_checklists cl ON cl.i_errorcode_id = ec.i_errorcode_id
-          INNER JOIN b_record_item rcit ON rcit.i_checklist_id = cl.i_checklist_id
-          INNER JOIN b_record rc ON rc.i_record_id = rcit.i_record_id
-        WHERE rc.d_record_date BETWEEN '${curYear}-01-01' AND '${curYear}-12-31' AND rcit.i_record_item_fail != 0
-        GROUP BY ec.i_errorcode_id, ec.c_code, ec.n_errorcode
-        ORDER BY qty DESC, ec.i_errorcode_id ASC
+        SELECT
+          b_errorcode.i_errorcode_id, 
+          b_errorcode.c_code,
+          b_errorcode.n_errorcode,
+          CASE WHEN record_item.qty IS NULL THEN 0 ELSE record_item.qty END + CASE WHEN record_failure.qty IS NULL THEN 0 ELSE record_failure.qty END AS qty
+        FROM b_errorcode 
+        LEFT JOIN (
+          SELECT 
+            i_errorcode_id, 
+            SUM(i_record_item_fail) AS qty 
+          FROM b_checklists cl
+            INNER JOIN b_record_item rcit ON rcit.i_checklist_id = cl.i_checklist_id 
+            INNER JOIN b_record rc ON rc.i_record_id = rcit.i_record_id 
+          WHERE rc.d_record_date BETWEEN '${curYear}-01-01' AND '${curYear}-12-31' 
+            AND rcit.i_record_item_fail != 0 
+          GROUP BY i_errorcode_id
+          ORDER BY qty DESC, i_errorcode_id ASC
+        ) AS record_item ON record_item.i_errorcode_id = b_errorcode.i_errorcode_id 
+        LEFT JOIN (
+          SELECT 
+            i_errorcode_id, 
+            SUM(i_record_failure) AS qty 
+          FROM b_record_failure rf
+            INNER JOIN b_record rc ON rc.i_record_id = rf.i_record_id 
+          WHERE rc.d_record_date BETWEEN '${curYear}-01-01' AND '${curYear}-12-31' 
+            AND i_record_failure != 0 
+          GROUP BY i_errorcode_id
+          ORDER BY qty DESC, i_errorcode_id ASC
+        ) AS record_failure ON record_failure.i_errorcode_id = b_errorcode.i_errorcode_id
+        WHERE CASE WHEN record_item.qty IS NULL THEN 0 ELSE record_item.qty END + CASE WHEN record_failure.qty IS NULL THEN 0 ELSE record_failure.qty END > 0
+        ORDER BY qty DESC, b_errorcode.i_errorcode_id ASC
       ";
       $topErrorcodeData = DB::select(DB::raw($topErrorcodeSql));
 
@@ -149,15 +174,15 @@ class DashboardController extends Controller
         if ($i == 5) {
           break;
         }
-        $top5ErrorcodeBarLabels[] = $value->c_code;
-        $top5ErrorcodeData[] = $value->qty;
+        $top5ErrorcodeBarLabels[$value->i_errorcode_id] = $value->c_code;
+        $top5ErrorcodeBarData[$value->i_errorcode_id] = $value->qty;
         $i++;
       }
     // End topErrorcode
 
-
-    // echo json_encode($top5ErrorcodeBarLabels);
-    return view('dashboard', compact('models', 'palletBarTotal', 'palletBarReject', 'machineBarTotal', 'machineBarFail', 'palletLineRed', 'palletLineBlue', 'machineLineRed', 'machineLineBlue', 'topErrorcodeData', 'top5ErrorcodeBarLabels', 'top5ErrorcodeBarData'));
+    // echo ($topErrorcodeSql);
+    // echo json_encode($topErrorcodeFailureData);
+    return view('dashboard', compact('models', 'years', 'palletBarTotal', 'palletBarReject', 'machineBarTotal', 'machineBarFail', 'palletLineRed', 'palletLineBlue', 'machineLineRed', 'machineLineBlue', 'topErrorcodeData', 'top5ErrorcodeBarLabels', 'top5ErrorcodeBarData'));
   }
 
   public function getChartData (Request $req)
@@ -179,10 +204,17 @@ class DashboardController extends Controller
     // Start Prepare data
       $barDateFrom = $barDateFrom ? $barDateFrom : "${curYear}-01-01";
       $barDateTo = $barDateTo ? $barDateTo : "${curYear}-12-31";
+      $top5DateFrom = $top5DateFrom ? $top5DateFrom : "${curYear}-01-01";
+      $top5DateTo = $top5DateTo ? $top5DateTo : "${curYear}-12-31";
 
-      $month_number = $this->mySql ? "MONTH(tab.d_record_date)" : "date_part('MONTH', d_record_date)";
+      $month_number_pallet = $this->mySql ? "MONTH(b_record.d_record_date)" : "date_part('MONTH', b_record.d_record_date)";
+      $month_number_machine = $this->mySql ? "MONTH(tab.d_record_date)" : "date_part('MONTH', tab.d_record_date)";
 
-      $whereModel = $barModelId != 'all' ? "AND tab.i_models_id = ${barModelId}" : '';
+      $whereModelBar = $barModelId != 'all' ? "AND b_record.i_models_id = ${barModelId}" : '';
+      $whereModelPalletLine = $lineModelId != 'all' ? "AND b_record.i_models_id = ${lineModelId}" : '';
+      $whereModelMachineLine = $lineModelId != 'all' ? "WHERE b_record.i_models_id = ${lineModelId}" : '';
+      $whereModelTop5 = $top5ModelId != 'all' ? "AND rc.i_models_id = ${top5ModelId}" : '';
+
       for ($i = 0; $i < 12; $i++) {
         $palletBarTotal[] = 0;
         $palletBarReject[] = 0;
@@ -195,14 +227,14 @@ class DashboardController extends Controller
     // Start palletBar
       $palletBarSql = "
         SELECT 
-          ${month_number} AS grouping, 
+          ${month_number_pallet} AS grouping, 
           COUNT(i_record_pallet_id) AS total_pallet, 
           SUM(i_record_pallet_status) AS total_reject 
         FROM b_models
-          INNER JOIN b_record tab ON tab.i_models_id = b_models.i_models_id 
-          INNER JOIN b_record_pallet ON b_record_pallet.i_record_id = tab.i_record_id
-        WHERE tab.d_record_date BETWEEN '${barDateFrom}' AND '${barDateTo}' ${whereModel}
-        GROUP BY ${month_number}
+          INNER JOIN b_record ON b_record.i_models_id = b_models.i_models_id 
+          INNER JOIN b_record_pallet ON b_record_pallet.i_record_id = b_record.i_record_id
+        WHERE d_record_date BETWEEN '${barDateFrom}' AND '${barDateTo}' ${whereModelBar}
+        GROUP BY ${month_number_pallet}
       ";
       $palletBarData = DB::select(DB::raw($palletBarSql));
 
@@ -216,21 +248,21 @@ class DashboardController extends Controller
     // Start machineBar
       $machineBarSql = "
         SELECT 
-          ${month_number} AS grouping,
+          ${month_number_machine} AS grouping,
           COUNT(c_machine_no) AS total_machine,
-          SUM(fail) AS total_fail
+          MAX(fail) AS total_fail
         FROM ( 
           SELECT 
             c_machine_no, 
             MAX(d_record_date) as d_record_date, 
-            MAX(i_record_item_fail) AS fail 
+            MAX(i_total_rjmc) AS fail 
           FROM b_models 
             INNER JOIN b_record ON b_record.i_models_id = b_models.i_models_id 
             INNER JOIN b_record_item ON b_record_item.i_record_id = b_record.i_record_id
-          WHERE b_record.d_record_date BETWEEN '${barDateFrom}' AND '${barDateTo}' $whereModel
+          WHERE b_record.d_record_date BETWEEN '${barDateFrom}' AND '${barDateTo}' ${whereModelBar}
           GROUP BY c_machine_no
         ) AS tab
-        GROUP BY ${month_number}
+        GROUP BY ${month_number_machine}
       ";
       $machineBarData = DB::select(DB::raw($machineBarSql));
 
@@ -245,18 +277,19 @@ class DashboardController extends Controller
     // Start lineChart
       for ($i = 1; $i <= 12; $i++) {
         $dateCal = $this->mySql ? 
-          "(SELECT '${curYear}-${i}-1' - INTERVAL 1 YEAR + INTERVAL 1 MONTH) AND (SELECT LAST_DAY('${curYear}-${i}-1'))" : 
-          "(SELECT (('${curYear}-${i}-1')::DATE - INTERVAL '1 YEAR - 1 MONTH')::DATE) AND (SELECT (date_trunc('MONTH',('${curYear}-${i}-1')::date) + INTERVAL '1 MONTH - 1 DAY')::DATE)";
+          "(SELECT '${lineYear}-${i}-1' - INTERVAL 1 YEAR + INTERVAL 1 MONTH) AND (SELECT LAST_DAY('${lineYear}-${i}-1'))" : 
+          "(SELECT (('${lineYear}-${i}-1')::DATE - INTERVAL '1 YEAR - 1 MONTH')::DATE) AND (SELECT (date_trunc('MONTH',('${lineYear}-${i}-1')::date) + INTERVAL '1 MONTH - 1 DAY')::DATE)";
+        
         $palletLineSql = "
           SELECT 
-            ${month_number} AS month_number, 
+            ${month_number_pallet} AS month_number, 
             COUNT(i_record_pallet_id) AS total_pallet, 
             SUM(i_record_pallet_status) AS total_reject 
           FROM b_models 
-            INNER JOIN b_record tab ON tab.i_models_id = b_models.i_models_id 
-            INNER JOIN b_record_pallet ON b_record_pallet.i_record_id = tab.i_record_id
-          WHERE tab.d_record_date BETWEEN ${dateCal}
-          GROUP BY ${month_number}
+            INNER JOIN b_record ON b_record.i_models_id = b_models.i_models_id 
+            INNER JOIN b_record_pallet ON b_record_pallet.i_record_id = b_record.i_record_id
+          WHERE b_record.d_record_date BETWEEN ${dateCal} ${whereModelPalletLine}
+          GROUP BY ${month_number_pallet}
         ";
         $palletTmp = DB::select(DB::raw($palletLineSql));
         $palletRawData[] = count($palletTmp) > 0 ? $palletTmp[0] : (object) array('month_number' => $i, 'total_pallet' => 0, 'total_reject' => 0);
@@ -266,7 +299,7 @@ class DashboardController extends Controller
 
         $machineLineSql = "
           SELECT 
-            ${month_number} AS month_number, 
+            ${month_number_machine} AS month_number, 
             COUNT(c_machine_no) AS total_machine,
             SUM(fail) AS total_fail
           FROM ( 
@@ -277,10 +310,11 @@ class DashboardController extends Controller
             FROM b_models 
               INNER JOIN b_record ON b_record.i_models_id = b_models.i_models_id 
               INNER JOIN b_record_item ON b_record_item.i_record_id = b_record.i_record_id
+            ${whereModelMachineLine}
             GROUP BY c_machine_no
           ) AS tab
           WHERE tab.d_record_date BETWEEN ${dateCal}
-          GROUP BY ${month_number}
+          GROUP BY ${month_number_machine}
         ";
         $machineTmp = DB::select(DB::raw($machineLineSql));
         $machineRawData[] = count($machineTmp) > 0 ? $machineTmp[0] : (object) array('month_number' => $i, 'total_machine' => 0, 'total_fail' => 0);
@@ -288,19 +322,45 @@ class DashboardController extends Controller
         $machineLineRed[] = $machineBarTotal[$i-1] > 0 ? number_format(($machineBarFail[$i-1] / $machineBarTotal[$i-1]) * 100, 2) : 0;
         $machineLineBlue[] = $machineRawData[$i-1]->total_machine > 0 ? number_format((($machineRawData[$i-1]->total_fail * 12) / ($machineRawData[$i-1]->total_machine * 12)) * 100, 2) : 0;
       }
+      $palletLine = compact('palletLineRed', 'palletLineBlue');
+      $machineLine = compact('machineLineRed', 'machineLineBlue');
     // End lineChart
 
 
     // Start topErrorcode
       $topErrorcodeSql = "
-        SELECT ec.i_errorcode_id, ec.c_code, ec.n_errorcode, SUM(i_record_item_fail) AS qty
-        FROM b_errorcode ec
-          INNER JOIN b_checklists cl ON cl.i_errorcode_id = ec.i_errorcode_id
-          INNER JOIN b_record_item rcit ON rcit.i_checklist_id = cl.i_checklist_id
-          INNER JOIN b_record tab ON tab.i_record_id = rcit.i_record_id
-        WHERE tab.d_record_date BETWEEN '${barDateFrom}' AND '${barDateTo}' $whereModel AND rcit.i_record_item_fail != 0
-        GROUP BY ec.i_errorcode_id, ec.c_code, ec.n_errorcode
-        ORDER BY qty DESC, ec.i_errorcode_id ASC
+        SELECT
+          b_errorcode.c_code,
+          b_errorcode.n_errorcode,
+          CASE WHEN record_item.qty IS NULL THEN 0 ELSE record_item.qty END + CASE WHEN record_failure.qty IS NULL THEN 0 ELSE record_failure.qty END AS qty
+        FROM b_errorcode 
+        LEFT JOIN (
+          SELECT 
+            i_errorcode_id, 
+            SUM(i_record_item_fail) AS qty 
+          FROM b_checklists cl
+            INNER JOIN b_record_item rcit ON rcit.i_checklist_id = cl.i_checklist_id 
+            INNER JOIN b_record rc ON rc.i_record_id = rcit.i_record_id 
+          WHERE rc.d_record_date BETWEEN '${top5DateFrom}' AND '${top5DateTo}' 
+            AND rcit.i_record_item_fail != 0 
+            ${whereModelTop5}
+          GROUP BY i_errorcode_id
+          ORDER BY qty DESC, i_errorcode_id ASC
+        ) AS record_item ON record_item.i_errorcode_id = b_errorcode.i_errorcode_id 
+        LEFT JOIN (
+          SELECT 
+            i_errorcode_id, 
+            SUM(i_record_failure) AS qty 
+          FROM b_record_failure rf
+            INNER JOIN b_record rc ON rc.i_record_id = rf.i_record_id 
+          WHERE rc.d_record_date BETWEEN '${top5DateFrom}' AND '${top5DateTo}' 
+            AND i_record_failure != 0 
+            ${whereModelTop5}
+          GROUP BY i_errorcode_id
+          ORDER BY qty DESC, i_errorcode_id ASC
+        ) AS record_failure ON record_failure.i_errorcode_id = b_errorcode.i_errorcode_id
+        WHERE CASE WHEN record_item.qty IS NULL THEN 0 ELSE record_item.qty END + CASE WHEN record_failure.qty IS NULL THEN 0 ELSE record_failure.qty END > 0
+        ORDER BY qty DESC, b_errorcode.i_errorcode_id ASC
       ";
       $topErrorcodeData = DB::select(DB::raw($topErrorcodeSql));
 
@@ -318,7 +378,7 @@ class DashboardController extends Controller
       $topErrorcode = compact('topErrorcodeData', 'top5ErrorcodeBarLabels', 'top5ErrorcodeBarData');
     // End topErrorcode
 
-    $chartData = compact('palletBar', 'machineBar', 'topErrorcode');
+    $chartData = compact('palletBar', 'machineBar', 'palletLine', 'machineLine', 'topErrorcode');
     echo json_encode($chartData);
   }
 }

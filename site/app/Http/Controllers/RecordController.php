@@ -72,13 +72,8 @@ class RecordController extends Controller
             $recordFailure = RecordFailure::getRecordItemByRecordId($record->i_record_id);
             $recordFailureDetails = RecordFailureDetail::getDetailByRecordId($record->i_record_id);
             $recordPallet = RecordPallet::getPalletByRecordId($record->i_record_id);
-            // echo json_encode($recordFailure);
-            return view('record.editForm', compact(
-                'record', 'mesurementChecklist', 'testSpecificationChecklist', 'failureSymptomChecklist', 
-                'machineList', 'recordMesurementItems', 'recordTestSpecificationItems', 
-                'recordMesurementDetails', 'recordTestSpecificationDetails', 
-                'recordFailure', 'recordFailureDetails', 'recordPallet'
-            ));
+            // echo json_encode($recordTestSpecificationItems);
+            return view('record.editForm', compact('record', 'mesurementChecklist', 'testSpecificationChecklist', 'failureSymptomChecklist', 'machineList', 'recordMesurementItems', 'recordTestSpecificationItems', 'recordMesurementDetails', 'recordTestSpecificationDetails', 'recordFailure', 'recordFailureDetails', 'recordPallet'));
         } else {
             return redirect()->route('record')->with('error', 'Permission denied!');
         }

@@ -23,6 +23,7 @@ class Checklist extends Model
             ->where('i_form_id', $i_form_id)
             ->where('i_errorcode_type_id', $i_errorcode_type_id)
             ->where('i_checklist_deleted', 0)
+            ->orderBy('b_errorcode.i_errorcode_id' , 'asc')
             ->get();
     }
 
