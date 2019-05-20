@@ -184,7 +184,7 @@
                     <th rowspan="2" width="20%">Inspection detail</th>
                     <th :colspan="record.machineList.length > 0 ? record.machineList.length : 1">
                       Machine no. 
-                      <input type="text" class="form-control input-machine" :disabled="!record.c_series" v-model="machineNo" @keyup.enter="addMachine()">
+                      <input type="text" class="form-control input-machine" id="input-machineNo" :disabled="!record.c_series" v-model="machineNo" @keyup.enter="addMachine()">
                       <span class="clear-machine" v-show="machineNo" @click="machineNo = ''">X</span>
                     </th>
                     <th rowspan="2" width="20%">Reject detail</th>
@@ -282,7 +282,7 @@
                   </tr>
                   <tr>
                     <th colspan="4">Pallet#</th>
-                    <th :colspan="(record.machineList.length / 2) < (index + 1)  ? 1 : 2" v-for="(value, index) in record.palletList">
+                    <th :colspan="palletDivide == 1 ? 1 : (record.machineList.length / 2) < (index + 1)  ? 1 : 2" v-for="(value, index) in record.palletList">
                       @{{ index + 1 }}
                     </th>
                     <th v-if="record.machineList.length == 0"></th>
@@ -291,7 +291,7 @@
                   </tr>
                   <tr>
                     <th colspan="4">Accept/Reject</th>
-                    <th :colspan="(record.machineList.length / 2) < (index + 1) ? 1 : 2" v-for="(value, index) in record.palletList" class="clickable"
+                    <th :colspan="palletDivide == 1 ? 1 : (record.machineList.length / 2) < (index + 1) ? 1 : 2" v-for="(value, index) in record.palletList" class="clickable"
                       :class="palletClass[value.status]"
                       @click="togglePalletStatus(index)"></th>
                     <th v-if="record.machineList.length == 0"></th>
@@ -319,6 +319,7 @@
         machineNo: '',
         palletClass: ['table-success', 'table-danger'],
         totalFailByMachine: [],
+        palletDivide: 1,
         record: {
           models: '',
           c_order_number: '',
@@ -375,7 +376,7 @@
 
             this.totalFailByMachine.push(0);
 
-            if (this.record.machineList.length % 2 == 1) {
+            if (this.palletDivide == 1 || this.record.machineList.length % 2 == 1) {
               this.record.palletList.push({
                 status: 0
               });
@@ -424,30 +425,35 @@
                 }
               })
               .then((response) => {
-                var workOrder = response.data.workOrder;
-                this.record.models = response.data.models.n_models_name;
-                this.record.i_models_id = response.data.models.i_models_id;
-                this.record.c_part_number = workOrder.c_item ? workOrder.c_item : '';
-                this.record.c_series = workOrder.c_series;
-                this.record.c_customer = workOrder.country;
-                this.record.mesurementChecklist = response.data.mesurementChecklist;
-                this.record.testSpecificationChecklist = response.data.testSpecificationChecklist;
-                response.data.mesurementChecklist.forEach((item, index) => {
-                  app.record.mesurementRejectDetail.push({
-                    checklistIndex: index,
-                    i_checklist_id: item.i_checklist_id,
-                    value: ''
+                if(response.data.record) {
+                  window.location.href = '{{ route("editRecord") }}/' + response.data.record.c_order_number.trim();
+                } else {
+                  var workOrder = response.data.workOrder;
+                  this.palletDivide = response.data.models.i_pallet_qty > 10 ? 2 : 1;
+                  this.record.models = response.data.models.n_models_name;
+                  this.record.i_models_id = response.data.models.i_models_id;
+                  this.record.c_part_number = workOrder.c_item ? workOrder.c_item : '';
+                  this.record.c_series = workOrder.c_series;
+                  this.record.c_customer = workOrder.country;
+                  this.record.mesurementChecklist = response.data.mesurementChecklist;
+                  this.record.testSpecificationChecklist = response.data.testSpecificationChecklist;
+                  response.data.mesurementChecklist.forEach((item, index) => {
+                    app.record.mesurementRejectDetail.push({
+                      checklistIndex: index,
+                      i_checklist_id: item.i_checklist_id,
+                      value: ''
+                    });
                   });
-                });
-                response.data.testSpecificationChecklist.forEach((item, index) => {
-                  app.record.testSpecificationRejectDetail.push({
-                    checklistIndex: index,
-                    i_checklist_id: item.i_checklist_id,
-                    value: ''
+                  response.data.testSpecificationChecklist.forEach((item, index) => {
+                    app.record.testSpecificationRejectDetail.push({
+                      checklistIndex: index,
+                      i_checklist_id: item.i_checklist_id,
+                      value: ''
+                    });
                   });
-                });
-                this.processing = false;
-              }).catch((error) => {
+                  this.processing = false;
+                }
+              }).catch((error, response) => {
                 alert('Order number is invalid or not found.');
                 this.record.c_order_number = "";
                 this.processing = false;
@@ -510,9 +516,9 @@
         },
 
         save() {
-          if (this.record.totalRJMC == '') {
-            alert('Please enter total reject machines.');
-            $('#total-rjmc').focus();
+          if (this.record.machineList.length == 0) {
+            alert('Please enter at least one machine.');
+            $('#input-machineNo').focus();
           } else if (this.record.judgement == 0) {
             alert('Please select lot judgement.');
           } else {

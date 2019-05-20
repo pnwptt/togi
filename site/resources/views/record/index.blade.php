@@ -7,6 +7,9 @@
       border-radius: 0;
       padding: 0;
     }
+    .float-right {
+      float: right;
+    }
   </style>
 @endsection
 
@@ -26,10 +29,7 @@
       </div>
     @endif
     <div class="row">
-      <div class="col-sm-11"><h3>Lot Inspection Result</h3></div>
-      <div class="col-sm-1">
-        <a href="{{ route('createRecordForm') }}" class="btn btn-success btn-ms btn-block">Add</a>
-      </div>
+      <div class="col-sm-12"><h3>Lot Inspection Result <a href="{{ route('createRecordForm') }}" class="btn btn-success btn-ms float-right">Add</a></h3></div>
     </div>
     <div class="row">
       <div class="col-md-12">

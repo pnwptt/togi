@@ -102,7 +102,7 @@ class DashboardController extends Controller
         $palletRawData[] = count($palletTmp) > 0 ? $palletTmp[0] : (object) array('month_number' => $i, 'total_pallet' => 0, 'total_reject' => 0);
 
         $palletLineRed[] = $palletBarTotal[$i-1] > 0 ? number_format(($palletBarReject[$i-1] / $palletBarTotal[$i-1]) * 100, 2) : 0;
-        $palletLineBlue[] = $palletRawData[$i-1]->total_pallet > 0 ? number_format((($palletRawData[$i-1]->total_reject * 12) / ($palletRawData[$i-1]->total_pallet * 12)) * 100, 2) : 0;
+        $palletLineBlue[] = $palletRawData[$i-1]->total_pallet > 0 ? number_format((($palletRawData[$i-1]->total_reject) / ($palletRawData[$i-1]->total_pallet)) * 100, 2) : 0;
 
         $machineLineSql = "
           SELECT 
@@ -126,7 +126,7 @@ class DashboardController extends Controller
         $machineRawData[] = count($machineTmp) > 0 ? $machineTmp[0] : (object) array('month_number' => $i, 'total_machine' => 0, 'total_fail' => 0);
 
         $machineLineRed[] = $machineBarTotal[$i-1] > 0 ? number_format(($machineBarFail[$i-1] / $machineBarTotal[$i-1]) * 100, 2) : 0;
-        $machineLineBlue[] = $machineRawData[$i-1]->total_machine > 0 ? number_format((($machineRawData[$i-1]->total_fail * 12) / ($machineRawData[$i-1]->total_machine * 12)) * 100, 2) : 0;
+        $machineLineBlue[] = $machineRawData[$i-1]->total_machine > 0 ? number_format((($machineRawData[$i-1]->total_fail) / ($machineRawData[$i-1]->total_machine)) * 100, 2) : 0;
       }
     // End lineChart
 
@@ -180,9 +180,18 @@ class DashboardController extends Controller
       }
     // End topErrorcode
 
+    $totalQtySql = "
+      SELECT SUM(max_qty) AS total_qty
+      FROM (SELECT c_order_number, MAX(i_qty) AS max_qty
+      FROM b_record
+      WHERE d_record_date BETWEEN '${curYear}-01-01' AND '${curYear}-12-31'
+      GROUP BY c_order_number) AS maxQty
+    ";
+    $totalQtyData = number_format(DB::select(DB::raw($totalQtySql))[0]->total_qty);
+
     // echo ($topErrorcodeSql);
     // echo json_encode($topErrorcodeFailureData);
-    return view('dashboard', compact('models', 'years', 'palletBarTotal', 'palletBarReject', 'machineBarTotal', 'machineBarFail', 'palletLineRed', 'palletLineBlue', 'machineLineRed', 'machineLineBlue', 'topErrorcodeData', 'top5ErrorcodeBarLabels', 'top5ErrorcodeBarData'));
+    return view('dashboard', compact('models', 'years', 'palletBarTotal', 'palletBarReject', 'machineBarTotal', 'machineBarFail', 'palletLineRed', 'palletLineBlue', 'machineLineRed', 'machineLineBlue', 'topErrorcodeData', 'top5ErrorcodeBarLabels', 'top5ErrorcodeBarData', 'totalQtyData'));
   }
 
   public function getChartData (Request $req)
@@ -295,7 +304,7 @@ class DashboardController extends Controller
         $palletRawData[] = count($palletTmp) > 0 ? $palletTmp[0] : (object) array('month_number' => $i, 'total_pallet' => 0, 'total_reject' => 0);
 
         $palletLineRed[] = $palletBarTotal[$i-1] > 0 ? number_format(($palletBarReject[$i-1] / $palletBarTotal[$i-1]) * 100, 2) : 0;
-        $palletLineBlue[] = $palletRawData[$i-1]->total_pallet > 0 ? number_format((($palletRawData[$i-1]->total_reject * 12) / ($palletRawData[$i-1]->total_pallet * 12)) * 100, 2) : 0;
+        $palletLineBlue[] = $palletRawData[$i-1]->total_pallet > 0 ? number_format((($palletRawData[$i-1]->total_reject) / ($palletRawData[$i-1]->total_pallet)) * 100, 2) : 0;
 
         $machineLineSql = "
           SELECT 
@@ -320,7 +329,7 @@ class DashboardController extends Controller
         $machineRawData[] = count($machineTmp) > 0 ? $machineTmp[0] : (object) array('month_number' => $i, 'total_machine' => 0, 'total_fail' => 0);
 
         $machineLineRed[] = $machineBarTotal[$i-1] > 0 ? number_format(($machineBarFail[$i-1] / $machineBarTotal[$i-1]) * 100, 2) : 0;
-        $machineLineBlue[] = $machineRawData[$i-1]->total_machine > 0 ? number_format((($machineRawData[$i-1]->total_fail * 12) / ($machineRawData[$i-1]->total_machine * 12)) * 100, 2) : 0;
+        $machineLineBlue[] = $machineRawData[$i-1]->total_machine > 0 ? number_format((($machineRawData[$i-1]->total_fail) / ($machineRawData[$i-1]->total_machine)) * 100, 2) : 0;
       }
       $palletLine = compact('palletLineRed', 'palletLineBlue');
       $machineLine = compact('machineLineRed', 'machineLineBlue');
@@ -378,7 +387,17 @@ class DashboardController extends Controller
       $topErrorcode = compact('topErrorcodeData', 'top5ErrorcodeBarLabels', 'top5ErrorcodeBarData');
     // End topErrorcode
 
-    $chartData = compact('palletBar', 'machineBar', 'palletLine', 'machineLine', 'topErrorcode');
+    $totalQtySql = "
+      SELECT SUM(max_qty) AS total_qty
+      FROM (SELECT c_order_number, MAX(i_qty) AS max_qty
+      FROM b_record
+        INNER JOIN  b_models ON b_models.i_models_id = b_record.i_models_id 
+      WHERE d_record_date BETWEEN '${barDateFrom}' AND '${barDateTo}' ${whereModelBar}
+      GROUP BY c_order_number) AS maxQty
+    ";
+    $totalQtyData = number_format(DB::select(DB::raw($totalQtySql))[0]->total_qty);
+
+    $chartData = compact('palletBar', 'machineBar', 'palletLine', 'machineLine', 'topErrorcode', 'totalQtyData');
     echo json_encode($chartData);
   }
 }

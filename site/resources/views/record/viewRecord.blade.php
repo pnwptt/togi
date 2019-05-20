@@ -59,6 +59,37 @@
     button.float-right {
       margin-left: 5px;
     }
+    .show-on-print {
+      display: none;
+    }
+    @media print {
+      @page {
+        margin: 0; 
+      }
+      body { 
+        margin: 1.6cm; 
+      }
+      .hide-on-print {
+        display: none;
+      }
+      .show-on-print {
+        display: inline-block;
+      }
+      .radio-input {
+        margin: 10px;
+      }
+      .container-fluid {
+        padding-bottom: 0;
+      }
+      .table-success span:after {
+        content: 'A';
+        color: black;
+      }
+      .table-danger span:after {
+        content: 'R';
+        color: black;
+      }
+    }
   </style>
 @endsection
 
@@ -81,7 +112,7 @@
     </div>
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-11"><h4>PPA Inspection Record</h4></div>
+        <div class="col-md-12"><h4>PPA Inspection Record <button type="button" class="btn btn-info btn-sm float-right hide-on-print" onclick="window.print()">Print</button></h4></div>
       </div>
       <div class="row">
         <div class="col-md-12">
@@ -137,11 +168,17 @@
                     <hr>
                     <h5 class="header-italic">Lot Judgement</h5>
                     <div class="form-group" align="center">
-                      <div class="custom-control custom-radio">
+                      <label class="radio-input show-on-print">
+                        <input type="radio" {{ $record->i_judgement == 1 ? 'checked' : '' }}> Accept
+                      </label>
+                      <label class="radio-input show-on-print">
+                        <input type="radio" {{ $record->i_judgement == -1 ? 'checked' : '' }}> Reject
+                      </label>
+                      <div class="custom-control custom-radio hide-on-print">
                         <input class="custom-control-input" onclick="return false" type="radio" value="1" id="judgementAccept" {{ $record->i_judgement == 1 ? 'checked' : '' }}>
                         <label class="custom-control-label" for="judgementAccept">Accept</label>
                       </div>
-                      <div class="custom-control custom-radio">
+                      <div class="custom-control custom-radio hide-on-print">
                         <input class="custom-control-input" onclick="return false" type="radio" value="-1" id="judgementReject" {{ $record->i_judgement == -1 ? 'checked' : '' }}>
                         <label class="custom-control-label" for="judgementReject">Reject</label>
                       </div>
@@ -164,7 +201,7 @@
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Check by</label>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" disabled value="@foreach($c_checkby as $key => $value)@if($key != 0), @endif{{$value}}@endforeach">
+                          <input type="text" class="form-control" disabled value="@foreach($c_checkby as $key => $value)@if($key != 0), @endif{{trim($value)}}@endforeach">
                       </div>
                     </div>
                     <div class="form-group row">
@@ -188,7 +225,7 @@
                     </div>
                     @if(session()->get('admin') && !$record->d_approve_date)
                       <hr>
-                      <div class="form-group row">
+                      <div class="form-group row hide-on-print">
                         <div class="col-sm-12">
                           <a href="{{ route('approveRecord', $record->c_order_number) }}" onclick="return confirm('Approve {{$record->c_order_number}}?')" class="btn btn-primary btn-block">APPROVE</a>
                         </div>
@@ -349,7 +386,7 @@
                   <tr>
                     <th colspan="4">Pallet#</th>
                     @foreach($recordPallet as $index => $value)
-                      <th colspan="{{ (count($machineList) / 2) < ($index + 1) ? 1 : 2 }}">
+                      <th colspan="{{ $record->i_pallet_qty <= 10 ? 1 : (count($machineList) / 2) < ($index + 1) ? 1 : 2 }}">
                         {{ $index + 1 }}
                       </th>
                     @endforeach
@@ -362,7 +399,7 @@
                   <tr>
                     <th colspan="4">Accept/Reject</th>
                     @foreach($recordPallet as $index => $value)
-                      <th colspan="{{ (count($machineList) / 2) < ($index + 1) ? 1 : 2 }}" class="{{ $value->i_record_pallet_status == 1 ? 'table-danger' : 'table-success' }}"></th>
+                      <th colspan="{{ $record->i_pallet_qty <= 10 ? 1 : (count($machineList) / 2) < ($index + 1) ? 1 : 2 }}" class="{{ $value->i_record_pallet_status == 1 ? 'table-danger' : 'table-success' }}"><span></span></th>
                     @endforeach
                     @if(count($machineList) == 0)
                       <th></th>

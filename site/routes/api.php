@@ -15,8 +15,6 @@ use Illuminate\Http\Request;
 
 Route::get('/checklist/checkerrorcode', 'ChecklistController@checkerrorcode')->name('checkerrorcode');
 
-Route::get('/workorder/findchecklist', 'WorkOrderController@findChecklist')->name('findChecklist');
-
 Route::get('/findErrorcode', function (Request $req) {
     return App\Models\Errorcode::where('c_code', $req['c_code'])->first();
 })->name('findErrorcode');

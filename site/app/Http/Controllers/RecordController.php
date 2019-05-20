@@ -86,7 +86,7 @@ class RecordController extends Controller
             $today = date('Y-m-d');
 
             $i_record_id = Record::insertGetId([
-                'c_order_number' => $req->c_order_number,
+                'c_order_number' => strtoupper($req->c_order_number),
                 'c_part_number' => $req->c_part_number,
                 'c_series' => $req->c_series,
                 'c_customer' => $req->c_customer,

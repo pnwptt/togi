@@ -48,7 +48,7 @@
       <div class="col-md-6"><center>PPA Inspection Report (% by M/C)</center><canvas class="chart" id="machineBar" height="150"></canvas></div>
     </div>
     <div class="row">
-      <div class="col-md-4"></div>
+      <div class="col-md-4"><br><h4 class="text-center">Total QTY : <span id="totalQty">{{ $totalQtyData }}</span></h4></div>
       <div class="col-md-2">
         Model: 
         <select class="form-control" id="lineModelId" onchange="onChangeModel('lineModelId')">
@@ -129,9 +129,9 @@
         </div>
       </div>
     </div>
-    <div class="row">
+    <div class="row justify-content-center">
       <div class="col-sm-2">
-        <button type="button" class="btn btn-success" onclick="gotoTop()">To top</button>
+        <button type="button" class="btn btn-success btn-block" onclick="gotoTop()">To top</button>
       </div>
     </div>
   </div>
@@ -175,6 +175,9 @@
           ]
         },
         options: {
+          legend: {
+            position: 'bottom'
+          },
           scales: {
             yAxes: [{
               ticks: {
@@ -228,6 +231,9 @@
           ]
         },
         options: {
+          legend: {
+            position: 'bottom'
+          },
           scales: {
             yAxes: [{
               ticks: {
@@ -281,6 +287,9 @@
           ]
         },
         options: {
+          legend: {
+            position: 'bottom'
+          },
           scales: {
             yAxes: [{
               ticks: {
@@ -334,6 +343,9 @@
           ]
         },
         options: {
+          legend: {
+            position: 'bottom'
+          },
           scales: {
             yAxes: [{
               ticks: {
@@ -390,6 +402,9 @@
           }]
         },
         options: {
+          legend: {
+            position: 'bottom'
+          },
           scales: {
             yAxes: [{
               ticks: {
@@ -447,6 +462,8 @@
       })
       .done((response) => {
         var data = JSON.parse(response);
+
+        $('#totalQty').text(data.totalQtyData);
 
         palletBar.data.datasets[0].data = data.palletBar.palletBarTotal;
         palletBar.data.datasets[1].data = data.palletBar.palletBarReject;

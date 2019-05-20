@@ -282,7 +282,7 @@
                   </tr>
                   <tr>
                     <th colspan="4">Pallet#</th>
-                    <th :colspan="(record.machineList.length / 2) < (index + 1)  ? 1 : 2" v-for="(value, index) in record.palletList">
+                    <th :colspan="palletDivide == 1 ? 1 : (record.machineList.length / 2) < (index + 1)  ? 1 : 2" v-for="(value, index) in record.palletList">
                       @{{ index + 1 }}
                     </th>
                     <th v-if="record.machineList.length == 0"></th>
@@ -291,7 +291,7 @@
                   </tr>
                   <tr>
                     <th colspan="4">Accept/Reject</th>
-                    <th :colspan="(record.machineList.length / 2) < (index + 1) ? 1 : 2" v-for="(value, index) in record.palletList" class="clickable"
+                    <th :colspan="palletDivide == 1 ? 1 : (record.machineList.length / 2) < (index + 1) ? 1 : 2" v-for="(value, index) in record.palletList" class="clickable"
                       :class="palletClass[value.status]"
                       @click="togglePalletStatus(index)"></th>
                     <th v-if="record.machineList.length == 0"></th>
@@ -319,26 +319,27 @@
         machineNo: '',
         palletClass: ['table-success', 'table-danger'],
         totalFailByMachine: [],
+        palletDivide: {{ $record->i_pallet_qty > 10 ? 2 : 1 }},
         record: {
           i_record_id: '{{ $record->i_record_id }}',
-          models: '{{ $record->n_models_name }}',
-          c_order_number: '{{ $record->c_order_number }}',
-          c_part_number: '{{ $record->c_part_number }}',
-          c_series: '{{ $record->c_series }}',
-          c_customer: '{{ $record->c_customer }}',
+          models: '{{ trim($record->n_models_name) }}',
+          c_order_number: '{{ trim($record->c_order_number) }}',
+          c_part_number: '{{ trim($record->c_part_number) }}',
+          c_series: '{{ trim($record->c_series) }}',
+          c_customer: '{{ trim($record->c_customer) }}',
           i_qty: '{{ $record->i_qty }}',
-          c_user: '{{ session()->get("c_user") }}',
+          c_user: '{{ trim(session()->get("c_user")) }}',
           i_sampling_qty: '{{ $record->i_sampling_qty }}',
           today: '{{ date("Y-m-d") }}',
           judgement: '{{ $record->i_judgement }}',
-          c_ncr_number: '{{ $record->c_ncr_number }}',
-          c_8d_report_no: '{{ $record->c_8d_report_no }}',
+          c_ncr_number: '{{ trim($record->c_ncr_number) }}',
+          c_8d_report_no: '{{ trim($record->c_8d_report_no) }}',
           totalRJMC: '{{ $record->i_total_rjmc }}',
           i_models_id: '{{ $record->i_models_id }}',
 
           machineList: [
             @foreach($machineList as $value)
-              {{ $value }},
+              '{{ trim($value) }}',
             @endforeach
           ],
 
@@ -500,7 +501,7 @@
                     value: false
                   });
                 @endif
-                console.log('{{ $value }} {{ $i }} {{ $v->i_errorcode_id }} true');
+                // console.log('{{ $value }} {{ $i }} {{ $v->i_errorcode_id }} true');
               @endif
             @endforeach
             @php($i++)
@@ -530,7 +531,7 @@
           this.checkError(index, item.checklistIndex, 'mesurement');
         });
         this.record.testSpecification.forEach((item, index) => {
-          console.log(index, item)
+          // console.log(index, item)
           this.checkError(index, item.checklistIndex, 'testSpecification');
         });
       },
@@ -543,7 +544,7 @@
 
             this.totalFailByMachine.push(0);
 
-            if (this.record.machineList.length % 2 == 1) {
+            if (this.palletDivide == 1 || this.record.machineList.length % 2 == 1) {
               this.record.palletList.push({
                 status: 0
               });
@@ -551,7 +552,7 @@
 
             this.record.mesurementChecklist.forEach((item, index) => {
               app.record.mesurement.push({
-                machineNo: mchineNo, 
+                machineNo: machineNo, 
                 checklistIndex: index, 
                 i_checklist_id: item.i_checklist_id, 
                 value: '',

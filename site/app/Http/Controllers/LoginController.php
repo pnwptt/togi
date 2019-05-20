@@ -9,6 +9,9 @@ class LoginController extends Controller
 {
     public function loginForm()
     {
+        if (session()->get('c_user') != null) {
+            return redirect()->route(session()->get('admin') ? 'dashboard' : 'record');
+        }
         return view('auth.login');
     }
 

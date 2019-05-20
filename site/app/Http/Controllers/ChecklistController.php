@@ -14,7 +14,7 @@ class ChecklistController extends Controller
 {
     public function index()
     {
-      $forms = Form::where('i_form_deleted', 0)->get();
+      $forms = Form::where('i_form_deleted', 0)->orderBy('i_form_id', 'desc')->get();
       return view('checklist.index', compact('forms'));
     }
 
