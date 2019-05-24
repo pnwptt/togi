@@ -85,7 +85,7 @@
   <script type="text/javascript" src="{{ asset('js/datatables.min.js') }}"></script>
   <script type="text/javascript">
     $('#datatables').DataTable({
-      sorting: [[1, 'desc']]
+      sorting: [[2, 'desc']]
     });
   </script>
 @endsection

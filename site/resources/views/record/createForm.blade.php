@@ -335,6 +335,7 @@
           c_8d_report_no: '',
           totalRJMC: 0,
           i_models_id: '',
+          i_form_id: '',
 
           machineList: [],
 
@@ -437,6 +438,7 @@
                   this.record.c_customer = workOrder.country;
                   this.record.mesurementChecklist = response.data.mesurementChecklist;
                   this.record.testSpecificationChecklist = response.data.testSpecificationChecklist;
+                  this.record.i_form_id = response.data.form.i_form_id;
                   response.data.mesurementChecklist.forEach((item, index) => {
                     app.record.mesurementRejectDetail.push({
                       checklistIndex: index,
@@ -479,6 +481,7 @@
             this.record.palletList = [];
             this.record.totalRJMC = 0;
             this.totalFailByMachine = [];
+            this.record.i_form_id = '';
           }
         },
 

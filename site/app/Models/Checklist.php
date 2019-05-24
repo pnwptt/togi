@@ -32,4 +32,9 @@ class Checklist extends Model
         $form = Form::where('i_models_id', $i_models_id)->where('i_status', 1)->first();
         return Checklist::getChecklistByFromId($form->i_form_id, $i_errorcode_type_id);
     }
+
+    static function getChecklistByFormId($i_form_id, $i_errorcode_type_id)
+    {
+        return Checklist::getChecklistByFromId($i_form_id, $i_errorcode_type_id);
+    }
 }

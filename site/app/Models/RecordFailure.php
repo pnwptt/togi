@@ -31,6 +31,7 @@ class RecordFailure extends Model
         return DB::table('b_record_failure')
             ->join('b_errorcode', 'b_errorcode.i_errorcode_id', '=', 'b_record_failure.i_errorcode_id')
             ->where('i_record_id', $i_record_id)
+            ->orderBy('i_record_failure_id', 'ASC')
             ->get();
     }
 
@@ -38,6 +39,7 @@ class RecordFailure extends Model
         return DB::table('b_record_failure')
             ->join('b_errorcode', 'b_errorcode.i_errorcode_id', '=', 'b_record_failure.i_errorcode_id')
             ->whereIn('i_record_id', $ids)
+            ->orderBy('i_record_failure_id', 'ASC')
             ->get();
     }
 }

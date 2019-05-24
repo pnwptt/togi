@@ -27,7 +27,7 @@ class WorkOrderController extends Controller
             $mesurementChecklist = Checklist::getChecklistByFromId($form->i_form_id, 1);
             $testSpecificationChecklist = Checklist::getChecklistByFromId($form->i_form_id, 2);
             $models = $series->getModels;
-            return compact('workOrder', 'models', 'mesurementChecklist', 'testSpecificationChecklist');
+            return compact('form', 'workOrder', 'models', 'mesurementChecklist', 'testSpecificationChecklist');
           } else {
             abort(400, 'Form not found.');          
           }

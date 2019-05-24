@@ -358,6 +358,7 @@
                               @endif
                               <td align="center">
                                 <input type="checkbox" class="form-control" onclick="return false" {{ $v->i_record_failure == 1 ? 'checked' : '' }}>
+                                {{ $v->c_machine_no }}
                               </td>
                             @endif
                           @endforeach
@@ -418,4 +419,5 @@
       </div>
     </div>
   </div>
+  {{ var_dump($totalFail) }}
 @endsection

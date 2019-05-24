@@ -57,8 +57,8 @@ class RecordController extends Controller
             ->where('c_checkby', session()->get('c_user'))
             ->first();
         if ($record) {
-            $mesurementChecklist = Checklist::getChecklistByModelsId($record->i_models_id, 1);
-            $testSpecificationChecklist = Checklist::getChecklistByModelsId($record->i_models_id, 2);
+            $mesurementChecklist = Checklist::getChecklistByFormId($record->i_form_id, 1);
+            $testSpecificationChecklist = Checklist::getChecklistByFormId($record->i_form_id, 2);
             $failureSymptomChecklist = RecordFailure::getChecklistByRecordId($record->i_record_id);
 
             $machineList = RecordItem::getMachinesByRecordId($record->i_record_id);
@@ -99,7 +99,8 @@ class RecordController extends Controller
                 'c_8d_report_no' => $req->c_8d_report_no,
                 'i_total_rjmc' => $req->totalRJMC,
                 'c_remark' => $req->remark,
-                'i_models_id' => $req->i_models_id
+                'i_models_id' => $req->i_models_id,
+                'i_form_id' => $req->i_form_id
             ], 'i_record_id');
 
             $recordItems = [];
@@ -191,9 +192,7 @@ class RecordController extends Controller
             $today = date('Y-m-d');
 
             Record::where('i_record_id', $req->i_record_id)->update([
-                'c_order_number' => $req->c_order_number,
                 'c_part_number' => $req->c_part_number,
-                'c_series' => $req->c_series,
                 'c_customer' => $req->c_customer,
                 'i_qty' => $req->i_qty,
                 'i_sampling_qty' => $req->i_sampling_qty,
@@ -203,8 +202,7 @@ class RecordController extends Controller
                 'c_ncr_number' => $req->c_ncr_number,
                 'c_8d_report_no' => $req->c_8d_report_no,
                 'i_total_rjmc' => $req->totalRJMC,
-                'c_remark' => $req->remark,
-                'i_models_id' => $req->i_models_id
+                'c_remark' => $req->remark
             ]);
 
             $recordItems = [];
@@ -325,18 +323,19 @@ class RecordController extends Controller
                     SUM(i_total_rjmc) AS i_total_rjmc,
                     MAX(i_pallet_qty) AS i_pallet_qty,
                     b_models.i_models_id,
-                    b_models.n_models_name
+                    b_models.n_models_name,
+                    b_record.i_form_id
                 "))
                 ->where('c_order_number', $req->wo)
-                ->groupBy('c_order_number', 'c_series', 'c_approveby', 'd_approve_date', 'b_models.i_models_id', 'b_models.n_models_name')
+                ->groupBy('c_order_number', 'c_series', 'c_approveby', 'd_approve_date', 'b_models.i_models_id', 'b_models.n_models_name', 'b_record.i_form_id')
                 ->first();
             $i_sampling_qty = DB::table('b_record')
                 ->join('b_record_item', 'b_record_item.i_record_id', '=', 'b_record.i_record_id')
                 ->select(DB::raw("COUNT(DISTINCT c_machine_no) AS i_sampling_qty"))
                 ->whereIn('b_record.i_record_id', $ids)
                 ->first()->i_sampling_qty;
-            $mesurementChecklist = Checklist::getChecklistByModelsId($record->i_models_id, 1);
-            $testSpecificationChecklist = Checklist::getChecklistByModelsId($record->i_models_id, 2);
+            $mesurementChecklist = Checklist::getChecklistByFormId($record->i_form_id, 1);
+            $testSpecificationChecklist = Checklist::getChecklistByFormId($record->i_form_id, 2);
             $failureSymptomChecklist = RecordFailure::getChecklistByRecordIdIn($ids);
             // echo json_encode($mesurementChecklist);
 
@@ -351,7 +350,6 @@ class RecordController extends Controller
             $recordFailure = RecordFailure::getRecordItemByRecordIdIn($ids);
             $recordFailureDetails = RecordFailureDetail::getDetailByRecordIdIn($ids);
             $recordPallet = RecordPallet::getPalletByRecordIdIn($ids);
-
             return view('record.viewRecord', compact(
                 'record', 'c_checkby', 'c_remark', 'i_sampling_qty',
                 'mesurementChecklist', 'testSpecificationChecklist', 'failureSymptomChecklist', 
