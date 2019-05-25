@@ -12,10 +12,10 @@ class RecordPallet extends Model
     public $timestamps = false;
 
     static function getPalletByRecordId($i_record_id) {
-        return RecordPallet::where('i_record_id', $i_record_id)->get();
+        return RecordPallet::where('i_record_id', $i_record_id)->orderBy('i_record_pallet_id', 'ASC')->get();
     }
 
     static function getPalletByRecordIdIn($ids) {
-        return RecordPallet::whereIn('i_record_id', $ids)->get();
+        return RecordPallet::whereIn('i_record_id', $ids)->orderBy('i_record_pallet_id', 'ASC')->get();
     }
 }

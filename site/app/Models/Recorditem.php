@@ -55,7 +55,6 @@ class RecordItem extends Model
             ->whereIn('i_record_id', $ids)
             ->where('i_errorcode_type_id', $i_errorcode_type_id)
             ->orderBy('b_record_item.i_record_item_id', 'asc')
-            ->orderBy('b_record_item.i_record_id', 'asc')
             ->get();
     }
 }

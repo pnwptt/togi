@@ -108,7 +108,7 @@
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Sampling Qty:</label>
                       <div class="col-sm-8">
-                        <input type="number" class="form-control" v-model="record.i_sampling_qty">
+                        <input type="number" class="form-control" disabled v-model="record.i_sampling_qty">
                       </div>
                     </div>
                   </td>
@@ -256,7 +256,7 @@
 
                   <!-- ========================================== Failure symotom ====================================== -->
                     <tr>
-                      <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7" class="table-light"><i>Failure symotom</i></td>
+                      <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7" class="table-light"><i>Failure symptom</i></td>
                     </tr>
                     <tr v-for="(cl, index) in record.failureSymptomChecklist">
                       <td align="center">@{{ index + 1 }}</td>
@@ -374,6 +374,7 @@
           var machineNo = this.validateMachineNo(this.machineNo);
           if (machineNo) {
             this.record.machineList.push(machineNo);
+            this.record.i_sampling_qt++;
 
             this.totalFailByMachine.push(0);
 
@@ -579,7 +580,7 @@
           },
 
           totalByMachineNo(index) {
-            var total = 0, m = [], t = [], fa = [], fb = [], fc = [];
+            var total = 0, m = [], t = [], f = [];
             m = this.record.mesurement.filter((m) => m.machineNo == this.record.machineList[index] && m.fail);
             t = this.record.testSpecification.filter((m) => m.machineNo == this.record.machineList[index] && m.fail);
             f = this.record.failureSymptom.filter((m) => m.machineNo == this.record.machineList[index] && m.value);

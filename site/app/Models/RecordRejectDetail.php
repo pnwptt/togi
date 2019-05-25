@@ -17,6 +17,7 @@ class RecordRejectDetail extends Model
             ->join('b_errorcode', 'b_errorcode.i_errorcode_id', '=', 'b_checklists.i_errorcode_id')
             ->where('i_record_id', $i_record_id)
             ->where('i_errorcode_type_id', $i_errorcode_type_id)
+            ->orderBy('i_record_reject_detail_id', 'ASC')
             ->get();
     }
 
@@ -26,6 +27,7 @@ class RecordRejectDetail extends Model
             ->join('b_errorcode', 'b_errorcode.i_errorcode_id', '=', 'b_checklists.i_errorcode_id')
             ->whereIn('i_record_id', $ids)
             ->where('i_errorcode_type_id', $i_errorcode_type_id)
+            ->orderBy('i_record_reject_detail_id', 'ASC')
             ->get();
     }
 }

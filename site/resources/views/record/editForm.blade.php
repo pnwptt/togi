@@ -108,7 +108,7 @@
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Sampling Qty:</label>
                       <div class="col-sm-8">
-                        <input type="number" class="form-control" v-model="record.i_sampling_qty">
+                        <input type="number" class="form-control" disabled v-model="record.i_sampling_qty">
                       </div>
                     </div>
                   </td>
@@ -256,7 +256,7 @@
 
                   <!-- ========================================== Failure symotom ====================================== -->
                     <tr>
-                      <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7" class="table-light"><i>Failure symotom</i></td>
+                      <td :colspan="record.machineList.length + 7 > 7 ? record.machineList.length + 7 : 7" class="table-light"><i>Failure symptom</i></td>
                     </tr>
                     <tr v-for="(cl, index) in record.failureSymptomChecklist">
                       <td align="center">@{{ index + 1 }}</td>
@@ -367,8 +367,8 @@
                 checklistIndex: '{{ $mIndex }}',
                 fail: false,
                 i_checklist_id: '{{ $value->i_checklist_id }}',
-                machineNo: '{{ $value->c_machine_no }}',
-                value: '{{ $value->i_record_item_value }}',
+                machineNo: '{{ trim($value->c_machine_no) }}',
+                value: '{{ trim($value->i_record_item_value) }}',
               },
               @php($mIndex++)
               @if($mIndex >= count($mesurementChecklist))
@@ -382,7 +382,7 @@
               {
                 checklistIndex: '{{ $mdIndex }}',
                 i_checklist_id: '{{ $value->i_checklist_id }}',
-                value: '{{ $value->c_detail }}'
+                value: '{{ trim($value->c_detail) }}'
               },
               @php($mdIndex++)
               @if($mdIndex >= count($mesurementChecklist))
@@ -415,8 +415,8 @@
                 checklistIndex: '{{ $tsIndex }}',
                 fail: false,
                 i_checklist_id: '{{ $value->i_checklist_id }}',
-                machineNo: '{{ $value->c_machine_no }}',
-                value: '{{ $value->i_record_item_value }}',
+                machineNo: '{{ trim($value->c_machine_no) }}',
+                value: '{{ trim($value->i_record_item_value) }}',
               },
               @php($tsIndex++)
               @if($tsIndex >= count($testSpecificationChecklist))
@@ -430,7 +430,7 @@
               {
                 checklistIndex: '{{ $tsdIndex }}',
                 i_checklist_id: '{{ $value->i_checklist_id }}',
-                value: '{{ $value->c_detail }}'
+                value: '{{ trim($value->c_detail) }}'
               },
               @php($tsdIndex++)
               @if($tsdIndex >= count($testSpecificationChecklist))
@@ -468,9 +468,9 @@
         @foreach($failureSymptomChecklist as $key => $value)
           this.record.failureSymptomChecklist[{{ $key }}] = {
             i_errorcode_id: '{{ $value->i_errorcode_id }}',
-            c_rank: '{{ $value->c_rank }}',
-            c_code: '{{ $value->c_code }}',
-            n_errorcode: '{{ $value->n_errorcode }}'
+            c_rank: '{{ trim($value->c_rank) }}',
+            c_code: '{{ trim($value->c_code) }}',
+            n_errorcode: '{{ trim($value->n_errorcode) }}'
           }
           this.record.failureSymptomRejectDetail[{{ $key }}] = {
             i_errorcode_id: '{{ $value->i_errorcode_id }}',
@@ -486,7 +486,7 @@
               @if($val->i_errorcode_id == $v->i_errorcode_id && $val->c_machine_no == $value)
                 @if($val->i_record_failure == 1)
                   this.record.failureSymptom.push({
-                    machineNo: '{{ $value }}',
+                    machineNo: '{{ trim($value) }}',
                     errorcodeIndex: '{{ $i }}',
                     i_errorcode_id: '{{ $v->i_errorcode_id }}',
                     c_rank: '{{ $v->c_rank }}',
@@ -494,7 +494,7 @@
                   });
                 @else
                   this.record.failureSymptom.push({
-                    machineNo: '{{ $value }}',
+                    machineNo: '{{ trim($value) }}',
                     errorcodeIndex: '{{ $i }}',
                     i_errorcode_id: '{{ $v->i_errorcode_id }}',
                     c_rank: '{{ $v->c_rank }}',
@@ -508,7 +508,7 @@
           @endforeach
           @while($i < 5)
             this.record.failureSymptom.push({
-              machineNo: '{{ $value }}',
+              machineNo: '{{ trim($value) }}',
               errorcodeIndex: '{{ $i }}',
               i_errorcode_id: '',
               c_rank: '',
@@ -541,6 +541,7 @@
           var machineNo = this.validateMachineNo(this.machineNo);
           if (machineNo) {
             this.record.machineList.push(machineNo);
+            this.record.i_sampling_qt++;
 
             this.totalFailByMachine.push(0);
 
@@ -678,12 +679,13 @@
           },
 
           totalByMachineNo(index) {
-            var total = 0, m = [], t = [], fa = [], fb = [], fc = [];
+            var total = 0, m = [], t = [], f = [];
             m = this.record.mesurement.filter((m) => m.machineNo == this.record.machineList[index] && m.fail);
             t = this.record.testSpecification.filter((m) => m.machineNo == this.record.machineList[index] && m.fail);
             f = this.record.failureSymptom.filter((m) => m.machineNo == this.record.machineList[index] && m.value);
             total = m.length + t.length + f.length;
             this.totalFailByMachine[index] = total;
+            console.log(this.record.mesurement)
             return total;
           },
 

@@ -343,7 +343,7 @@
                   <!-- ========================================== Failure symptom ====================================== -->
                     @if(count($recordFailure) != 0)
                       <tr>
-                        <td colspan="{{ count($machineList) + 7 > 7 ? count($machineList) + 7 : 7 }}" class="table-light"><i>Failure symotom</i></td>
+                        <td colspan="{{ count($machineList) + 7 > 7 ? count($machineList) + 7 : 7 }}" class="table-light"><i>Failure symptom</i></td>
                       </tr>
                       @foreach($failureSymptomChecklist as $index => $value)
                         <tr>
@@ -419,5 +419,4 @@
       </div>
     </div>
   </div>
-  {{ var_dump($totalFail) }}
 @endsection
